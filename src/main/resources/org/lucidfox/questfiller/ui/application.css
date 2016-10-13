@@ -1,0 +1,9 @@
+.root {
+	-fx-font-family: "Noto Sans";
+	-fx-font-size: 9pt;
+}
+
+TextArea {
+	-fx-font-family: "Ubuntu Mono";
+	-fx-font-size: 11pt;
+}
