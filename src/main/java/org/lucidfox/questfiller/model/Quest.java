@@ -11,6 +11,7 @@ public final class Quest {
 	private int id;
 	private String name;
 	private Faction faction;
+	private CharacterClass characterClass;
 	private String category;
 	private int level;
 	private int levelRequired;
@@ -57,6 +58,14 @@ public final class Quest {
 
 	public void setFaction(final Faction faction) {
 		this.faction = faction;
+	}
+	
+	public CharacterClass getCharacterClass() {
+		return characterClass;
+	}
+	
+	public void setCharacterClass(final CharacterClass characterClass) {
+		this.characterClass = characterClass;
 	}
 
 	public String getCategory() {
@@ -191,7 +200,7 @@ public final class Quest {
 		return stages;
 	}
 
-	public void setStages(List<String> stages) {
+	public void setStages(final List<String> stages) {
 		this.stages = stages;
 	}
 
