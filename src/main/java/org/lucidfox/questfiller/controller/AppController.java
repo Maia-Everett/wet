@@ -1,9 +1,14 @@
 package org.lucidfox.questfiller.controller;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.concurrent.CompletableFuture;
 
+import org.jsoup.Jsoup;
+import org.lucidfox.questfiller.model.Quest;
 import org.lucidfox.questfiller.ui.MainWindow;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -29,17 +34,13 @@ public class AppController {
 		
 		// Button handlers
 		mainWindow = loader.getController();
-		mainWindow.setOnClose(e -> primaryStage.close());
+		mainWindow.setOnClose(primaryStage::close);
+		mainWindow.setOnLoad(this::doLoad);
 
 		// Customize main window
 		primaryStage.setTitle("Quest Filler");
 		primaryStage.getIcons().add(new Image(MainWindow.class.getResource("icon.png").toExternalForm()));
 		primaryStage.setScene(scene);
-		
-		// Window close handler - clean up after ourselves
-		primaryStage.setOnHidden(e -> {
-			
-		});
 	}
 
 	public void showUI() {
@@ -47,7 +48,28 @@ public class AppController {
 		primaryStage.centerOnScreen();
 	}
 	
-	private void doLoad() {
+	private void doLoad(final String url) {
+		mainWindow.setLoading(true);
 		
+		CompletableFuture.supplyAsync(() -> {
+			// Worker thread
+			try {
+				return Jsoup.connect(url).get();
+			} catch (final IOException e) {
+				throw new UncheckedIOException(e);
+			}
+		}).handleAsync((document, e) -> {
+			// UI thread
+			mainWindow.setLoading(false);
+			
+			if (e != null) {
+				mainWindow.showError(e);
+				return null;
+			}
+			
+			final Quest quest = new WowheadParser().parse(document);
+			mainWindow.setText(new ArticleFormatter().format(quest));	
+			return null;
+		}, Platform::runLater);
 	}
 }
