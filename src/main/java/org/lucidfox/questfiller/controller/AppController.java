@@ -49,6 +49,10 @@ public class AppController {
 	}
 	
 	private void doLoad(final String url) {
+		if (url.isEmpty()) {
+			return;
+		}
+		
 		mainWindow.setLoading(true);
 		
 		CompletableFuture.supplyAsync(() -> {

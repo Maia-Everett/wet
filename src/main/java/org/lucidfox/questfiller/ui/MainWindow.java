@@ -2,6 +2,8 @@ package org.lucidfox.questfiller.ui;
 
 import java.util.function.Consumer;
 
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -38,8 +40,13 @@ public class MainWindow {
 			content.putString(textArea.getText());
 			Clipboard.getSystemClipboard().setContent(content);
 		});
-		
-		wowheadUrl.setOnMouseClicked(e -> wowheadUrl.selectAll());
+
+		// Select the entire URL on focus gain
+		wowheadUrl.focusedProperty().addListener((ChangeListener<Boolean>) (value, oldValue, newValue) -> {
+			if (newValue) {
+				Platform.runLater(wowheadUrl::selectAll);
+			}
+		});
 	}
 	
 	public void setOnClose(final Runnable handler) {
@@ -47,7 +54,7 @@ public class MainWindow {
 	}
 	
 	public void setLoading(final boolean isLoading) {
-		wowheadUrl.setEditable(isLoading);
+		wowheadUrl.setEditable(!isLoading);
 		loadBtn.setDisable(isLoading);
 		loading.setVisible(isLoading);
 	}
