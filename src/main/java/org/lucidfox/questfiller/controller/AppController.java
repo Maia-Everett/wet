@@ -71,8 +71,13 @@ public class AppController {
 				return null;
 			}
 			
-			final Quest quest = new WowheadParser().parse(document);
-			mainWindow.setText(new ArticleFormatter().format(quest));	
+			try {
+				final Quest quest = new WowheadParser().parse(document);
+				mainWindow.setText(new ArticleFormatter().format(quest));
+			} catch (final RuntimeException ex) {
+				mainWindow.showError(ex);
+			}
+			
 			return null;
 		}, Platform::runLater);
 	}

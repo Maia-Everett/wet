@@ -4,6 +4,6 @@ import org.lucidfox.questfiller.model.Quest;
 
 public final class ArticleFormatter {
 	public String format(final Quest quest) {
-		return quest.text;
+		return quest.dump();
 	}
 }

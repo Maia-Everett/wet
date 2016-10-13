@@ -69,6 +69,7 @@ public class MainWindow {
 	}
 	
 	public void showError(final Throwable e) {
+		e.printStackTrace();
 		new Alert(AlertType.ERROR, e.getMessage()).showAndWait();
 	}
 }
