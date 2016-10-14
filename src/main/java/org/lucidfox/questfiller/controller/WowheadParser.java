@@ -24,7 +24,7 @@ public final class WowheadParser {
 		final Quest quest = new Quest();
 		
 		final String url = html.select("link[rel=canonical]").attr("href");
-		final String idStr = getRegexGroup("/quest=([0-9]+)/", url, 1);
+		final String idStr = getRegexGroup("/quest=([0-9]+)/", url, 1).get();
 		quest.setId(Integer.parseInt(idStr));
 		
 		final Element mainContainer = html.select("#main-contents div.text").first();
@@ -200,7 +200,7 @@ public final class WowheadParser {
 			
 			if (divs.first().ownText().contains("experience")) {
 				firstReputationDiv = 1;
-				final String xpValue = getRegexGroup("([0-9,]*) experience", divs.first().ownText(), 1);
+				final String xpValue = getRegexGroup("([0-9,]*) experience", divs.first().ownText(), 1).get();
 				quest.setExperience(Integer.parseInt(xpValue.replace(",", "")));
 			} else {
 				firstReputationDiv = 0;
@@ -215,7 +215,7 @@ public final class WowheadParser {
 			}
 		}
 	}
-		
+	
 	private void parseInfobox(final Quest quest, final Document html) {
 		// Infobox section
 		final Optional<String> infoboxData = html.getElementsByTag("script")
@@ -228,9 +228,13 @@ public final class WowheadParser {
 			return;
 		}
 		
-		final String infoboxMarkup = getRegexGroup("Markup\\.printHtml\\('([^']*)'", infoboxData.get(), 1);
+		final String infoboxMarkup = getRegexGroup("Markup\\.printHtml\\('([^']*)'", infoboxData.get(), 1).get();
 		final List<String> infoboxLines = unescapeInfoboxMarkup(infoboxMarkup);
-		infoboxLines.forEach(System.out::println);
+		
+		// Pattern-match each infobox line
+		for (final String infoboxLine : infoboxLines) {
+			
+		}
 	}
 	
 	// Utility methods
@@ -249,15 +253,20 @@ public final class WowheadParser {
 		
 		// We'll get BBCode, convert it to a list of plain text lines
 		return Stream.of(sb.toString().split(Pattern.quote("[/li][li]")))
+				.flatMap(line -> Stream.of(line.split(Pattern.quote("[br]"))))
 				.map(line -> line.replaceAll("\\[(?:race|class)=([0-9]+)\\]", "$1")) // replace [race/class=X] with X
 				.map(line -> line.replaceAll("\\[[^\\]]+\\]", ""))          // remove all square bracket tags
 				.collect(Collectors.toList());
 	}
 
-	private String getRegexGroup(final String regex, final String str, final int group) {
+	private Optional<String> getRegexGroup(final String regex, final String str, final int group) {
 		final Matcher matcher = Pattern.compile(regex).matcher(str);
-		matcher.find();
-		return matcher.group(group);
+		
+		if (!matcher.find()) {
+			return Optional.empty();
+		}
+		
+		return Optional.of(matcher.group(group));
 	}
 	
 	private String textOf(final Element el) {
@@ -284,6 +293,11 @@ public final class WowheadParser {
 	public static void main(final String[] args) throws IOException {
 		final String url = "http://www.wowhead.com/quest=25267/message-for-saurfang";
 		final Document doc = Jsoup.connect(url).get();
-		System.out.println(new WowheadParser().parse(doc).dump());
+		final Quest quest = new WowheadParser().parse(doc);
+		System.out.println(quest.dump());
+		System.out.println();
+		System.out.println(" ----------------------------------- ");
+		System.out.println();
+		System.out.println(new ArticleFormatter().format(quest));
 	}
 }

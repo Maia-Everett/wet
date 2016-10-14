@@ -14,10 +14,10 @@ public final class Quest {
 	private CharacterClass characterClass;
 	private Race race;
 	private String category;
-	private int level;
-	private int levelRequired;
-	private boolean isGroup;
-	private int groupSize;
+	private Integer level;
+	private Integer levelRequired;
+	private String type;
+	private Integer groupSize;
 	private String startEntity;
 	private String finishEntity;
 	private Map<String, Integer> reputationGains = new LinkedHashMap<>();
@@ -88,35 +88,35 @@ public final class Quest {
 		this.category = category;
 	}
 
-	public int getLevel() {
+	public Integer getLevel() {
 		return level;
 	}
 
-	public void setLevel(final int level) {
+	public void setLevel(final Integer level) {
 		this.level = level;
 	}
 
-	public int getLevelRequired() {
+	public Integer getLevelRequired() {
 		return levelRequired;
 	}
 
-	public void setLevelRequired(final int levelRequired) {
+	public void setLevelRequired(final Integer levelRequired) {
 		this.levelRequired = levelRequired;
 	}
 
-	public boolean isGroup() {
-		return isGroup;
+	public String getType() {
+		return type;
+	}
+	
+	public void setType(final String type) {
+		this.type = type;
 	}
 
-	public void setGroup(final boolean group) {
-		this.isGroup = group;
-	}
-
-	public int getGroupSize() {
+	public Integer getGroupSize() {
 		return groupSize;
 	}
 
-	public void setGroupSize(final int groupSize) {
+	public void setGroupSize(final Integer groupSize) {
 		this.groupSize = groupSize;
 	}
 
@@ -270,6 +270,54 @@ public final class Quest {
 
 	public void setPatchAdded(final String patchAdded) {
 		this.patchAdded = patchAdded;
+	}
+	
+	public boolean hasItemRewards() {
+		return !choiceRewards.isEmpty() || !nonChoiceRewards.isEmpty();
+	}
+	
+	public List<String> getAllNonChoiceRewards() {
+		final List<String> result = new ArrayList<>();
+		result.addAll(nonChoiceRewards);
+		result.addAll(abilityRewards);
+		result.addAll(buffRewards);
+		return result;
+	}
+	
+	public boolean hasNonMoneyRewards() {
+		return hasItemRewards() || !abilityRewards.isEmpty() || !buffRewards.isEmpty();
+	}
+	
+	public boolean hasMoney() {
+		return money != 0;
+	}
+	
+	public boolean hasRewards() {
+		return hasMoney() || hasNonMoneyRewards();
+	}
+	
+	public boolean hasExperience() {
+		return experience != 0;
+	}
+	
+	public boolean hasGains() {
+		return hasExperience() || !reputationGains.isEmpty();
+	}
+	
+	private static Integer getNonzeroOrNull(final int quantity) {
+		return quantity == 0 ? null : quantity;
+	}
+	
+	public Integer getGold() {
+		return getNonzeroOrNull(money / 10000); 
+	}
+	
+	public Integer getSilver() {
+		return getNonzeroOrNull((money % 10000) / 100); 
+	}
+	
+	public Integer getCopper() {
+		return getNonzeroOrNull(money % 100); 
 	}
 	
 	public String dump() {

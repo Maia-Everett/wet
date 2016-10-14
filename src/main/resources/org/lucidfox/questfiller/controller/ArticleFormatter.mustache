@@ -1,0 +1,128 @@
+{{=<< >>=}}
+{{Questbox
+ | id = <<q.id>>
+ | name = <<q.name>>
+<<#q.faction>>
+ | faction = <<q.faction>>
+<</q.faction>>
+<<#q.race>>
+ | race = <<q.race>>
+<</q.race>>
+<<#q.faction>>
+ | faction = <<q.faction>>
+<</q.faction>>
+<<#q.category>>
+ | category = <<q.category>>
+<</q.category>>
+<<#q.level>>
+ | level = <<q.level>>
+<</q.level>>
+<<#q.levelRequired>>
+ | levelreq = <<q.levelRequired>>
+<</q.levelRequired>>
+<<#q.type>>
+ | type = <<q.type>>
+<</q.type>>
+<<#q.groupSize>>
+ | groupsize = <<q.groupSize>>
+<</q.groupSize>>
+<<#q.startEntity>>
+ | start = <<q.startEntity>>
+<</q.startEntity>>
+<<#q.finishEntity>>
+ | end = <<q.finishEntity>>
+<</q.finishEntity>>
+<<^q.reputationGains.isEmpty>>
+ | reputation = <<#q.reputationGains.entrySet>>+<<value>> [[<<key>>]]<<^-last>><br /><</-last>><</q.reputationGains.entrySet>>
+<</q.reputationGains.isEmpty>>
+<<#q.hasExperience>>
+ | experience = <<q.experience>>
+<</q.hasExperience>>
+<<#q.hasNonMoneyRewards>>
+ | rewards =
+<<#q.choiceRewards>>
+<<^-first>>or <</-first>>[[<<this>>]]<<^-last>><br /><</-last>>
+<</q.choiceRewards>>
+<<#q.allNonChoiceRewards>>
+<<#-first>><<^q.choiceRewards.isEmpty>><br /><br /><</q.choiceRewards.isEmpty>><</-first>>
+[[<<this>>]]<<^-last>><br /><</-last>>
+<</q.allNonChoiceRewards>>
+<</q.hasNonMoneyRewards>>
+<<#q.hasMoney>>
+ | money = {{cost|<<q.gold>>|<<q.silver>>|<<q.copper>>}}
+<</q.hasMoney>>
+<<#q.isRepeatable>>
+ | repeatable = Yes
+<</q.isRepeatable>>
+<<^q.isShareable>>
+ | shareable = No
+<</q.isShareable>>
+ | previous = <<#q.previousQuestName>>[[Quest:<<q.previousQuestName>>]]<</q.previousQuestName>>
+ | next = <<#q.nextQuestName>>[[Quest:<<q.nextQuestName>>]]<</q.nextQuestName>>
+ | other-faction = 
+}}
+
+== Description ==
+<<q.description>>
+<<#q.progress>>
+
+== Progress ==
+<<q.progress>>
+<</q.progress>>
+<<#q.hasRewards>>
+
+== Rewards ==
+<<^q.choiceRewards.isEmpty>>
+{{itembox|You will be able to choose one of these rewards:
+<<#q.choiceRewards>>
+|<<this>>
+<</q.choiceRewards>>
+}}
+<</q.choiceRewards.isEmpty>>
+<<^q.nonChoiceRewards.isEmpty>>
+
+{{itembox|You will <<^q.choiceRewards.isEmpty>>also <</q.choiceRewards.isEmpty>> receive:
+<<#q.nonChoiceRewards>>
+|<<this>>
+<</q.nonChoiceRewards>>
+}}
+<</q.nonChoiceRewards.isEmpty>>
+<<#q.abilityRewards>>
+
+You will <<#q.hasItemRewards>>also <</q.hasItemRewards>>learn: [[<<this>>]]
+<</q.abilityRewards>>
+<<#q.buffRewards>>
+
+The following spell will be cast on you: [[<<this>>]]
+<</q.buffRewards>>
+<<#q.hasMoney>>
+
+You will <<#q.hasNonMoneyRewards>>also <</q.hasNonMoneyRewards>>receive: {{cost|<<q.gold>>|<<q.silver>>|<<q.copper>>}}
+<</q.hasMoney>>
+<</q.hasRewards>>
+<<#q.completion>>
+
+== Completion ==
+<<q.completion>>
+<</q.completion>>
+<<#q.hasGains>>
+
+== Gains ==
+<<#q.hasExperience>>
+* <<q.experience>> [[XP]]
+<</q.hasExperience>>
+<<#q.reputationGains.entrySet>>
+* <<value>> reputation with [[<<key>>]]
+<</q.reputationGains.entrySet>>
+<</q.hasGains>>
+
+== Quest progression ==
+...
+<<#q.patchAdded>>
+
+== Patch notes ==
+* {{Patch <<q.patchAdded>>|note=Added.}}
+<</q.patchAdded>>
+
+== External links ==
+{{Elinks-quest|<<q.id>>}}
