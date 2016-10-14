@@ -1,4 +1,5 @@
 {{=<< >>=}}
+{{Stub/Quest}}
 {{Questbox
  | id = <<q.id>>
  | name = <<q.name>>
@@ -68,22 +69,22 @@
  | other-faction = 
 }}
 
-== Objectives ==
+==Objectives==
 <<q.objectives>>
 <<#q.stages>>
 * <<this>>
 <</q.stages>>
 
-== Description ==
+==Description==
 <<q.description>>
 <<#q.progress>>
 
-== Progress ==
+==Progress==
 <<q.progress>>
 <</q.progress>>
 <<#q.hasRewards>>
 
-== Rewards ==
+==Rewards==
 <<^q.choiceRewards.isEmpty>>
 {{itembox|You will be able to choose one of these rewards:
 <<#q.choiceRewards>>
@@ -114,12 +115,12 @@ You will <<#q.hasNonMoneyRewards>>also <</q.hasNonMoneyRewards>>receive: {{cost|
 <</q.hasRewards>>
 <<#q.completion>>
 
-== Completion ==
+==Completion==
 <<q.completion>>
 <</q.completion>>
 <<#q.hasGains>>
 
-== Gains ==
+==Gains==
 <<#q.hasExperience>>
 * <<q.experience>> [[XP]]
 <</q.hasExperience>>
@@ -128,13 +129,14 @@ You will <<#q.hasNonMoneyRewards>>also <</q.hasNonMoneyRewards>>receive: {{cost|
 <</q.reputationGains.entrySet>>
 <</q.hasGains>>
 
-== Quest progression ==
+==Quest progression==
 ...
 <<#q.patchAdded>>
 
-== Patch notes ==
+==Patch notes==
 * {{Patch <<q.patchAdded>>|note=Added.}}
 <</q.patchAdded>>
 
-== External links ==
+==External links==
+{{subst:el}}
 {{Elinks-quest|<<q.id>>}}
