@@ -3,6 +3,7 @@ package org.lucidfox.questfiller.controller;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,11 +13,12 @@ import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 
 public final class ArticleFormatter {
-	private final Template template;
+	private static final Template TEMPLATE;
 	
-	public ArticleFormatter() {
-		try (final Reader reader = new InputStreamReader(getClass().getResourceAsStream("ArticleFormatter.mustache"))) {
-			template = Mustache.compiler()
+	static {
+		try (final Reader reader = new InputStreamReader(
+				ArticleFormatter.class.getResourceAsStream("ArticleFormatter.mustache"), StandardCharsets.UTF_8)) {
+			TEMPLATE = Mustache.compiler()
 					.escapeHTML(false)
 					.nullValue("")
 					.compile(reader);
@@ -28,6 +30,6 @@ public final class ArticleFormatter {
 	public String format(final Quest quest) {
 		final Map<String, Object> context = new HashMap<>();
 		context.put("q", quest);
-		return template.execute(context);
+		return TEMPLATE.execute(context);
 	}
 }

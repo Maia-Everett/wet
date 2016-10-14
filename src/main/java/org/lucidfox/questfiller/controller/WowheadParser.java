@@ -17,14 +17,17 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
+import org.lucidfox.questfiller.model.CharacterClass;
+import org.lucidfox.questfiller.model.Faction;
 import org.lucidfox.questfiller.model.Quest;
+import org.lucidfox.questfiller.model.Race;
 
 public final class WowheadParser {
 	public Quest parse(final Document html) {
 		final Quest quest = new Quest();
 		
 		final String url = html.select("link[rel=canonical]").attr("href");
-		final String idStr = getRegexGroup("/quest=([0-9]+)/", url, 1).get();
+		final String idStr = getRegexGroup(url, "/quest=([0-9]+)/", 1).get();
 		quest.setId(Integer.parseInt(idStr));
 		
 		final Element mainContainer = html.select("#main-contents div.text").first();
@@ -44,7 +47,8 @@ public final class WowheadParser {
 		// Objectives section
 		Node objectivesNode = questName.nextSibling();
 		
-		while (!(objectivesNode instanceof TextNode)) {
+		// Objectives text is the first non-empty text node immediately following the header
+		while (!(objectivesNode instanceof TextNode) || ((TextNode) objectivesNode).text().trim().isEmpty()) {
 			objectivesNode = objectivesNode.nextSibling();
 		}
 		
@@ -200,7 +204,7 @@ public final class WowheadParser {
 			
 			if (divs.first().ownText().contains("experience")) {
 				firstReputationDiv = 1;
-				final String xpValue = getRegexGroup("([0-9,]*) experience", divs.first().ownText(), 1).get();
+				final String xpValue = getRegexGroup(divs.first().ownText(), "([0-9,]*) experience", 1).get();
 				quest.setExperience(Integer.parseInt(xpValue.replace(",", "")));
 			} else {
 				firstReputationDiv = 0;
@@ -228,12 +232,79 @@ public final class WowheadParser {
 			return;
 		}
 		
-		final String infoboxMarkup = getRegexGroup("Markup\\.printHtml\\('([^']*)'", infoboxData.get(), 1).get();
+		final String infoboxMarkup = getRegexGroup(infoboxData.get(), "Markup\\.printHtml\\('([^']*)'", 1).get();
 		final List<String> infoboxLines = unescapeInfoboxMarkup(infoboxMarkup);
 		
 		// Pattern-match each infobox line
 		for (final String infoboxLine : infoboxLines) {
+			getRegexGroup(infoboxLine, "Level: ([0-9]+)", 1).ifPresent(levelStr -> {
+				quest.setLevel(Integer.parseInt(levelStr));
+			});
 			
+			getRegexGroup(infoboxLine, "Requires level ([0-9]+)", 1).ifPresent(levelStr -> {
+				quest.setLevelRequired(Integer.parseInt(levelStr));
+			});
+			
+			getRegexGroup(infoboxLine, "Type: (.+)", 1).ifPresent(type -> {
+				quest.setType(type);
+			});
+			
+			getRegexGroup(infoboxLine, "Category: (.+)", 1).ifPresent(category -> {
+				quest.setCategory(category);
+			});
+			
+			getRegexGroup(infoboxLine, "Loremaster: (.+)", 1).ifPresent(zone -> {
+				if (!"Yes".equals(zone)) {
+					quest.setCategory(zone);
+				}
+			});
+			
+			getRegexGroup(infoboxLine, "Side: (.+)", 1).ifPresent(side -> {
+				switch (side) {
+				case "Alliance":
+					quest.setFaction(Faction.ALLIANCE);
+					break;
+				case "Horde":
+					quest.setFaction(Faction.HORDE);
+					break;
+				case "Both":
+					quest.setFaction(Faction.NEUTRAL);
+					break;
+				default:
+					System.err.printf("Unknown side %s\n", side);
+					// Unknown faction
+					quest.setFaction(null);
+					break;
+				}
+			});
+			
+			getRegexGroup(infoboxLine, "Race: ([0-9]+)", 1).ifPresent(raceId -> {
+				quest.setRace(Race.getById(Integer.parseInt(raceId)));
+			});
+			
+			getRegexGroup(infoboxLine, "Class: ([0-9]+)", 1).ifPresent(classId -> {
+				quest.setCharacterClass(CharacterClass.getById(Integer.parseInt(classId)));
+			});
+			
+			getRegexGroup(infoboxLine, "Start: (.+)", 1).ifPresent(startEntity -> {
+				quest.setStartEntity(startEntity);
+			});
+			
+			getRegexGroup(infoboxLine, "End: (.+)", 1).ifPresent(finishEntity -> {
+				quest.setFinishEntity(finishEntity);
+			});
+			
+			getRegexGroup(infoboxLine, "Added in patch (.+)", 1).ifPresent(patch -> {
+				quest.setPatchAdded(PatchVersions.getCanonicalVersion(patch));
+			});
+			
+			if ("Repeatable".equals(infoboxLine)) {
+				quest.setRepeatable(true);
+			} else if ("Sharable".equals(infoboxLine)) {
+				quest.setShareable(true);
+			} else if ("Not sharable".equals(infoboxLine)) {
+				quest.setShareable(false);
+			}
 		}
 	}
 	
@@ -259,7 +330,7 @@ public final class WowheadParser {
 				.collect(Collectors.toList());
 	}
 
-	private Optional<String> getRegexGroup(final String regex, final String str, final int group) {
+	private Optional<String> getRegexGroup(final String str, final String regex, final int group) {
 		final Matcher matcher = Pattern.compile(regex).matcher(str);
 		
 		if (!matcher.find()) {
@@ -291,7 +362,7 @@ public final class WowheadParser {
 	}
 	
 	public static void main(final String[] args) throws IOException {
-		final String url = "http://www.wowhead.com/quest=25267/message-for-saurfang";
+		final String url = "http://www.wowhead.com/quest=28724/iverrons-antidote";
 		final Document doc = Jsoup.connect(url).get();
 		final Quest quest = new WowheadParser().parse(doc);
 		System.out.println(quest.dump());

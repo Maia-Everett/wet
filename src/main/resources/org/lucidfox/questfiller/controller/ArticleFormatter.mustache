@@ -8,9 +8,9 @@
 <<#q.race>>
  | race = <<q.race>>
 <</q.race>>
-<<#q.faction>>
- | faction = <<q.faction>>
-<</q.faction>>
+<<#q.characterClass>>
+ | class = <<q.characterClass>>
+<</q.characterClass>>
 <<#q.category>>
  | category = <<q.category>>
 <</q.category>>
@@ -27,10 +27,16 @@
  | groupsize = <<q.groupSize>>
 <</q.groupSize>>
 <<#q.startEntity>>
- | start = <<q.startEntity>>
+ | start = [[<<q.startEntity>>]]
+<</q.startEntity>>
+<<^q.startEntity>>
+ | start = Automatic
 <</q.startEntity>>
 <<#q.finishEntity>>
- | end = <<q.finishEntity>>
+ | end = [[<<q.finishEntity>>]]
+<</q.finishEntity>>
+<<^q.finishEntity>>
+ | end = Automatic
 <</q.finishEntity>>
 <<^q.reputationGains.isEmpty>>
  | reputation = <<#q.reputationGains.entrySet>>+<<value>> [[<<key>>]]<<^-last>><br /><</-last>><</q.reputationGains.entrySet>>
@@ -61,6 +67,12 @@
  | next = <<#q.nextQuestName>>[[Quest:<<q.nextQuestName>>]]<</q.nextQuestName>>
  | other-faction = 
 }}
+
+== Objectives ==
+<<q.objectives>>
+<<#q.stages>>
+* <<this>>
+<</q.stages>>
 
 == Description ==
 <<q.description>>
