@@ -40,6 +40,7 @@ public final class WowheadParser {
 		parseRewards(quest, mainContainer);
 		parseGains(quest, mainContainer);
 		parseInfobox(quest, html);
+		parseSeries(quest, html);
 		return quest;
 	}
 
@@ -319,6 +320,36 @@ public final class WowheadParser {
 		}
 	}
 	
+	private void parseSeries(final Quest quest, final Document html) {
+		// Try to determine previous and next quests
+		final Element seriesTable = html.select("#sidebar table.series").first();
+		
+		if (seriesTable == null) {
+			return;
+		}
+		
+		// Find the table cell with the current quest, in bold
+		final Element ourQuestItem = seriesTable.getElementsByTag("b").first();
+		Element ourQuestCell = ourQuestItem.parent();
+		
+		while (!ourQuestCell.tagName().equals("td")) {
+			ourQuestCell = ourQuestCell.parent();
+		}
+		
+		// Find where in the table it is
+		final Elements questCells = seriesTable.getElementsByTag("td");
+		final int ourQuestIndex = questCells.indexOf(ourQuestCell);
+		
+		if (ourQuestIndex > 0) {
+			final String[] previousQuests = textOf(questCells.get(ourQuestIndex - 1)).split("\n");
+			Stream.of(previousQuests).forEach(quest.getPreviousQuests()::add);
+		}
+		
+		if (ourQuestIndex < questCells.size() - 1) {
+			final String[] nextQuests = textOf(questCells.get(ourQuestIndex + 1)).split("\n");
+			Stream.of(nextQuests).forEach(quest.getNextQuests()::add);
+		}
+	}
 	// Utility methods
 	
 	private List<String> unescapeInfoboxMarkup(final String infoboxMarkup) {

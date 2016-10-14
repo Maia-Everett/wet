@@ -62,8 +62,8 @@
 <<^q.isShareable>>
  | shareable = No
 <</q.isShareable>>
- | previous = <<#q.previousQuestName>>[[Quest:<<q.previousQuestName>>]]<</q.previousQuestName>>
- | next = <<#q.nextQuestName>>[[Quest:<<q.nextQuestName>>]]<</q.nextQuestName>>
+ | previous = <<#q.previousQuests>>[[Quest:<<this>>]]<<^-last>>, <</-last>><</q.previousQuests>>
+ | next = <<#q.nextQuests>>[[Quest:<<this>>]]<<^-last>>, <</-last>><</q.nextQuests>>
  | other-faction = 
 }}
 

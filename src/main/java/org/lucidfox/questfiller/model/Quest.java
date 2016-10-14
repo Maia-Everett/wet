@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public final class Quest {
 	// Infobox
@@ -30,8 +32,8 @@ public final class Quest {
 	private int money;
 	private boolean repeatable;
 	private boolean shareable;
-	private String previousQuestName;
-	private String nextQuestName;
+	private Set<String> previousQuests = new TreeSet<>();
+	private Set<String> nextQuests = new TreeSet<>();
 
 	// Main text
 	private String objectives;
@@ -217,20 +219,20 @@ public final class Quest {
 		this.shareable = shareable;
 	}
 
-	public String getPreviousQuestName() {
-		return previousQuestName;
+	public Set<String> getPreviousQuests() {
+		return previousQuests;
 	}
 
-	public void setPreviousQuestName(final String previousQuestName) {
-		this.previousQuestName = previousQuestName;
+	public void setPreviousQuests(final Set<String> previousQuests) {
+		this.previousQuests = previousQuests;
 	}
 
-	public String getNextQuestName() {
-		return nextQuestName;
+	public Set<String> getNextQuests() {
+		return nextQuests;
 	}
 
-	public void setNextQuestName(final String nextQuestName) {
-		this.nextQuestName = nextQuestName;
+	public void setNextQuests(final Set<String> nextQuests) {
+		this.nextQuests = nextQuests;
 	}
 
 	public String getObjectives() {
