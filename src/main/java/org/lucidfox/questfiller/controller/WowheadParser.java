@@ -251,7 +251,13 @@ public final class WowheadParser {
 			});
 			
 			getRegexGroup(infoboxLine, "Type: (.+)", 1).ifPresent(type -> {
-				quest.setType(type);
+				if (type.equals("Artifact")) {
+					// This is what wowpedia uses
+					quest.setType("Legendary");
+					quest.setCategory("Artifact");
+				} else {
+					quest.setType(type);
+				}
 			});
 			
 			getRegexGroup(infoboxLine, "Category: (.+)", 1).ifPresent(category -> {
