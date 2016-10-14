@@ -31,6 +31,16 @@ public final class WowheadParser {
 		final Element questName = html.select("h1.heading-size-1").first();
 		quest.setName(questName.text());
 		
+		parseObjectives(quest, mainContainer, questName);
+		parseQuestText(quest, mainContainer, html);
+		parseMoney(quest, mainContainer);
+		parseRewards(quest, mainContainer);
+		parseGains(quest, mainContainer);
+		parseInfobox(quest, html);
+		return quest;
+	}
+
+	private void parseObjectives(final Quest quest, final Element mainContainer, final Element questName) {
 		// Objectives section
 		Node objectivesNode = questName.nextSibling();
 		
@@ -58,7 +68,9 @@ public final class WowheadParser {
 				quest.getStages().add(parent.text());
 			}
 		}
-		
+	}
+
+	private void parseQuestText(final Quest quest, final Element mainContainer, final Document html) {
 		// Description is messy
 		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
 		final Element descriptionHeading = headingsSize3.stream()
@@ -91,7 +103,9 @@ public final class WowheadParser {
 		if (completionHeading != null) {
 			quest.setCompletion(textOf(completionHeading));
 		}
+	}
 		
+	private void parseMoney(final Quest quest, final Element mainContainer) {
 		// Money rewards
 		final List<Element> allMoneyElements = new ArrayList<Element>();
 		allMoneyElements.addAll(mainContainer.select("span.moneygold"));
@@ -131,7 +145,9 @@ public final class WowheadParser {
 			
 			quest.setMoney(money);
 		}
+	}
 		
+	private void parseRewards(final Quest quest, final Element mainContainer) {
 		// Non-money rewards
 		final Elements icontabs = mainContainer.select("table.icontab.icontab-box");
 		
@@ -164,8 +180,11 @@ public final class WowheadParser {
 				rewardList.add(link.ownText());
 			}
 		}
+	}
 		
+	private void parseGains(final Quest quest, final Element mainContainer) {
 		// Gains section
+		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
 		final Optional<Element> gains = headingsSize3.stream()
 				.filter(el -> el.text().equals("Gains")).findFirst();
 		
@@ -195,7 +214,9 @@ public final class WowheadParser {
 				quest.getReputationGains().put(faction, Integer.parseInt(repValue.replace(",", "")));
 			}
 		}
+	}
 		
+	private void parseInfobox(final Quest quest, final Document html) {
 		// Infobox section
 		final Optional<String> infoboxData = html.getElementsByTag("script")
 				.stream()
@@ -204,15 +225,15 @@ public final class WowheadParser {
 				.findFirst();
 		
 		if (!infoboxData.isPresent()) {
-			return quest;
+			return;
 		}
 		
 		final String infoboxMarkup = getRegexGroup("Markup\\.printHtml\\('([^']*)'", infoboxData.get(), 1);
 		final List<String> infoboxLines = unescapeInfoboxMarkup(infoboxMarkup);
 		infoboxLines.forEach(System.out::println);
-		
-		return quest;
 	}
+	
+	// Utility methods
 	
 	private List<String> unescapeInfoboxMarkup(final String infoboxMarkup) {
 		// Convert \xNN escape sequences to their corresponding characters
@@ -228,7 +249,7 @@ public final class WowheadParser {
 		
 		// We'll get BBCode, convert it to a list of plain text lines
 		return Stream.of(sb.toString().split(Pattern.quote("[/li][li]")))
-				.map(line -> line.replaceAll("\\[class=([0-9]+)\\]", "$1")) // replace [class=X] with X
+				.map(line -> line.replaceAll("\\[(?:race|class)=([0-9]+)\\]", "$1")) // replace [race/class=X] with X
 				.map(line -> line.replaceAll("\\[[^\\]]+\\]", ""))          // remove all square bracket tags
 				.collect(Collectors.toList());
 	}

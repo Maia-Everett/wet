@@ -12,6 +12,7 @@ public final class Quest {
 	private String name;
 	private Faction faction;
 	private CharacterClass characterClass;
+	private Race race;
 	private String category;
 	private int level;
 	private int levelRequired;
@@ -69,6 +70,14 @@ public final class Quest {
 	
 	public void setCharacterClass(final CharacterClass characterClass) {
 		this.characterClass = characterClass;
+	}
+	
+	public Race getRace() {
+		return race;
+	}
+	
+	public void setRace(final Race race) {
+		this.race = race;
 	}
 
 	public String getCategory() {
