@@ -45,7 +45,7 @@
       </HBox>
    </top>
    <center>
-      <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets left="6.0" right="6.0" />
          </BorderPane.margin>
