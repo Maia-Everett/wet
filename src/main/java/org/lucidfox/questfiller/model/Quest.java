@@ -21,7 +21,10 @@ public final class Quest {
 	private String finishEntity;
 	private Map<String, Integer> reputationGains = new LinkedHashMap<>();
 	private int experience;
-	private List<String> rewards = new ArrayList<>();
+	private List<String> choiceRewards = new ArrayList<>();
+	private List<String> nonChoiceRewards = new ArrayList<>();
+	private List<String> abilityRewards = new ArrayList<>();
+	private List<String> buffRewards = new ArrayList<>();
 	private int money;
 	private boolean repeatable;
 	private boolean shareable;
@@ -140,12 +143,36 @@ public final class Quest {
 		this.experience = experience;
 	}
 
-	public List<String> getRewards() {
-		return rewards;
+	public List<String> getChoiceRewards() {
+		return choiceRewards;
 	}
 
-	public void setRewards(final List<String> rewards) {
-		this.rewards = rewards;
+	public void setChoiceRewards(final List<String> choiceRewards) {
+		this.choiceRewards = choiceRewards;
+	}
+
+	public List<String> getNonChoiceRewards() {
+		return nonChoiceRewards;
+	}
+
+	public void setNonChoiceRewards(final List<String> nonChoiceRewards) {
+		this.nonChoiceRewards = nonChoiceRewards;
+	}
+
+	public List<String> getAbilityRewards() {
+		return abilityRewards;
+	}
+
+	public void setAbilityRewards(final List<String> abilityRewards) {
+		this.abilityRewards = abilityRewards;
+	}
+
+	public List<String> getBuffRewards() {
+		return buffRewards;
+	}
+
+	public void setBuffRewards(final List<String> buffRewards) {
+		this.buffRewards = buffRewards;
 	}
 
 	public int getMoney() {
