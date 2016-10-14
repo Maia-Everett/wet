@@ -2,6 +2,8 @@ package org.lucidfox.questfiller.controller;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 
 import org.jsoup.Jsoup;
@@ -50,6 +52,13 @@ public class AppController {
 	
 	private void doLoad(final String url) {
 		if (url.isEmpty()) {
+			return;
+		}
+		
+		try {
+			new URL(url);
+		} catch (final MalformedURLException e) {
+			mainWindow.showError(new IOException("Invalid URL", e));
 			return;
 		}
 		

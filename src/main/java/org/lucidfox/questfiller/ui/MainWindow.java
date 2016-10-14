@@ -1,5 +1,7 @@
 package org.lucidfox.questfiller.ui;
 
+import java.io.UncheckedIOException;
+import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
 
 import javafx.application.Platform;
@@ -69,7 +71,30 @@ public class MainWindow {
 	}
 	
 	public void showError(final Throwable e) {
-		e.printStackTrace();
-		new Alert(AlertType.ERROR, e.getMessage()).showAndWait();
+		Throwable realEx = e;
+		
+		while (realEx instanceof UncheckedIOException || realEx instanceof CompletionException) {
+			realEx = realEx.getCause();
+		}
+		
+		final String message;
+		
+		if (!(realEx instanceof RuntimeException)) {
+			message = realEx.getMessage();
+		} else {
+			final StringBuilder sb = new StringBuilder(realEx.toString());
+			sb.append("\n\n");
+			
+			for (final StackTraceElement st : realEx.getStackTrace()) {
+				sb.append(st.toString());
+				sb.append("\n");
+			}
+			
+			message = sb.toString();
+		}
+		
+		final Alert alert = new Alert(AlertType.ERROR, message);
+		alert.setResizable(true);
+		alert.showAndWait();
 	}
 }
