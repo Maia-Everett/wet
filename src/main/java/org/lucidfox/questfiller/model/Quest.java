@@ -22,6 +22,7 @@ public final class Quest {
 	private String finishEntity;
 	private Map<String, Integer> reputationGains = new LinkedHashMap<>();
 	private int experience;
+	private List<String> otherGains = new ArrayList<>();
 	private List<String> choiceRewards = new ArrayList<>();
 	private List<String> nonChoiceRewards = new ArrayList<>();
 	private List<String> abilityRewards = new ArrayList<>();
@@ -150,6 +151,14 @@ public final class Quest {
 
 	public void setExperience(final int experience) {
 		this.experience = experience;
+	}
+	
+	public List<String> getOtherGains() {
+		return otherGains;
+	}
+	
+	public void setOtherGains(final List<String> otherGains) {
+		this.otherGains = otherGains;
 	}
 
 	public List<String> getChoiceRewards() {

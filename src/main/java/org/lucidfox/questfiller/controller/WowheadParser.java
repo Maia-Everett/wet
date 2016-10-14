@@ -200,22 +200,27 @@ public final class WowheadParser {
 			}
 			
 			Elements divs = ((Element) gainsData).getElementsByTag("div");
-			int firstReputationDiv;
+			int firstNonXPDiv;
 			
 			if (divs.first().ownText().contains("experience")) {
-				firstReputationDiv = 1;
+				firstNonXPDiv = 1;
 				final String xpValue = getRegexGroup(divs.first().ownText(), "([0-9,]*) experience", 1).get();
 				quest.setExperience(Integer.parseInt(xpValue.replace(",", "")));
 			} else {
-				firstReputationDiv = 0;
+				firstNonXPDiv = 0;
 			}
 			
-			for (int i = firstReputationDiv; i < divs.size(); i++) {
+			for (int i = firstNonXPDiv; i < divs.size(); i++) {
 				final Element div = divs.get(i);
-				final String repValue = div.getElementsByTag("span").first().ownText();
-				final String faction = div.getElementsByTag("a").first().ownText();
 				
-				quest.getReputationGains().put(faction, Integer.parseInt(repValue.replace(",", "")));
+				if (div.ownText().contains("reputation with")) {
+					final String repValue = div.getElementsByTag("span").first().ownText();
+					final String faction = div.getElementsByTag("a").first().ownText();
+					quest.getReputationGains().put(faction, Integer.parseInt(repValue.replace(",", "")));
+				} else {
+					// Non-reputation gain
+					quest.getOtherGains().add(div.text());
+				}
 			}
 		}
 	}
