@@ -49,8 +49,7 @@
 <<^-first>>or <</-first>>[[<<this>>]]<<^-last>><br /><</-last>>
 <</q.choiceRewards>>
 <<#q.allNonChoiceRewards>>
-<<#-first>><<^q.choiceRewards.isEmpty>><br /><br /><</q.choiceRewards.isEmpty>><</-first>>
-[[<<this>>]]<<^-last>><br /><</-last>>
+<<#-first>><<^q.choiceRewards.isEmpty>><br /><br /><</q.choiceRewards.isEmpty>><</-first>>[[<<this>>]]<<^-last>><br /><</-last>>
 <</q.allNonChoiceRewards>>
 <</q.hasNonMoneyRewards>>
 <<#q.hasMoney>>
@@ -64,7 +63,9 @@
 <</q.isShareable>>
  | previous = <<#q.previousQuests>>[[Quest:<<this>>]]<<^-last>>, <</-last>><</q.previousQuests>>
  | next = <<#q.nextQuests>>[[Quest:<<this>>]]<<^-last>>, <</-last>><</q.nextQuests>>
- | other-faction = 
+ <<^q.isNeutral>>
+ | other-faction =
+ <</q.isNeutral>> 
 }}
 
 ==Objectives==

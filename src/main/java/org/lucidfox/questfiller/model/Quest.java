@@ -331,6 +331,10 @@ public final class Quest {
 		return getNonzeroOrNull(money % 100); 
 	}
 	
+	public boolean isNeutral() {
+		return faction == Faction.NEUTRAL;
+	}
+	
 	public String dump() {
 		final StringBuilder sb = new StringBuilder();
 		
