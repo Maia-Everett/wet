@@ -38,6 +38,7 @@ public final class Quest {
 	// Main text
 	private String objectives;
 	private List<String> stages = new ArrayList<>();
+	private List<String> providedItems = new ArrayList<>();
 	private String description;
 	private String progress;
 	private String completion;
@@ -249,6 +250,14 @@ public final class Quest {
 
 	public void setStages(final List<String> stages) {
 		this.stages = stages;
+	}
+	
+	public List<String> getProvidedItems() {
+		return providedItems;
+	}
+	
+	public void setProvidedItems(final List<String> providedItems) {
+		this.providedItems = providedItems;
 	}
 
 	public String getDescription() {

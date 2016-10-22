@@ -56,7 +56,8 @@ public final class WowheadParser {
 		quest.setObjectives(((TextNode) objectivesNode).text());
 		
 		// Objective completion stages
-		final Element stagesTable = mainContainer.select("table.iconlist").first();
+		final Elements iconlists = mainContainer.select("table.iconlist");
+		final Element stagesTable = iconlists.first();
 		
 		if (stagesTable != null) {
 			// Remove any subtables
@@ -71,6 +72,20 @@ public final class WowheadParser {
 				}
 				
 				quest.getStages().add(parent.text());
+			}
+		}
+		
+		// Provided items
+		if (iconlists.size() >= 2) {
+			final Element maybeProvided = iconlists.get(1);
+			final Node before = maybeProvided.previousSibling();
+			
+			if (before instanceof TextNode && ((TextNode) before).text().contains("Provided")) {
+				maybeProvided.select("table.iconlist").remove();
+				
+				for (final Element itemLink : maybeProvided.getElementsByTag("a")) {
+					quest.getProvidedItems().add(itemLink.text());
+				}
 			}
 		}
 	}
