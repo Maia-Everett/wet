@@ -89,35 +89,38 @@
 |<<this>>
 <</q.choiceRewards>>
 }}
+
 <</q.choiceRewards.isEmpty>>
 <<^q.nonChoiceRewards.isEmpty>>
-
 {{itembox|You will <<^q.choiceRewards.isEmpty>>also <</q.choiceRewards.isEmpty>> receive:
 <<#q.nonChoiceRewards>>
 |<<this>>
 <</q.nonChoiceRewards>>
 }}
+
 <</q.nonChoiceRewards.isEmpty>>
 <<#q.abilityRewards>>
-
 You will <<#q.hasItemRewards>>also <</q.hasItemRewards>>learn: [[<<this>>]]
+
 <</q.abilityRewards>>
 <<#q.buffRewards>>
-
 The following spell will be cast on you: [[<<this>>]]
+
 <</q.buffRewards>>
 <<#q.hasMoney>>
-
 You will <<#q.hasNonMoneyRewards>>also <</q.hasNonMoneyRewards>>receive: {{cost|<<q.gold>>|<<q.silver>>|<<q.copper>>}}
+
 <</q.hasMoney>>
 <</q.hasRewards>>
-<<#q.completion>>
+<<^q.hasRewards>>
 
+<</q.hasRewards>>
+<<#q.completion>>
 ==Completion==
 <<q.completion>>
 <</q.completion>>
-<<#q.hasGains>>
 
+<<#q.hasGains>>
 ==Gains==
 <<#q.hasExperience>>
 * <<q.experience>> [[XP]]
