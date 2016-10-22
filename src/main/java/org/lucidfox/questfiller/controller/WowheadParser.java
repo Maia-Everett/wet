@@ -337,12 +337,6 @@ public final class WowheadParser {
 				}
 			});
 			
-			getRegexGroup(infoboxLine, "Loremaster: (.+)", 1).ifPresent(zone -> {
-				if (!"Yes".equals(zone)) {
-					quest.setCategory(zone);
-				}
-			});
-			
 			getRegexGroup(infoboxLine, "Side: (.+)", 1).ifPresent(side -> {
 				switch (side) {
 				case "Alliance":
