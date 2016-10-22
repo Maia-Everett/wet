@@ -1,13 +1,24 @@
 package org.lucidfox.questfiller.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,6 +34,28 @@ import org.lucidfox.questfiller.model.Quest;
 import org.lucidfox.questfiller.model.Race;
 
 public final class WowheadParser {
+	private final Map<Integer, String> questCategories = new HashMap<>();
+	
+	public WowheadParser(final Reader localeJsReader) throws IOException {
+		// Obtain localization for quest categories
+		final String fullScript = new BufferedReader(localeJsReader).lines().collect(Collectors.joining("\n"));
+		final String questScript = getRegexGroup(fullScript, "var mn_quests=[^;]+;", 0).get();
+		final ScriptEngine js = new ScriptEngineManager().getEngineByName("nashorn");
+		
+		try {
+			// Eval the piece of JS that interests us, then convert the resulting data structure into our map
+			js.eval(questScript);
+			js.put("questCategories", questCategories);
+			
+			try (final Reader reader = new InputStreamReader(
+					getClass().getResourceAsStream("LocaleCategories.js"), StandardCharsets.UTF_8)) {
+				js.eval(reader);
+			}
+		} catch (final ScriptException e) {
+			throw new RuntimeException(e);
+		} 
+	}
+	
 	public Quest parse(final Document html) {
 		final Quest quest = new Quest();
 		
@@ -34,6 +67,7 @@ public final class WowheadParser {
 		final Element questName = html.select("h1.heading-size-1").first();
 		quest.setName(questName.text());
 		
+		parseCategory(quest, html);
 		parseObjectives(quest, mainContainer, questName);
 		parseQuestText(quest, mainContainer, html);
 		parseMoney(quest, mainContainer);
@@ -42,6 +76,26 @@ public final class WowheadParser {
 		parseInfobox(quest, html);
 		parseSeries(quest, html);
 		return quest;
+	}
+
+	private void parseCategory(final Quest quest, final Document html) {
+		// Category taken from breadcrumb, which Wowhead draws with JS :(
+		final Optional<String> breadcrumbData = html.getElementsByTag("script")
+				.stream()
+				.map(Element::data)
+				.filter(data -> data.contains("PageTemplate.set({breadcrumb:"))
+				.findFirst();
+		
+		if (!breadcrumbData.isPresent()) {
+			return;
+		}
+		
+		// ugh, parsing JS with regexes
+		final String regex = Pattern.quote("PageTemplate.set({breadcrumb: [") + "([0-9,-]+)" + Pattern.quote("]});");
+		final String[] categoryIds = getRegexGroup(breadcrumbData.get(), regex, 1).get().split(",");
+		// last number in list is the category id
+		final int questId = Integer.parseInt(categoryIds[categoryIds.length - 1]);
+		quest.setCategory(questCategories.get(questId));
 	}
 
 	private void parseObjectives(final Quest quest, final Element mainContainer, final Element questName) {
@@ -270,14 +324,9 @@ public final class WowheadParser {
 				if (type.equals("Artifact")) {
 					// This is what wowpedia uses
 					quest.setType("Legendary");
-					quest.setCategory("Artifact");
 				} else {
 					quest.setType(type);
 				}
-			});
-			
-			getRegexGroup(infoboxLine, "Category: (.+)", 1).ifPresent(category -> {
-				quest.setCategory(category);
 			});
 			
 			getRegexGroup(infoboxLine, "Loremaster: (.+)", 1).ifPresent(zone -> {
@@ -419,9 +468,16 @@ public final class WowheadParser {
 	}
 	
 	public static void main(final String[] args) throws IOException {
+		final String localeEnus = "http://wow.zamimg.com/js/locale_enus.js";
+		final WowheadParser parser;
+		
+		try (final Reader reader = new InputStreamReader(new URL(localeEnus).openStream(), StandardCharsets.UTF_8)) {
+			parser = new WowheadParser(reader);
+		}
+		
 		final String url = "http://www.wowhead.com/quest=28724/iverrons-antidote";
 		final Document doc = Jsoup.connect(url).get();
-		final Quest quest = new WowheadParser().parse(doc);
+		final Quest quest = parser.parse(doc);
 		System.out.println(quest.dump());
 		System.out.println();
 		System.out.println(" ----------------------------------- ");

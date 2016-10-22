@@ -1,13 +1,15 @@
 package org.lucidfox.questfiller.controller;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 import org.jsoup.Jsoup;
-import org.lucidfox.questfiller.model.Quest;
 import org.lucidfox.questfiller.ui.MainWindow;
 
 import javafx.application.Platform;
@@ -19,6 +21,7 @@ import javafx.stage.Stage;
 
 public class AppController {
 	private final Stage primaryStage;
+	private final CompletableFuture<WowheadParser> parserInit;
 	
 	private MainWindow mainWindow;
 	
@@ -26,6 +29,17 @@ public class AppController {
 			throws IOException {
 		this.primaryStage = primaryStage;
 		createUI(new FXMLLoader());
+		
+		parserInit = CompletableFuture.supplyAsync(() -> {
+			// Worker thread
+			final String url = "http://wow.zamimg.com/js/locale_enus.js";
+			
+			try (final Reader reader = new InputStreamReader(new URL(url).openStream(), StandardCharsets.UTF_8)) {
+				return new WowheadParser(reader);
+			} catch (final IOException e) {
+				throw new UncheckedIOException(e);
+			}
+		});
 	}
 
 	private void createUI(final FXMLLoader loader) throws IOException {
@@ -64,14 +78,14 @@ public class AppController {
 		
 		mainWindow.setLoading(true);
 		
-		CompletableFuture.supplyAsync(() -> {
+		parserInit.thenApplyAsync(parser -> {
 			// Worker thread
 			try {
-				return Jsoup.connect(url).get();
+				return parser.parse(Jsoup.connect(url).get());
 			} catch (final IOException e) {
 				throw new UncheckedIOException(e);
 			}
-		}).handleAsync((document, e) -> {
+		}).handleAsync((quest, e) -> {
 			// UI thread
 			mainWindow.setLoading(false);
 			
@@ -81,7 +95,6 @@ public class AppController {
 			}
 			
 			try {
-				final Quest quest = new WowheadParser().parse(document);
 				mainWindow.setText(new ArticleFormatter().format(quest));
 			} catch (final RuntimeException ex) {
 				mainWindow.showError(ex);
