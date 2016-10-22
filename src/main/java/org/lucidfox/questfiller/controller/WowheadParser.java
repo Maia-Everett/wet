@@ -7,10 +7,13 @@ import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -34,6 +37,11 @@ import org.lucidfox.questfiller.model.Quest;
 import org.lucidfox.questfiller.model.Race;
 
 public final class WowheadParser {
+	// Quest categories for which most quests scale with level
+	private static final Set<String> LEGION_SCALING_QUEST_CATEGORIES = new HashSet<>(Arrays.asList(
+			"Azsuna", "Val'sharah", "Highmountain", "Stormheim", "Artifact"
+	));
+	
 	private final Map<Integer, String> questCategories = new HashMap<>();
 	
 	public WowheadParser(final Reader localeJsReader) throws IOException {
@@ -380,6 +388,11 @@ public final class WowheadParser {
 				quest.setShareable(true);
 			} else if ("Not sharable".equals(infoboxLine)) {
 				quest.setShareable(false);
+			}
+			
+			// If we still don't know the level, and it's a Legion quest, its level probably scales
+			if (quest.getLevel() == null && LEGION_SCALING_QUEST_CATEGORIES.contains(quest.getCategory())) {
+				quest.setLevel(100);
 			}
 		}
 	}
