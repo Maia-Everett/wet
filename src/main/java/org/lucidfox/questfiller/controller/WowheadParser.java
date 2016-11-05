@@ -372,7 +372,7 @@ public final class WowheadParser {
 				quest.setFinishEntity(finishEntity);
 			});
 			
-			getRegexGroup(infoboxLine, "Added in patch (.+)", 1).ifPresent(patch -> {
+			getRegexGroup(infoboxLine, "Added in patch ([0-9]+.[0-9]+.[0-9]+)", 1).ifPresent(patch -> {
 				quest.setPatchAdded(PatchVersions.getCanonicalVersion(patch));
 			});
 			
