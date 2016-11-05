@@ -39,7 +39,7 @@
  | reputation = <<#q.reputationGains.entrySet>>+<<value>> [[<<key>>]]<<^-last>><br /><</-last>><</q.reputationGains.entrySet>>
 <</q.reputationGains.isEmpty>>
 <<#q.hasExperience>>
- | experience = <<q.experience>>
+ | experience = <<q.experienceStr>>
 <</q.hasExperience>>
 <<#q.hasNonMoneyRewards>>
  | rewards =
@@ -109,10 +109,6 @@ You will <<#q.hasNonMoneyRewards>>also <</q.hasNonMoneyRewards>>receive: {{cost|
 
 <</q.hasMoney>>
 <</q.hasRewards>>
-<<^q.hasRewards>>
-
-<</q.hasRewards>>
-<<#q.hasRewards>>
 <<#q.progress>>
 ==Progress==
 <<q.progress>>
@@ -126,7 +122,7 @@ You will <<#q.hasNonMoneyRewards>>also <</q.hasNonMoneyRewards>>receive: {{cost|
 <<#q.hasGains>>
 ==Gains==
 <<#q.hasExperience>>
-* <<q.experience>> [[XP]]
+* <<q.experienceStr>> [[XP]]
 <</q.hasExperience>>
 <<#q.reputationGains.entrySet>>
 * <<value>> reputation with [[<<key>>]]

@@ -482,7 +482,7 @@ public final class WowheadParser {
 			parser = new WowheadParser(reader);
 		}
 		
-		final String url = "http://www.wowhead.com/quest=28724/iverrons-antidote";
+		final String url = "http://www.wowhead.com/quest=40747/the-delicate-art-of-telemancy";
 		final Document doc = Jsoup.connect(url).get();
 		final Quest quest = parser.parse(doc);
 		System.out.println(quest.dump());

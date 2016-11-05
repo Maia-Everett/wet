@@ -1,9 +1,11 @@
 package org.lucidfox.questfiller.model;
 
 import java.lang.reflect.Method;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -318,6 +320,10 @@ public final class Quest {
 	
 	public boolean hasExperience() {
 		return experience != 0;
+	}
+	
+	public String getExperienceStr() {
+		return NumberFormat.getNumberInstance(Locale.US).format(experience);
 	}
 	
 	public boolean hasGains() {
