@@ -250,6 +250,9 @@ public final class WowheadParser {
 					rewardList = quest.getAbilityRewards();
 				} else if (prevText.contains("The following spell will be cast on you:")) {
 					rewardList = quest.getBuffRewards();
+				} else if (prevText.trim().isEmpty() && isMoneyRewardSpan(icontab.previousElementSibling())) {
+					// This is probably an item tucked at the end after money rewards
+					rewardList = quest.getNonChoiceRewards();
 				} else {
 					continue; // unknown icontab type
 				}
@@ -263,7 +266,11 @@ public final class WowheadParser {
 			}
 		}
 	}
-		
+	
+	private boolean isMoneyRewardSpan(final Element element) {
+		return "span".equals(element.tagName()) && element.className().matches(".*money(?:gold|silver|copper).*");
+	}
+
 	private void parseGains(final Quest quest, final Element mainContainer) {
 		// Gains section
 		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
