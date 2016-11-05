@@ -115,7 +115,7 @@ public final class WowheadParser {
 			objectivesNode = objectivesNode.nextSibling();
 		}
 		
-		quest.setObjectives(((TextNode) objectivesNode).text());
+		quest.setObjectives(((TextNode) objectivesNode).text().trim());
 		
 		// Objective completion stages
 		final Elements iconlists = mainContainer.select("table.iconlist");
