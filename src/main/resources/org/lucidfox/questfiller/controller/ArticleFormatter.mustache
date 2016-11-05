@@ -77,13 +77,8 @@
 
 ==Description==
 <<q.description>>
-<<#q.progress>>
 
-==Progress==
-<<q.progress>>
-<</q.progress>>
 <<#q.hasRewards>>
-
 ==Rewards==
 <<^q.choiceRewards.isEmpty>>
 {{itembox|You will be able to choose one of these rewards:
@@ -117,6 +112,12 @@ You will <<#q.hasNonMoneyRewards>>also <</q.hasNonMoneyRewards>>receive: {{cost|
 <<^q.hasRewards>>
 
 <</q.hasRewards>>
+<<#q.hasRewards>>
+<<#q.progress>>
+==Progress==
+<<q.progress>>
+
+<</q.progress>>
 <<#q.completion>>
 ==Completion==
 <<q.completion>>
