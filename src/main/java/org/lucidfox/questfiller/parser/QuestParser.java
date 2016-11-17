@@ -5,10 +5,6 @@ import static org.lucidfox.questfiller.parser.ParseUtils.textOf;
 import static org.lucidfox.questfiller.parser.ParseUtils.unescapeInfoboxMarkup;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -418,20 +414,15 @@ public final class QuestParser {
 	// Utility methods
 	
 	public static void main(final String[] args) throws IOException {
-		final String localeEnus = "http://wow.zamimg.com/js/locale_enus.js";
-		final QuestParser parser;
-		
-		try (final Reader reader = new InputStreamReader(new URL(localeEnus).openStream(), StandardCharsets.UTF_8)) {
-			parser = new QuestParser(new ParserContext(reader));
-		}
+		final ParserContext context = ParserContext.load();
 		
 		final String url = "http://www.wowhead.com/quest=40747/the-delicate-art-of-telemancy";
 		final Document doc = Jsoup.connect(url).get();
-		final Quest quest = parser.parse(doc);
+		final Quest quest = (Quest) new QuestParser(context).parse(doc);
 		System.out.println(quest.dump());
 		System.out.println();
 		System.out.println(" ----------------------------------- ");
 		System.out.println();
-		System.out.println(new ArticleFormatter().format(quest));
+		System.out.println(new ArticleFormatter().format(doc, ParserType.QUEST, context));
 	}
 }

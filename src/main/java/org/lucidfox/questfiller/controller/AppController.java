@@ -1,18 +1,15 @@
 package org.lucidfox.questfiller.controller;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.lucidfox.questfiller.parser.ParserContext;
-import org.lucidfox.questfiller.parser.QuestParser;
+import org.lucidfox.questfiller.parser.ParserType;
 import org.lucidfox.questfiller.ui.MainWindow;
 
 import javafx.application.Platform;
@@ -35,10 +32,8 @@ public class AppController {
 		
 		parserInit = CompletableFuture.supplyAsync(() -> {
 			// Worker thread
-			final String url = "http://wow.zamimg.com/js/locale_enus.js";
-			
-			try (final Reader reader = new InputStreamReader(new URL(url).openStream(), StandardCharsets.UTF_8)) {
-				return new ParserContext(reader);
+			try  {
+				return ParserContext.load();
 			} catch (final IOException e) {
 				throw new UncheckedIOException(e);
 			}
@@ -85,7 +80,7 @@ public class AppController {
 			// Worker thread
 			try {
 				Document htmlDoc = Jsoup.connect(url).get();
-				return new ArticleFormatter().format(new QuestParser(context).parse(htmlDoc));
+				return new ArticleFormatter().format(htmlDoc, ParserType.QUEST, context);
 			} catch (final IOException e) {
 				throw new UncheckedIOException(e);
 			}
