@@ -74,13 +74,14 @@ public class AppController {
 			return;
 		}
 		
+		final ParserType parserType = mainWindow.getSelectedArticleType();
 		mainWindow.setLoading(true);
 		
 		parserInit.thenApplyAsync(context -> {
 			// Worker thread
 			try {
 				Document htmlDoc = Jsoup.connect(url).get();
-				return new ArticleFormatter().format(htmlDoc, ParserType.QUEST, context);
+				return new ArticleFormatter().format(htmlDoc, parserType, context);
 			} catch (final IOException e) {
 				throw new UncheckedIOException(e);
 			}

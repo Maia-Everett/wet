@@ -26,7 +26,7 @@ import org.lucidfox.questfiller.model.Faction;
 import org.lucidfox.questfiller.model.Quest;
 import org.lucidfox.questfiller.model.Race;
 
-public final class QuestParser {
+final class QuestParser {
 	// Quest categories for which most quests scale with level
 	private static final Set<String> LEGION_SCALING_QUEST_CATEGORIES = new HashSet<>(Arrays.asList(
 			"Azsuna", "Val'sharah", "Highmountain", "Stormheim", "Artifact"
@@ -34,7 +34,7 @@ public final class QuestParser {
 	
 	private final ParserContext context;
 	
-	public QuestParser(final ParserContext context) {
+	QuestParser(final ParserContext context) {
 		this.context = context; 
 	}
 	

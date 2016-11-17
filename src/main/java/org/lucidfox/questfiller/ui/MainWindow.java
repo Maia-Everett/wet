@@ -4,12 +4,15 @@ import java.io.UncheckedIOException;
 import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
 
+import org.lucidfox.questfiller.parser.ParserType;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -33,6 +36,9 @@ public class MainWindow {
 	private Button loadBtn;
 	
 	@FXML
+	private ChoiceBox<ParserType> articleTypeSelector;
+	
+	@FXML
 	private TextArea textArea;
 	
 	@FXML
@@ -49,6 +55,13 @@ public class MainWindow {
 				Platform.runLater(wowheadUrl::selectAll);
 			}
 		});
+		
+		articleTypeSelector.getItems().addAll(ParserType.values());
+		articleTypeSelector.getSelectionModel().select(ParserType.QUEST);
+	}
+	
+	public ParserType getSelectedArticleType() {
+		return articleTypeSelector.getSelectionModel().getSelectedItem();
 	}
 	
 	public void setOnClose(final Runnable handler) {
@@ -59,6 +72,7 @@ public class MainWindow {
 		wowheadUrl.setEditable(!isLoading);
 		loadBtn.setDisable(isLoading);
 		loading.setVisible(isLoading);
+		articleTypeSelector.setDisable(isLoading);
 	}
 	
 	public void setOnLoad(final Consumer<String> handler) {

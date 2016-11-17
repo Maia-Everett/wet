@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -33,6 +34,11 @@
       <HBox BorderPane.alignment="CENTER">
          <children>
             <TextField fx:id="wowheadUrl" promptText="Wowhead URL" HBox.hgrow="ALWAYS" />
+            <ChoiceBox fx:id="articleTypeSelector" prefWidth="80.0">
+               <HBox.margin>
+                  <Insets left="8.0" />
+               </HBox.margin>
+            </ChoiceBox>
             <Button fx:id="loadBtn" minHeight="26.0" minWidth="-Infinity" mnemonicParsing="false" prefWidth="80.0" text="Load">
                <HBox.margin>
                   <Insets left="8.0" />
