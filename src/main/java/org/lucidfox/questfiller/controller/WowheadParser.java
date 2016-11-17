@@ -135,6 +135,15 @@ public final class WowheadParser {
 				
 				quest.getStages().add(parent.text());
 			}
+
+			// Suggested players
+			final Element suggestedPlayers = stagesTable.getElementsContainingOwnText("Suggested players:").first();
+			
+			if (suggestedPlayers != null) {
+				String playerCountStr =
+						getRegexGroup(suggestedPlayers.ownText(), "Suggested players: ([0-9]+)", 1).get();
+				quest.setGroupSize(Integer.parseInt(playerCountStr));
+			}
 		}
 		
 		// Provided items
