@@ -10,6 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.lucidfox.questfiller.parser.ParserContext;
 import org.lucidfox.questfiller.parser.WowheadParser;
 import org.lucidfox.questfiller.ui.MainWindow;
 
@@ -22,7 +24,7 @@ import javafx.stage.Stage;
 
 public class AppController {
 	private final Stage primaryStage;
-	private final CompletableFuture<WowheadParser> parserInit;
+	private final CompletableFuture<ParserContext> parserInit;
 	
 	private MainWindow mainWindow;
 	
@@ -36,7 +38,7 @@ public class AppController {
 			final String url = "http://wow.zamimg.com/js/locale_enus.js";
 			
 			try (final Reader reader = new InputStreamReader(new URL(url).openStream(), StandardCharsets.UTF_8)) {
-				return new WowheadParser(reader);
+				return new ParserContext(reader);
 			} catch (final IOException e) {
 				throw new UncheckedIOException(e);
 			}
@@ -79,14 +81,15 @@ public class AppController {
 		
 		mainWindow.setLoading(true);
 		
-		parserInit.thenApplyAsync(parser -> {
+		parserInit.thenApplyAsync(context -> {
 			// Worker thread
 			try {
-				return parser.parse(Jsoup.connect(url).get());
+				Document htmlDoc = Jsoup.connect(url).get();
+				return new ArticleFormatter().format(new WowheadParser(context).parse(htmlDoc));
 			} catch (final IOException e) {
 				throw new UncheckedIOException(e);
 			}
-		}).handleAsync((quest, e) -> {
+		}).handleAsync((wikitext, e) -> {
 			// UI thread
 			mainWindow.setLoading(false);
 			
@@ -96,7 +99,7 @@ public class AppController {
 			}
 			
 			try {
-				mainWindow.setText(new ArticleFormatter().format(quest));
+				mainWindow.setText(wikitext);
 			} catch (final RuntimeException ex) {
 				mainWindow.showError(ex);
 			}

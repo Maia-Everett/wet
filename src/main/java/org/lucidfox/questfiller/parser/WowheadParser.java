@@ -4,7 +4,6 @@ import static org.lucidfox.questfiller.parser.ParseUtils.getRegexGroup;
 import static org.lucidfox.questfiller.parser.ParseUtils.textOf;
 import static org.lucidfox.questfiller.parser.ParseUtils.unescapeInfoboxMarkup;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -12,19 +11,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -44,26 +36,10 @@ public final class WowheadParser {
 			"Azsuna", "Val'sharah", "Highmountain", "Stormheim", "Artifact"
 	));
 	
-	private final Map<Integer, String> questCategories = new HashMap<>();
+	private final ParserContext context;
 	
-	public WowheadParser(final Reader localeJsReader) throws IOException {
-		// Obtain localization for quest categories
-		final String fullScript = new BufferedReader(localeJsReader).lines().collect(Collectors.joining("\n"));
-		final String questScript = getRegexGroup(fullScript, "var mn_quests=[^;]+;", 0).get();
-		final ScriptEngine js = new ScriptEngineManager().getEngineByName("nashorn");
-		
-		try {
-			// Eval the piece of JS that interests us, then convert the resulting data structure into our map
-			js.eval(questScript);
-			js.put("questCategories", questCategories);
-			
-			try (final Reader reader = new InputStreamReader(
-					getClass().getResourceAsStream("LocaleCategories.js"), StandardCharsets.UTF_8)) {
-				js.eval(reader);
-			}
-		} catch (final ScriptException e) {
-			throw new RuntimeException(e);
-		} 
+	public WowheadParser(final ParserContext context) {
+		this.context = context; 
 	}
 	
 	public Quest parse(final Document html) {
@@ -104,8 +80,8 @@ public final class WowheadParser {
 		final String regex = Pattern.quote("PageTemplate.set({breadcrumb: [") + "([0-9,-]+)" + Pattern.quote("]});");
 		final String[] categoryIds = getRegexGroup(breadcrumbData.get(), regex, 1).get().split(",");
 		// last number in list is the category id
-		final int questId = Integer.parseInt(categoryIds[categoryIds.length - 1]);
-		quest.setCategory(questCategories.get(questId));
+		final int categoryId = Integer.parseInt(categoryIds[categoryIds.length - 1]);
+		quest.setCategory(context.getQuestCategory(categoryId));
 	}
 
 	private void parseObjectives(final Quest quest, final Element mainContainer, final Element questName) {
@@ -446,7 +422,7 @@ public final class WowheadParser {
 		final WowheadParser parser;
 		
 		try (final Reader reader = new InputStreamReader(new URL(localeEnus).openStream(), StandardCharsets.UTF_8)) {
-			parser = new WowheadParser(reader);
+			parser = new WowheadParser(new ParserContext(reader));
 		}
 		
 		final String url = "http://www.wowhead.com/quest=40747/the-delicate-art-of-telemancy";
