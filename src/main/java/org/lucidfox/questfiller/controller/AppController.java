@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 import org.jsoup.Jsoup;
+import org.lucidfox.questfiller.parser.WowheadParser;
 import org.lucidfox.questfiller.ui.MainWindow;
 
 import javafx.application.Platform;

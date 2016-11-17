@@ -1,4 +1,4 @@
-package org.lucidfox.questfiller.controller;
+package org.lucidfox.questfiller.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,6 +31,7 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
+import org.lucidfox.questfiller.controller.ArticleFormatter;
 import org.lucidfox.questfiller.model.CharacterClass;
 import org.lucidfox.questfiller.model.Faction;
 import org.lucidfox.questfiller.model.Quest;

@@ -1,4 +1,4 @@
-package org.lucidfox.questfiller.controller;
+package org.lucidfox.questfiller.parser;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
