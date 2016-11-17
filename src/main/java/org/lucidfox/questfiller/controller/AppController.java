@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.lucidfox.questfiller.parser.ParserContext;
-import org.lucidfox.questfiller.parser.WowheadParser;
+import org.lucidfox.questfiller.parser.QuestParser;
 import org.lucidfox.questfiller.ui.MainWindow;
 
 import javafx.application.Platform;
@@ -85,7 +85,7 @@ public class AppController {
 			// Worker thread
 			try {
 				Document htmlDoc = Jsoup.connect(url).get();
-				return new ArticleFormatter().format(new WowheadParser(context).parse(htmlDoc));
+				return new ArticleFormatter().format(new QuestParser(context).parse(htmlDoc));
 			} catch (final IOException e) {
 				throw new UncheckedIOException(e);
 			}

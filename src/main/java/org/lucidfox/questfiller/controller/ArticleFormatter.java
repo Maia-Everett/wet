@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lucidfox.questfiller.QuestFillerApp;
 import org.lucidfox.questfiller.model.Quest;
 
 import com.samskivert.mustache.Mustache;
@@ -16,12 +17,14 @@ public final class ArticleFormatter {
 	private static final Template TEMPLATE;
 	
 	static {
+		final String templatePackage = "/" + QuestFillerApp.class.getPackage().getName().replace('.', '/')
+				+ "/template/";
+		final Mustache.Compiler templateCompiler = Mustache.compiler().escapeHTML(false).nullValue("");
+		final String questTemplate = templatePackage + "quest.mustache";
+		
 		try (final Reader reader = new InputStreamReader(
-				ArticleFormatter.class.getResourceAsStream("ArticleFormatter.mustache"), StandardCharsets.UTF_8)) {
-			TEMPLATE = Mustache.compiler()
-					.escapeHTML(false)
-					.nullValue("")
-					.compile(reader);
+				ArticleFormatter.class.getResourceAsStream(questTemplate), StandardCharsets.UTF_8)) {
+			TEMPLATE = templateCompiler.compile(reader);
 		} catch (final IOException e) {
 			throw new AssertionError(e);
 		}

@@ -30,7 +30,7 @@ import org.lucidfox.questfiller.model.Faction;
 import org.lucidfox.questfiller.model.Quest;
 import org.lucidfox.questfiller.model.Race;
 
-public final class WowheadParser {
+public final class QuestParser {
 	// Quest categories for which most quests scale with level
 	private static final Set<String> LEGION_SCALING_QUEST_CATEGORIES = new HashSet<>(Arrays.asList(
 			"Azsuna", "Val'sharah", "Highmountain", "Stormheim", "Artifact"
@@ -38,7 +38,7 @@ public final class WowheadParser {
 	
 	private final ParserContext context;
 	
-	public WowheadParser(final ParserContext context) {
+	public QuestParser(final ParserContext context) {
 		this.context = context; 
 	}
 	
@@ -419,10 +419,10 @@ public final class WowheadParser {
 	
 	public static void main(final String[] args) throws IOException {
 		final String localeEnus = "http://wow.zamimg.com/js/locale_enus.js";
-		final WowheadParser parser;
+		final QuestParser parser;
 		
 		try (final Reader reader = new InputStreamReader(new URL(localeEnus).openStream(), StandardCharsets.UTF_8)) {
-			parser = new WowheadParser(new ParserContext(reader));
+			parser = new QuestParser(new ParserContext(reader));
 		}
 		
 		final String url = "http://www.wowhead.com/quest=40747/the-delicate-art-of-telemancy";
