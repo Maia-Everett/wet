@@ -126,7 +126,9 @@
       <property name="tokens" value="SEMI,TYPECAST"/>
     </module>
     <module name="AvoidStaticImport">
+      <property name="severity" value="ignore"/>
       <property name="excludes" value="org.junit.Assert.*"/>
+      <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
     </module>
   </module>
   <module name="JavadocPackage">
