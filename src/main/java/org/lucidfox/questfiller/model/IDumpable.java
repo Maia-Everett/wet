@@ -7,8 +7,9 @@ public interface IDumpable {
 		final StringBuilder sb = new StringBuilder();
 		
 		for (final Method m : getClass().getDeclaredMethods()) {
-			if (m.getName().startsWith("get") && m.getParameterCount() == 0 && !"getClass".equals(m.getName())) {
-				sb.append(m.getName().replaceAll("^get", ""));
+			if ((m.getName().startsWith("get") || m.getName().startsWith("is"))
+					&& m.getParameterCount() == 0 && !"getClass".equals(m.getName())) {
+				sb.append(m.getName().replaceAll("^(get|is)", ""));
 				sb.append(": ");
 				
 				try {

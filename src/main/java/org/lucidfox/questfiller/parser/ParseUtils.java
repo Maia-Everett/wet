@@ -1,5 +1,6 @@
 package org.lucidfox.questfiller.parser;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -7,6 +8,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
@@ -17,7 +19,22 @@ import org.jsoup.select.NodeVisitor;
 final class ParseUtils {
 	private ParseUtils() { }
 	
-	static List<String> unescapeInfoboxMarkup(final String infoboxMarkup) {
+	static List<String> getInfoboxLines(final Document html) {
+		final Optional<String> infoboxData = html.getElementsByTag("script")
+				.stream()
+				.map(Element::data)
+				.filter(data -> data.contains("Markup.printHtml"))
+				.findFirst();
+		
+		if (!infoboxData.isPresent()) {
+			return Collections.emptyList();
+		}
+		
+		final String infoboxMarkup = getRegexGroup(infoboxData.get(), "Markup\\.printHtml\\('([^']*)'", 1).get();
+		return unescapeInfoboxMarkup(infoboxMarkup);
+	}
+	
+	private static List<String> unescapeInfoboxMarkup(final String infoboxMarkup) {
 		// Convert \xNN escape sequences to their corresponding characters
 		final Matcher matcher = Pattern.compile("\\\\x([0-9A-Z]{2})").matcher(infoboxMarkup);
 		final StringBuffer sb = new StringBuffer();

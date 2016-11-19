@@ -8,11 +8,11 @@ public final class Mission implements IDumpable {
 	private String name;
 	private String location;
 	private String duration;
-	private Faction faction;
+	private Faction faction = Faction.NEUTRAL;
 	private CharacterClass characterClass;
 	private String category;
 	private Integer level;
-	private Integer levelRequired;
+	private Integer followerItemLevel;
 	private String type;
 	private Integer groupSize;
 	private int experience;
@@ -23,6 +23,7 @@ public final class Mission implements IDumpable {
 	private int bonusMoney;
 	private int bonusXP;
 	private int bonusResources;
+	private String patchAdded;
 	private List<String> bonusItems = new ArrayList<>();
 	
 	public String getLocation() {
@@ -153,12 +154,12 @@ public final class Mission implements IDumpable {
 		this.level = level;
 	}
 
-	public Integer getLevelRequired() {
-		return levelRequired;
+	public Integer getFollowerItemLevel() {
+		return followerItemLevel;
 	}
 
-	public void setLevelRequired(final Integer levelRequired) {
-		this.levelRequired = levelRequired;
+	public void setFollowerItemLevel(final Integer followerItemLevel) {
+		this.followerItemLevel = followerItemLevel;
 	}
 
 	public String getType() {
@@ -183,6 +184,14 @@ public final class Mission implements IDumpable {
 
 	public void setExperience(final int experience) {
 		this.experience = experience;
+	}
+	
+	public String getPatchAdded() {
+		return patchAdded;
+	}
+	
+	public void setPatchAdded(final String patchAdded) {
+		this.patchAdded = patchAdded;
 	}
 	
 	private static Integer getNonzeroOrNull(final int quantity) {

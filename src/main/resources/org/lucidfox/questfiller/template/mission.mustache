@@ -3,6 +3,7 @@
  | id = <<m.id>>
  | name = <<m.name>>
  | location = <<m.location>>
+ | duration = <<m.duration>>
  | category = <<m.category>>
 <<#m.faction>>
  | faction = <<m.faction>>
@@ -11,9 +12,12 @@
  | class = <<m.characterClass>>
 <</m.characterClass>>
  | level = <<m.level>>
-<<#m.levelRequired>>
- | levelreq = <<m.levelRequired>>
-<</m.levelRequired>>
+<<#m.followerItemLevel>>
+ | flevel = <<m.followerItemLevel>>
+<</m.followerItemLevel>>
+<<#m.rare>>
+ | rare = yes
+<</m.rare>>
 <<#m.type>>
  | type = <<m.type>>
 <</m.type>>

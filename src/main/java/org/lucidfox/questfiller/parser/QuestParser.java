@@ -4,7 +4,6 @@ import static org.lucidfox.questfiller.parser.ParseUtils.collectTextUntilNextTag
 import static org.lucidfox.questfiller.parser.ParseUtils.getFirstWithOwnText;
 import static org.lucidfox.questfiller.parser.ParseUtils.getRegexGroup;
 import static org.lucidfox.questfiller.parser.ParseUtils.textOf;
-import static org.lucidfox.questfiller.parser.ParseUtils.unescapeInfoboxMarkup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -346,18 +345,7 @@ final class QuestParser implements IParser<Quest> {
 	
 	private void parseInfobox(final Quest quest, final Document html) {
 		// Infobox section
-		final Optional<String> infoboxData = html.getElementsByTag("script")
-				.stream()
-				.map(Element::data)
-				.filter(data -> data.contains("Markup.printHtml"))
-				.findFirst();
-		
-		if (!infoboxData.isPresent()) {
-			return;
-		}
-		
-		final String infoboxMarkup = getRegexGroup(infoboxData.get(), "Markup\\.printHtml\\('([^']*)'", 1).get();
-		final List<String> infoboxLines = unescapeInfoboxMarkup(infoboxMarkup);
+		final List<String> infoboxLines = ParseUtils.getInfoboxLines(html);
 		
 		// Pattern-match each infobox line
 		for (final String infoboxLine : infoboxLines) {
