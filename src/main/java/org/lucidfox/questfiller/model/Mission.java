@@ -8,6 +8,7 @@ public final class Mission implements IDumpable {
 	private int id;
 	private String name;
 	private String location;
+	private String duration;
 	private Faction faction;
 	private CharacterClass characterClass;
 	private String category;
@@ -31,6 +32,14 @@ public final class Mission implements IDumpable {
 	
 	public void setLocation(final String location) {
 		this.location = location;
+	}
+	
+	public String getDuration() {
+		return duration;
+	}
+	
+	public void setDuration(final String duration) {
+		this.duration = duration;
 	}
 	
 	public boolean isRare() {
