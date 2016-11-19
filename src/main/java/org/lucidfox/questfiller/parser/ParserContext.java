@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -21,13 +20,10 @@ public final class ParserContext {
 	private final Map<Integer, String> questCategories = new HashMap<>();
 	
 	public static ParserContext load() throws IOException {
-		// Worker thread
 		final String url = "http://wow.zamimg.com/js/locale_enus.js";
 		
 		try (final Reader reader = new InputStreamReader(new URL(url).openStream(), StandardCharsets.UTF_8)) {
 			return new ParserContext(reader);
-		} catch (final IOException e) {
-			throw new UncheckedIOException(e);
 		}
 	}
 	
