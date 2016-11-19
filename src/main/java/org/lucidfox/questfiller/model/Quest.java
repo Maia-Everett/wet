@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 public final class Quest {
 	// Infobox
@@ -27,8 +28,8 @@ public final class Quest {
 	private Map<String, Integer> reputationGains = new LinkedHashMap<>();
 	private int experience;
 	private List<String> otherGains = new ArrayList<>();
-	private List<String> choiceRewards = new ArrayList<>();
-	private List<String> nonChoiceRewards = new ArrayList<>();
+	private List<ItemReward> choiceRewards = new ArrayList<>();
+	private List<ItemReward> nonChoiceRewards = new ArrayList<>();
 	private List<String> abilityRewards = new ArrayList<>();
 	private List<String> buffRewards = new ArrayList<>();
 	private int money;
@@ -166,19 +167,19 @@ public final class Quest {
 		this.otherGains = otherGains;
 	}
 
-	public List<String> getChoiceRewards() {
+	public List<ItemReward> getChoiceRewards() {
 		return choiceRewards;
 	}
 
-	public void setChoiceRewards(final List<String> choiceRewards) {
+	public void setChoiceRewards(final List<ItemReward> choiceRewards) {
 		this.choiceRewards = choiceRewards;
 	}
 
-	public List<String> getNonChoiceRewards() {
+	public List<ItemReward> getNonChoiceRewards() {
 		return nonChoiceRewards;
 	}
 
-	public void setNonChoiceRewards(final List<String> nonChoiceRewards) {
+	public void setNonChoiceRewards(final List<ItemReward> nonChoiceRewards) {
 		this.nonChoiceRewards = nonChoiceRewards;
 	}
 
@@ -298,11 +299,12 @@ public final class Quest {
 		return !choiceRewards.isEmpty() || !nonChoiceRewards.isEmpty();
 	}
 	
-	public List<String> getAllNonChoiceRewards() {
-		final List<String> result = new ArrayList<>();
+	public List<ItemReward> getAllNonChoiceRewards() {
+		final List<ItemReward> result = new ArrayList<>();
 		result.addAll(nonChoiceRewards);
-		result.addAll(abilityRewards);
-		result.addAll(buffRewards);
+		// These are not actually item rewards, but the formatter will behave as if they're items with unknown quantity
+		Stream.concat(abilityRewards.stream(), buffRewards.stream()).forEach(
+				reward -> result.add(new ItemReward(reward, null)));
 		return result;
 	}
 	

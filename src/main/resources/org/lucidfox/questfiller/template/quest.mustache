@@ -44,10 +44,10 @@
 <<#q.hasNonMoneyRewards>>
  | rewards =
 <<#q.choiceRewards>>
-<<^-first>>or <</-first>>[[<<this>>]]<<^-last>><br /><</-last>>
+<<^-first>>or <</-first>><<#quantity>><<this>>x <</quantity>>[[<<name>>]]<<^-last>><br /><</-last>>
 <</q.choiceRewards>>
 <<#q.allNonChoiceRewards>>
-<<#-first>><<^q.choiceRewards.isEmpty>><br /><br /><</q.choiceRewards.isEmpty>><</-first>>[[<<this>>]]<<^-last>><br /><</-last>>
+<<#-first>><<^q.choiceRewards.isEmpty>><br /><br /><</q.choiceRewards.isEmpty>><</-first>><<#quantity>><<this>>x <</quantity>>[[<<name>>]]<<^-last>><br /><</-last>>
 <</q.allNonChoiceRewards>>
 <</q.hasNonMoneyRewards>>
 <<#q.hasMoney>>
@@ -96,7 +96,7 @@
 <<^q.choiceRewards.isEmpty>>
 {{itembox|You will be able to choose one of these rewards:
 <<#q.choiceRewards>>
-|<<this>>
+|q<<-index>>=<<quantity>>|<<name>>
 <</q.choiceRewards>>
 }}
 
@@ -104,7 +104,7 @@
 <<^q.nonChoiceRewards.isEmpty>>
 {{itembox|You will <<^q.choiceRewards.isEmpty>>also <</q.choiceRewards.isEmpty>>receive:
 <<#q.nonChoiceRewards>>
-|<<this>>
+|q<<-index>>=<<quantity>>|<<name>>
 <</q.nonChoiceRewards>>
 }}
 

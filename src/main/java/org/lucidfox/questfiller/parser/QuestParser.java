@@ -9,10 +9,14 @@ import static org.lucidfox.questfiller.parser.ParseUtils.unescapeInfoboxMarkup;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -25,6 +29,7 @@ import org.jsoup.select.Elements;
 import org.lucidfox.questfiller.controller.ArticleFormatter;
 import org.lucidfox.questfiller.model.CharacterClass;
 import org.lucidfox.questfiller.model.Faction;
+import org.lucidfox.questfiller.model.ItemReward;
 import org.lucidfox.questfiller.model.Quest;
 import org.lucidfox.questfiller.model.Race;
 
@@ -223,35 +228,79 @@ final class QuestParser {
 		
 		for (final Element icontab : icontabs) {
 			final Node prevNode = icontab.previousSibling();
-			final List<String> rewardList;
 			
 			if (icontab.id().equals("dynamic-rewards")) {
-				rewardList = quest.getChoiceRewards();
+				collectItemRewards(icontab, mainContainer, quest.getChoiceRewards());
 			} else if (prevNode instanceof TextNode) {
 				final String prevText = ((TextNode) prevNode).text();
 				
 				if (prevText.contains("You will receive:") || prevText.contains("You will also receive:")) {
-					rewardList = quest.getNonChoiceRewards();
+					collectItemRewards(icontab, mainContainer, quest.getNonChoiceRewards());
 				} else if (prevText.contains("You will be able to choose one of these rewards:")) {
-					rewardList = quest.getChoiceRewards();
+					collectItemRewards(icontab, mainContainer, quest.getChoiceRewards());
 				} else if (prevText.contains("You will learn:")) {
-					rewardList = quest.getAbilityRewards();
+					collectNonItemRewards(icontab, quest.getAbilityRewards());
 				} else if (prevText.contains("The following spell will be cast on you:")) {
-					rewardList = quest.getBuffRewards();
+					collectNonItemRewards(icontab, quest.getBuffRewards());
 				} else if (prevText.trim().isEmpty() && isMoneyRewardSpan(icontab.previousElementSibling())) {
 					// This is probably an item tucked at the end after money rewards
-					rewardList = quest.getNonChoiceRewards();
-				} else {
-					continue; // unknown icontab type
+					collectItemRewards(icontab, mainContainer, quest.getNonChoiceRewards());
 				}
-			} else {
-				continue; // unknown icontab type
+			}
+		}
+	}
+	
+	private void collectItemRewards(final Element icontab, final Element mainContainer,
+			final Collection<ItemReward> collector) {
+		final Map<String, String> itemNamesByIconId = new LinkedHashMap<>();
+		final Map<String, Integer> itemQuantitiesByIconId = new LinkedHashMap<>();
+		
+		// Item names are contained in the actual icontab, as are placeholders for the icon and quantity
+		for (final Element iconPlaceholder : icontab.select("th[id]")) {
+			final String iconId = iconPlaceholder.id();
+			// the next element is a td with the link to the actual item
+			final String itemName = iconPlaceholder.nextElementSibling().getElementsByTag("a").first().ownText();
+			itemNamesByIconId.put(iconId, itemName);
+		}
+		
+		// Item quantities are filled through JavaScript.
+		// Find the first script element immediately after this icontab
+		Element nextScript;
+		for (nextScript = icontab.nextElementSibling(); !nextScript.tagName().equals("script");
+				nextScript = nextScript.nextElementSibling()) { }
+		
+		// Parse JavaScript lines like
+		// $WH.ge('icontab-icon1').appendChild(g_items.createIcon(115793, 1, "3"));
+		// We're interested in what's inside ge() - the icon box ID -
+		// and the contents of the last quotes (item quantity)
+		final Pattern iconInitRegex = Pattern.compile(
+				Pattern.quote("$WH.ge('")
+				+ "([^']+)"
+				+ Pattern.quote("').appendChild(g_items.createIcon(")
+				+ "[^\"]+\"([^\"]+)\""
+				+ Pattern.quote("));"));
+		final Matcher matcher = iconInitRegex.matcher(nextScript.data());
+		
+		while (matcher.find()) {
+			// group 1 is icon box element ID, group 2 is item quantity (or 0 if no quantity should be displayed)
+			itemQuantitiesByIconId.put(matcher.group(1), Integer.parseInt(matcher.group(2)));
+		}
+		
+		itemNamesByIconId.forEach((iconId, itemName) -> {
+			Integer itemQuantity = itemQuantitiesByIconId.get(iconId);
+			
+			// "0" means draw no quantity on the icon
+			if (itemQuantity != null && (itemQuantity == 0 || itemQuantity == 1)) {
+				itemQuantity = null;
 			}
 			
-			// Parse the icontab
-			for (final Element link : icontab.getElementsByTag("a")) {
-				rewardList.add(link.ownText());
-			}
+			collector.add(new ItemReward(itemName, itemQuantity));
+		});
+	}
+	
+	private void collectNonItemRewards(final Element icontab, final Collection<String> collector) {
+		for (final Element link : icontab.getElementsByTag("a")) {
+			collector.add(link.ownText());
 		}
 	}
 	
