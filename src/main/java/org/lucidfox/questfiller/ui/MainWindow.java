@@ -56,6 +56,7 @@ public class MainWindow {
 			}
 		});
 		
+		articleTypeSelector.setManaged(false); // For now, until other parser types actually appear
 		articleTypeSelector.getItems().addAll(ParserType.values());
 		articleTypeSelector.getSelectionModel().select(ParserType.QUEST);
 	}
