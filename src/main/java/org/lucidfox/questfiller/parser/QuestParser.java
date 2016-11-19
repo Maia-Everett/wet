@@ -477,6 +477,6 @@ final class QuestParser {
 		System.out.println();
 		System.out.println(" ----------------------------------- ");
 		System.out.println();
-		System.out.println(new ArticleFormatter().format(doc, ParserType.QUEST, context));
+		System.out.println(new ArticleFormatter().format(doc, context));
 	}
 }

@@ -3,6 +3,8 @@ package org.lucidfox.questfiller.ui;
 import java.io.UncheckedIOException;
 import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.lucidfox.questfiller.parser.ParserType;
 
@@ -12,7 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -36,7 +38,7 @@ public class MainWindow {
 	private Button loadBtn;
 	
 	@FXML
-	private ChoiceBox<ParserType> articleTypeSelector;
+	private Label supportedArticleTypes;
 	
 	@FXML
 	private TextArea textArea;
@@ -56,13 +58,8 @@ public class MainWindow {
 			}
 		});
 		
-		articleTypeSelector.setManaged(false); // For now, until other parser types actually appear
-		articleTypeSelector.getItems().addAll(ParserType.values());
-		articleTypeSelector.getSelectionModel().select(ParserType.QUEST);
-	}
-	
-	public ParserType getSelectedArticleType() {
-		return articleTypeSelector.getSelectionModel().getSelectedItem();
+		supportedArticleTypes.setText("Supported article types: "
+				+ Stream.of(ParserType.values()).map(Object::toString).collect(Collectors.joining(", ")));
 	}
 	
 	public void setOnClose(final Runnable handler) {
@@ -73,7 +70,6 @@ public class MainWindow {
 		wowheadUrl.setEditable(!isLoading);
 		loadBtn.setDisable(isLoading);
 		loading.setVisible(isLoading);
-		articleTypeSelector.setDisable(isLoading);
 	}
 	
 	public void setOnLoad(final Consumer<String> handler) {

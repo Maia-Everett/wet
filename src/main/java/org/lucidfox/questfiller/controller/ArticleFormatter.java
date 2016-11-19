@@ -22,7 +22,9 @@ public final class ArticleFormatter {
 			+ "/template";
 	private static final Mustache.Compiler TEMPLATE_COMPILER = Mustache.compiler().escapeHTML(false).nullValue("");
 	
-	public String format(final Document html, final ParserType parserType, final ParserContext parserContext) {
+	public String format(final Document html, final ParserContext parserContext) {
+		final ParserType parserType = ParserType.detect(html).orElseThrow(
+				() -> new RuntimeException("Unsupported Wowhead article type"));
 		final Object data = parserType.parse(html, parserContext);
 		final Map<String, Object> context = new HashMap<>();
 		

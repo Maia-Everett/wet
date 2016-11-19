@@ -3,12 +3,13 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lucidfox.questfiller.ui.MainWindow">
    <bottom>
@@ -31,27 +32,30 @@
       </ButtonBar>
    </bottom>
    <top>
-      <HBox BorderPane.alignment="CENTER">
-         <children>
-            <TextField fx:id="wowheadUrl" promptText="Wowhead URL" HBox.hgrow="ALWAYS" />
-            <ChoiceBox fx:id="articleTypeSelector" prefWidth="80.0">
-               <HBox.margin>
-                  <Insets left="8.0" />
-               </HBox.margin>
-            </ChoiceBox>
-            <Button fx:id="loadBtn" minHeight="26.0" minWidth="-Infinity" mnemonicParsing="false" prefWidth="80.0" text="Load">
-               <HBox.margin>
-                  <Insets left="8.0" />
-               </HBox.margin>
-            </Button>
-         </children>
+      <VBox BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
          </BorderPane.margin>
-      </HBox>
+         <children>
+            <HBox>
+               <children>
+                  <TextField fx:id="wowheadUrl" promptText="Paste Wowhead URL here, then press Enter or click Load." HBox.hgrow="ALWAYS" />
+                  <Button fx:id="loadBtn" minHeight="26.0" minWidth="-Infinity" mnemonicParsing="false" prefWidth="80.0" text="Load">
+                     <HBox.margin>
+                        <Insets left="8.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+            <Label fx:id="supportedArticleTypes">
+               <VBox.margin>
+                  <Insets left="5.0" top="5.0" />
+               </VBox.margin></Label>
+         </children>
+      </VBox>
    </top>
    <center>
-      <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" BorderPane.alignment="CENTER">
+      <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" promptText="Formatted Wowpedia article text will appear here." wrapText="true" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets left="6.0" right="6.0" />
          </BorderPane.margin>

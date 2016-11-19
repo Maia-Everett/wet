@@ -9,7 +9,6 @@ import java.util.concurrent.CompletableFuture;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.lucidfox.questfiller.parser.ParserContext;
-import org.lucidfox.questfiller.parser.ParserType;
 import org.lucidfox.questfiller.ui.MainWindow;
 
 import javafx.application.Platform;
@@ -52,7 +51,7 @@ public class AppController {
 		mainWindow.setOnLoad(this::doLoad);
 
 		// Customize main window
-		primaryStage.setTitle("Quest Filler");
+		primaryStage.setTitle("Wowhead to Wowpedia Article Converter");
 		primaryStage.getIcons().add(new Image(MainWindow.class.getResource("icon.png").toExternalForm()));
 		primaryStage.setScene(scene);
 	}
@@ -74,14 +73,13 @@ public class AppController {
 			return;
 		}
 		
-		final ParserType parserType = mainWindow.getSelectedArticleType();
 		mainWindow.setLoading(true);
 		
 		parserInit.thenApplyAsync(context -> {
 			// Worker thread
 			try {
-				Document htmlDoc = Jsoup.connect(url).get();
-				return new ArticleFormatter().format(htmlDoc, parserType, context);
+				final Document htmlDoc = Jsoup.connect(url).get();
+				return new ArticleFormatter().format(htmlDoc, context);
 			} catch (final IOException e) {
 				throw new UncheckedIOException(e);
 			}
