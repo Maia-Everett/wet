@@ -1,8 +1,8 @@
 package org.lucidfox.questfiller.model;
 
 public final class ItemReward {
-	private String name;
-	private Integer quantity;
+	private final String name;
+	private final Integer quantity;
 
 	public ItemReward(final String name, final Integer quantity) {
 		this.name = name;
