@@ -1,0 +1,41 @@
+{{=<< >>=}}
+{{Missionbox
+ | id = <<m.id>>
+ | name = <<m.name>>
+ | location = <<m.location>>
+ | category = <<m.category>>
+<<#m.faction>>
+ | faction = <<m.faction>>
+<</m.faction>>
+<<#m.characterClass>>
+ | class = <<m.characterClass>>
+<</m.characterClass>>
+ | level = <<m.level>>
+<<#m.levelRequired>>
+ | levelreq = <<m.levelRequired>>
+<</m.levelRequired>>
+<<#m.type>>
+ | type = <<m.type>>
+<</m.type>>
+<<#m.groupSize>>
+ | groupsize = <<m.groupSize>>
+<</m.groupSize>>
+}}
+
+==Description==
+<<#m.description>>
+<<this>>
+<</m.description>>
+<<^m.description>>
+...
+<</m.description>>
+
+<<#m.patchAdded>>
+
+==Patch changes==
+* {{Patch <<m.patchAdded>>|note=Added.}}
+<</m.patchAdded>>
+
+==External links==
+{{subst:el}}
+{{Elinks-mission|<<m.id>>}}

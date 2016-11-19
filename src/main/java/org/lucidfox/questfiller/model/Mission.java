@@ -7,6 +7,7 @@ import java.util.List;
 public final class Mission implements IDumpable {
 	private int id;
 	private String name;
+	private String location;
 	private Faction faction;
 	private CharacterClass characterClass;
 	private String category;
@@ -23,6 +24,14 @@ public final class Mission implements IDumpable {
 	private int bonusXP;
 	private int bonusResources;
 	private List<String> bonusItems = new ArrayList<>();
+	
+	public String getLocation() {
+		return location;
+	}
+	
+	public void setLocation(final String location) {
+		this.location = location;
+	}
 	
 	public boolean isRare() {
 		return rare;

@@ -6,7 +6,6 @@ import static org.lucidfox.questfiller.parser.ParseUtils.getRegexGroup;
 import static org.lucidfox.questfiller.parser.ParseUtils.textOf;
 import static org.lucidfox.questfiller.parser.ParseUtils.unescapeInfoboxMarkup;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,20 +19,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
-import org.lucidfox.questfiller.controller.ArticleFormatter;
 import org.lucidfox.questfiller.model.CharacterClass;
 import org.lucidfox.questfiller.model.Faction;
 import org.lucidfox.questfiller.model.ItemReward;
 import org.lucidfox.questfiller.model.Quest;
 import org.lucidfox.questfiller.model.Race;
 
-final class QuestParser {
+final class QuestParser implements IParser<Quest> {
 	// Quest categories for which most quests scale with level
 	private static final Set<String> LEGION_SCALING_QUEST_CATEGORIES = new HashSet<>(Arrays.asList(
 			"Azsuna", "Val'sharah", "Highmountain", "Stormheim", "Artifact"
@@ -464,19 +461,5 @@ final class QuestParser {
 			final String[] nextQuests = textOf(questCells.get(ourQuestIndex + 1)).split("\n");
 			Stream.of(nextQuests).forEach(quest.getNextQuests()::add);
 		}
-	}
-	// Utility methods
-	
-	public static void main(final String[] args) throws IOException {
-		final ParserContext context = ParserContext.load();
-		
-		final String url = "http://www.wowhead.com/quest=40747/the-delicate-art-of-telemancy";
-		final Document doc = Jsoup.connect(url).get();
-		final Quest quest = (Quest) new QuestParser(context).parse(doc);
-		System.out.println(quest.dump());
-		System.out.println();
-		System.out.println(" ----------------------------------- ");
-		System.out.println();
-		System.out.println(new ArticleFormatter().format(doc, context));
 	}
 }
