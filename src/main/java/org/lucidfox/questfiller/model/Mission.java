@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Mission {
+public final class Mission implements IDumpable {
 	private int id;
 	private String name;
 	private Faction faction;

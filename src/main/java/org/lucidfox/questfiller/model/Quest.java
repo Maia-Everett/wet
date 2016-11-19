@@ -1,6 +1,5 @@
 package org.lucidfox.questfiller.model;
 
-import java.lang.reflect.Method;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -11,7 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
-public final class Quest {
+public final class Quest implements IDumpable {
 	// Infobox
 	private int id;
 	private String name;
@@ -350,28 +349,6 @@ public final class Quest {
 	
 	public boolean isNeutral() {
 		return faction == Faction.NEUTRAL;
-	}
-	
-	public String dump() {
-		final StringBuilder sb = new StringBuilder();
-		
-		for (final Method m : getClass().getDeclaredMethods()) {
-			if (m.getName().startsWith("get") && m.getParameterCount() == 0 && !"getClass".equals(m.getName())) {
-				sb.append(m.getName().replaceAll("^get", ""));
-				sb.append(": ");
-				
-				try {
-					sb.append(m.invoke(this));
-				} catch (final ReflectiveOperationException e) {
-					e.printStackTrace();
-					sb.append("<error>");
-				}
-				
-				sb.append("\n");
-			}
-		}
-		
-		return sb.toString();
 	}
 	
 	@Override
