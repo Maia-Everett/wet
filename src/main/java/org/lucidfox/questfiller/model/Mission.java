@@ -24,7 +24,7 @@ public final class Mission implements IDumpable {
 	private int bonusXP;
 	private int bonusResources;
 	private String patchAdded;
-	private List<String> bonusItems = new ArrayList<>();
+	private List<ItemReward> bonusItems = new ArrayList<>();
 	
 	public String getLocation() {
 		return location;
@@ -82,11 +82,11 @@ public final class Mission implements IDumpable {
 		this.bonusResources = bonusResources;
 	}
 
-	public List<String> getBonusItems() {
+	public List<ItemReward> getBonusItems() {
 		return bonusItems;
 	}
 
-	public void setBonusItems(final List<String> bonusItems) {
+	public void setBonusItems(final List<ItemReward> bonusItems) {
 		this.bonusItems = bonusItems;
 	}
 
