@@ -6,7 +6,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.lucidfox.questfiller.model.Mission;
 
-public final class MissionParser implements IParser<Mission> {
+final class MissionParser implements IParser<Mission> {
 	//private final ParserContext context;
 	
 	MissionParser(final ParserContext context) {
