@@ -42,6 +42,11 @@ public enum ParserType {
 	
 	public static Optional<ParserType> detect(final Document html) {
 		final String url = html.select("link[rel=canonical]").attr("href");
+		
+		if (url.isEmpty()) {
+			return Optional.empty();
+		}
+		
 		// Get article type from canonical URL
 		final String articleType = getRegexGroup(url, "/([a-z-]+)=[0-9]+/", 1).get();
 		// Convert to enum constant name, e.g. quest -> QUEST, item-set -> ITEM_SET
