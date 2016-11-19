@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
+import org.jsoup.select.Elements;
 import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
 
@@ -65,5 +66,26 @@ final class ParseUtils {
 			}
 		}).traverse(el);
 		return accum.toString().trim();
+	}
+	
+	
+	static Optional<Element> getFirstWithOwnText(final Elements elementList, final String text) {
+		return elementList.stream().filter(el -> el.ownText().equals(text)).findFirst();
+	}
+	
+	static String collectTextUntilNextTag(final Element header, final String nextTagName) {
+		final StringBuilder sb = new StringBuilder();
+		
+		for (Node node = header.nextSibling();
+				!(node instanceof Element && ((Element) node).tagName().equals(nextTagName));
+				node = node.nextSibling()) {
+			if (node instanceof TextNode) {
+				sb.append(((TextNode) node).text());
+			} else if (node instanceof Element && ((Element) node).tagName().equals("br")) {
+				sb.append("\n");
+			}
+		}
+		
+		return sb.toString();
 	}
 }

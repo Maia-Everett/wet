@@ -1,5 +1,7 @@
 package org.lucidfox.questfiller.parser;
 
+import static org.lucidfox.questfiller.parser.ParseUtils.collectTextUntilNextTag;
+import static org.lucidfox.questfiller.parser.ParseUtils.getFirstWithOwnText;
 import static org.lucidfox.questfiller.parser.ParseUtils.getRegexGroup;
 import static org.lucidfox.questfiller.parser.ParseUtils.textOf;
 import static org.lucidfox.questfiller.parser.ParseUtils.unescapeInfoboxMarkup;
@@ -89,7 +91,14 @@ final class QuestParser {
 			objectivesNode = objectivesNode.nextSibling();
 		}
 		
-		quest.setObjectives(((TextNode) objectivesNode).text().trim());
+		final Node beforeObjectives = objectivesNode.previousSibling();
+		
+		// If there is a h2.heading-size-3 right before the "objectives" text, it is probably not objectives,
+		// but rather progress or completion, like on the quest "Draenei Tail"
+		if (!(beforeObjectives instanceof Element && ((Element) beforeObjectives).tagName().equals("h2")
+				&& ((Element) beforeObjectives).hasClass("heading-size-3"))) {
+			quest.setObjectives(((TextNode) objectivesNode).text().trim());
+		}
 		
 		// Objective completion stages
 		final Elements iconlists = mainContainer.select("table.iconlist");
@@ -136,30 +145,22 @@ final class QuestParser {
 	}
 
 	private void parseQuestText(final Quest quest, final Element mainContainer, final Document html) {
-		// Description is messy
+		// Description section
 		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
-		final Element descriptionHeading = headingsSize3.stream()
-				.filter(el -> el.text().equals("Description")).findFirst().get();
 		
-		final StringBuilder description = new StringBuilder();
-		
-		for (Node node = descriptionHeading.nextSibling();
-				!(node instanceof Element && ((Element) node).tagName().equals("h2"));
-				node = node.nextSibling()) {
-			if (node instanceof TextNode) {
-				description.append(((TextNode) node).text());
-			} else if (node instanceof Element && ((Element) node).tagName().equals("br")) {
-				description.append("\n");
-			}
-		}
-		
-		quest.setDescription(description.toString().trim());
+		getFirstWithOwnText(headingsSize3, "Description").ifPresent(descriptionHeading -> {
+			quest.setDescription(collectTextUntilNextTag(descriptionHeading, "h2").trim());
+		});
 		
 		// Progress section
 		final Element progressHeading = html.getElementById("lknlksndgg-progress");
 		
 		if (progressHeading != null) {
 			quest.setProgress(textOf(progressHeading));
+		} else {
+			getFirstWithOwnText(headingsSize3, "Progress").ifPresent(fallbackProgressHeading -> {
+				quest.setProgress(collectTextUntilNextTag(fallbackProgressHeading, "h2").trim());
+			});
 		}
 		
 		// Completion section
@@ -167,6 +168,10 @@ final class QuestParser {
 		
 		if (completionHeading != null) {
 			quest.setCompletion(textOf(completionHeading));
+		} else {
+			getFirstWithOwnText(headingsSize3, "Completion").ifPresent(fallbackCompletionHeading -> {
+				quest.setCompletion(collectTextUntilNextTag(fallbackCompletionHeading, "h2").trim());
+			});
 		}
 	}
 		
