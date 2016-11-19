@@ -8,7 +8,7 @@ public final class Mission implements IDumpable {
 	private String name;
 	private String location;
 	private String duration;
-	private Faction faction = Faction.NEUTRAL;
+	private Faction faction;
 	private CharacterClass characterClass;
 	private String category;
 	private Integer level;

@@ -10,7 +10,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.lucidfox.questfiller.model.CharacterClass;
-import org.lucidfox.questfiller.model.Faction;
 import org.lucidfox.questfiller.model.Mission;
 
 final class MissionParser implements IParser<Mission> {
@@ -89,22 +88,6 @@ final class MissionParser implements IParser<Mission> {
 
 			getRegexGroup(infoboxLine, "Category: (.+)", 1).ifPresent(category -> {
 				mission.setCategory(category);
-			});
-			
-			getRegexGroup(infoboxLine, "Side: (.+)", 1).ifPresent(side -> {
-				switch (side) {
-				case "Alliance":
-					mission.setFaction(Faction.ALLIANCE);
-					break;
-				case "Horde":
-					mission.setFaction(Faction.HORDE);
-					break;
-				case "Both":
-					mission.setFaction(Faction.NEUTRAL);
-					break;
-				default:
-					break;
-				}
 			});
 			
 			getRegexGroup(infoboxLine, "Class: ([0-9]+)", 1).ifPresent(classId -> {
