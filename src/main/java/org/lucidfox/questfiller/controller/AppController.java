@@ -24,8 +24,7 @@ public class AppController {
 	
 	private MainWindow mainWindow;
 	
-	public AppController(final Stage primaryStage)
-			throws IOException {
+	public AppController(final Stage primaryStage) throws IOException {
 		this.primaryStage = primaryStage;
 		createUI(new FXMLLoader());
 		
