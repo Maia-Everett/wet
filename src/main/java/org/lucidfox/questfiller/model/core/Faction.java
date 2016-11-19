@@ -1,4 +1,4 @@
-package org.lucidfox.questfiller.model;
+package org.lucidfox.questfiller.model.core;
 
 public enum Faction {
 	ALLIANCE("A", "Alliance"),

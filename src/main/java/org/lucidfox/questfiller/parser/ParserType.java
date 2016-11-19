@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.lucidfox.questfiller.controller.ArticleFormatter;
-import org.lucidfox.questfiller.model.IDumpable;
+import org.lucidfox.questfiller.model.core.IDumpable;
 
 public enum ParserType {
 	QUEST("Quest", "q", QuestParser::new),

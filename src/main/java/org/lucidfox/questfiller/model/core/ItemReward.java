@@ -1,4 +1,4 @@
-package org.lucidfox.questfiller.model;
+package org.lucidfox.questfiller.model.core;
 
 public final class ItemReward {
 	private final String name;

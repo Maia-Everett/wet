@@ -1,4 +1,4 @@
-package org.lucidfox.questfiller.model;
+package org.lucidfox.questfiller.model.quest;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -9,6 +9,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
+
+import org.lucidfox.questfiller.model.core.CharacterClass;
+import org.lucidfox.questfiller.model.core.Faction;
+import org.lucidfox.questfiller.model.core.IDumpable;
+import org.lucidfox.questfiller.model.core.ItemReward;
+import org.lucidfox.questfiller.model.core.Race;
 
 public final class Quest implements IDumpable {
 	// Infobox

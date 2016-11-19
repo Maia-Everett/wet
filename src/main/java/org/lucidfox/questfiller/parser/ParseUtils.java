@@ -19,6 +19,20 @@ import org.jsoup.select.NodeVisitor;
 final class ParseUtils {
 	private ParseUtils() { }
 	
+	static int[] getCategoryIds(final Document html) {
+		// Category taken from breadcrumb, which Wowhead draws with JS :(
+		final String breadcrumbData = html.getElementsByTag("script")
+				.stream()
+				.map(Element::data)
+				.filter(data -> data.contains("PageTemplate.set({breadcrumb:"))
+				.findFirst().get();
+		
+		// ugh, parsing JS with regexes
+		final String regex = Pattern.quote("PageTemplate.set({breadcrumb: [") + "([0-9,-]+)" + Pattern.quote("]});");
+		final String[] categoryIds = getRegexGroup(breadcrumbData, regex, 1).get().split(",");
+		return Stream.of(categoryIds).mapToInt(Integer::parseInt).toArray();
+	}
+	
 	static List<String> getInfoboxLines(final Document html) {
 		final Optional<String> infoboxData = html.getElementsByTag("script")
 				.stream()

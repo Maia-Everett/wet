@@ -1,9 +1,14 @@
-package org.lucidfox.questfiller.model;
+package org.lucidfox.questfiller.model.mission;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Mission implements IDumpable {
+import org.lucidfox.questfiller.model.core.CharacterClass;
+import org.lucidfox.questfiller.model.core.Faction;
+import org.lucidfox.questfiller.model.core.IDumpable;
+import org.lucidfox.questfiller.model.core.ItemReward;
+
+public abstract class Mission implements IDumpable {
 	private int id;
 	private String name;
 	private String location;
@@ -213,6 +218,8 @@ public final class Mission implements IDumpable {
 	public boolean isNeutral() {
 		return faction == Faction.NEUTRAL;
 	}
+	
+	public abstract String getInfoboxTemplate();
 	
 	@Override
 	public String toString() {

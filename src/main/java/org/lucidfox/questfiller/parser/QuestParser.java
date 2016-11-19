@@ -23,11 +23,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
-import org.lucidfox.questfiller.model.CharacterClass;
-import org.lucidfox.questfiller.model.Faction;
-import org.lucidfox.questfiller.model.ItemReward;
-import org.lucidfox.questfiller.model.Quest;
-import org.lucidfox.questfiller.model.Race;
+import org.lucidfox.questfiller.model.core.CharacterClass;
+import org.lucidfox.questfiller.model.core.Faction;
+import org.lucidfox.questfiller.model.core.ItemReward;
+import org.lucidfox.questfiller.model.core.Race;
+import org.lucidfox.questfiller.model.quest.Quest;
 
 final class QuestParser implements IParser<Quest> {
 	// Quest categories for which most quests scale with level
@@ -65,21 +65,9 @@ final class QuestParser implements IParser<Quest> {
 
 	private void parseCategory(final Quest quest, final Document html) {
 		// Category taken from breadcrumb, which Wowhead draws with JS :(
-		final Optional<String> breadcrumbData = html.getElementsByTag("script")
-				.stream()
-				.map(Element::data)
-				.filter(data -> data.contains("PageTemplate.set({breadcrumb:"))
-				.findFirst();
-		
-		if (!breadcrumbData.isPresent()) {
-			return;
-		}
-		
-		// ugh, parsing JS with regexes
-		final String regex = Pattern.quote("PageTemplate.set({breadcrumb: [") + "([0-9,-]+)" + Pattern.quote("]});");
-		final String[] categoryIds = getRegexGroup(breadcrumbData.get(), regex, 1).get().split(",");
+		final int[] categoryIds = ParseUtils.getCategoryIds(html);
 		// last number in list is the category id
-		final int categoryId = Integer.parseInt(categoryIds[categoryIds.length - 1]);
+		final int categoryId = categoryIds[categoryIds.length - 1];
 		quest.setCategory(context.getQuestCategory(categoryId));
 	}
 

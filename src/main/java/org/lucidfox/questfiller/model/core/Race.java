@@ -1,4 +1,4 @@
-package org.lucidfox.questfiller.model;
+package org.lucidfox.questfiller.model.core;
 
 import java.util.HashMap;
 import java.util.Map;

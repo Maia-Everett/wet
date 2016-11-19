@@ -1,4 +1,4 @@
-package org.lucidfox.questfiller.model;
+package org.lucidfox.questfiller.model.mission;
 
 import java.util.ArrayList;
 import java.util.Collections;

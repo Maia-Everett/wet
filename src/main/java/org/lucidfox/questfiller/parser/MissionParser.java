@@ -9,10 +9,19 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.lucidfox.questfiller.model.CharacterClass;
-import org.lucidfox.questfiller.model.Mission;
+import org.lucidfox.questfiller.model.core.CharacterClass;
+import org.lucidfox.questfiller.model.mission.ClassHallMission;
+import org.lucidfox.questfiller.model.mission.GarrisonMission;
+import org.lucidfox.questfiller.model.mission.Mission;
+import org.lucidfox.questfiller.model.mission.NavalMission;
 
 final class MissionParser implements IParser<Mission> {
+	// Magic numbers from breadcrumb bar
+	private static final int MISSION_SYSTEM_GARRISONS = 21;
+	private static final int MISSION_SYSTEM_CLASS_HALLS = 30;
+	private static final int MISSION_UNIT_FOLLOWERS = 1;
+	private static final int MISSION_UNIT_SHIPS = 2;
+	
 	//private final ParserContext context;
 	
 	MissionParser(final ParserContext context) {
@@ -20,7 +29,7 @@ final class MissionParser implements IParser<Mission> {
 	}
 	
 	public Mission parse(final Document html) {
-		final Mission mission = new Mission();
+		final Mission mission = createMissionOfCorrectType(html);
 		
 		final String url = html.select("link[rel=canonical]").attr("href");
 		final String idStr = getRegexGroup(url, "/mission=([0-9]+)/", 1).get();
@@ -35,6 +44,25 @@ final class MissionParser implements IParser<Mission> {
 		parseRewards(mission, mainContainer);
 		parseInfobox(mission, html);
 		return mission;
+	}
+	
+	private Mission createMissionOfCorrectType(final Document html) {
+		final int[] categoryIds = ParseUtils.getCategoryIds(html);
+		
+		if (categoryIds[1] == MISSION_SYSTEM_CLASS_HALLS) {
+			return new ClassHallMission();
+		}
+
+		assert categoryIds[1] == MISSION_SYSTEM_GARRISONS;
+		
+		switch (categoryIds[3]) {
+		case MISSION_UNIT_FOLLOWERS:
+			return new GarrisonMission();
+		case MISSION_UNIT_SHIPS:
+			return new NavalMission();
+		default:
+			throw new AssertionError();
+		}
 	}
 
 	private void parseDescription(final Mission mission, final Element mainContainer, final Document html) {
