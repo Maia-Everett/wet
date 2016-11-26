@@ -141,7 +141,7 @@ final class MissionParser implements IParser<Mission> {
 				mission.setPatchAdded(PatchVersions.getCanonicalVersion(patch));
 			});
 			
-			getRegexGroup(infoboxLine, "(?:Followers|Champions): ([0-9]+)", 1).ifPresent(groupSize -> {
+			getRegexGroup(infoboxLine, "(?:Followers|Champions|Ships): ([0-9]+)", 1).ifPresent(groupSize -> {
 				mission.setGroupSize(Integer.parseInt(groupSize));
 			});
 		}

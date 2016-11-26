@@ -20,7 +20,8 @@ public abstract class Mission implements IDumpable {
 	private Integer followerItemLevel;
 	private String type;
 	private Integer groupSize;
-	private int experience;
+	private Integer experience;
+	private Integer cost;
 	private boolean rare;
 	private int followerXP;
 	private String description;
@@ -183,12 +184,20 @@ public abstract class Mission implements IDumpable {
 		this.groupSize = groupSize;
 	}
 
-	public int getExperience() {
+	public Integer getExperience() {
 		return experience;
 	}
 
-	public void setExperience(final int experience) {
+	public void setExperience(final Integer experience) {
 		this.experience = experience;
+	}
+
+	public Integer getCost() {
+		return cost;
+	}
+
+	public void setCost(final Integer cost) {
+		this.cost = cost;
 	}
 	
 	public String getPatchAdded() {
