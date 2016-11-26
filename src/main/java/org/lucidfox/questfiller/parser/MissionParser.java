@@ -4,6 +4,7 @@ import static org.lucidfox.questfiller.parser.ParseUtils.collectTextUntilNextTag
 import static org.lucidfox.questfiller.parser.ParseUtils.getFirstWithOwnText;
 import static org.lucidfox.questfiller.parser.ParseUtils.getRegexGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jsoup.nodes.Document;
@@ -13,6 +14,7 @@ import org.lucidfox.questfiller.model.core.CharacterClass;
 import org.lucidfox.questfiller.model.mission.ClassHallMission;
 import org.lucidfox.questfiller.model.mission.GarrisonMission;
 import org.lucidfox.questfiller.model.mission.Mission;
+import org.lucidfox.questfiller.model.mission.MissionEnemy;
 import org.lucidfox.questfiller.model.mission.NavalMission;
 
 final class MissionParser implements IParser<Mission> {
@@ -22,10 +24,10 @@ final class MissionParser implements IParser<Mission> {
 	private static final int MISSION_UNIT_FOLLOWERS = 1;
 	private static final int MISSION_UNIT_SHIPS = 2;
 	
-	//private final ParserContext context;
+	private final ParserContext context;
 	
 	MissionParser(final ParserContext context) {
-		//this.context = context; 
+		this.context = context; 
 	}
 	
 	public Mission parse(final Document html) {
@@ -74,8 +76,21 @@ final class MissionParser implements IParser<Mission> {
 	}
 
 	private void parseEncounters(final Mission mission, final Element mainContainer) {
-		// TODO Auto-generated method stub
-		
+		for (final Element td : mainContainer.select("td.garrison-encounter-enemy")) {
+			if (td.hasClass("empty")) {
+				continue;
+			}
+			
+			final String enemyName = td.select("span.garrison-encounter-enemy-name").text();
+			final List<String> enemyCounters = new ArrayList<>();
+			
+			for (final Element mechanic : td.select("div.garrison-encounter-enemy-mechanic")) {
+				final int mechanicId = Integer.parseInt(mechanic.attr("data-mechanic"));
+				enemyCounters.add(context.getMissionThreat(mechanicId));
+			}
+			
+			mission.getEnemies().add(new MissionEnemy(enemyName, enemyCounters));
+		}
 	}
 
 	private void parseRewards(final Mission mission, final Element mainContainer) {

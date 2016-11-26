@@ -5,6 +5,7 @@
  | location = <<m.location>>
  | duration = <<m.duration>>
  | type = <<m.category>>
+ | enemies = <<#m.enemies>><<name>><<^-last>><br /><</-last>><</m.enemies>>
 <<#m.faction>>
  | faction = <<m.faction>>
 <</m.faction>>
@@ -31,12 +32,17 @@
 ...
 <</m.description>>
 
-<<#m.patchAdded>>
+==Counters==
+* Type: {{Garrison ability|<<m.type>>}}
+<<#m.enemies>>
+* <<name>>:<<#counters>> {{Garrison ability|<<this>>}}<</counters>>
+<</m.enemies>>
 
+<<#m.patchAdded>>
 ==Patch changes==
 * {{Patch <<m.patchAdded>>|note=Added.}}
-<</m.patchAdded>>
 
+<</m.patchAdded>>
 ==External links==
 {{subst:el}}
 {{Elinks-mission|<<m.id>>}}

@@ -24,4 +24,9 @@ public final class MissionEnemy {
 	public List<String> getCounters() {
 		return counters;
 	}
+	
+	@Override
+	public String toString() {
+		return name + " " + counters;
+	}
 }
