@@ -5,4 +5,9 @@ public final class NavalMission extends Mission {
 	public String getInfoboxTemplate() {
 		return "Navalbox";
 	}
+
+	@Override
+	public String getResourceName() {
+		return "Oil";
+	}
 }

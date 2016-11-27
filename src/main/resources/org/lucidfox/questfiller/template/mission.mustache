@@ -3,9 +3,6 @@
  | id = <<m.id>>
  | name = <<m.name>>
  | location = <<m.location>>
- | duration = <<m.duration>>
- | type = <<m.category>>
- | enemies = <<#m.enemies>><<name>><<^-last>><br /><</-last>><</m.enemies>>
 <<#m.faction>>
  | faction = <<m.faction>>
 <</m.faction>>
@@ -19,13 +16,27 @@
 <<#m.rare>>
  | rare = yes
 <</m.rare>>
+ | duration = <<m.duration>>
 <<#m.groupSize>>
  | groupsize = <<m.groupSize>>
 <</m.groupSize>>
- | experience = <<m.experience>>
+ | type = <<m.category>>
+ | enemies = <<#m.enemies>><<name>><<^-last>><br /><</-last>><</m.enemies>>
 <<#m.cost>>
  | cost = <<m.cost>>
 <</m.cost>>
+<<#m.hasMoney>>
+ | bonusgold = {{cost|<<m.gold>>|<<m.silver>>|<<m.copper>>}}
+<</m.hasMoney>>
+<<#m.bonusXPStr>>
+ | bonusxp = <<this>>
+<</m.bonusXPStr>>
+<<#m.hasResources>>
+ | bonusresources = <<m.bonusResources>>
+<</m.hasResources>>
+<<^m.bonusItems.isEmpty>>
+ | bonusitem = <<#m.bonusItems>><<#quantity>><<this>>x <</quantity>>[[<<name>>]]<<^-last>><br /><</-last>><</m.bonusItems>>
+<</m.bonusItems.isEmpty>>
 }}
 
 ==Description==
@@ -37,11 +48,35 @@
 <</m.description>>
 
 ==Counters==
-* Type: {{Garrison ability|<<m.type>>}}
+<<#m.type>>
+* Type: {{Garrison ability|<<this>>}}
+<</m.type>>
 <<#m.enemies>>
 * <<name>>:<<#counters>> {{Garrison ability|<<this>>}}<</counters>>
 <</m.enemies>>
 
+==Rewards==
+<<^m.bonusItems.isEmpty>>
+{{itembox|You will receive:
+<<#m.bonusItems>>
+|q<<-index>>=<<quantity>>|<<name>>
+<</m.bonusItems>>
+}}
+
+<</m.bonusItems.isEmpty>>
+<<#m.hasNonItemRewards>>
+You will <<^m.bonusItems.isEmpty>>also <</m.bonusItems.isEmpty>>receive:
+<<#m.bonusXPStr>>
+* <<this>> bonus follower XP
+<</m.bonusXPStr>>
+<<#m.hasMoney>>
+* {{cost|<<m.gold>>|<<m.silver>>|<<m.copper>>}}
+<</m.hasMoney>>
+<<#m.hasResources>>
+* [[<<m.resourceName>>]] (<<m.bonusResources>>)
+<</m.hasResources>>
+
+<</m.hasNonItemRewards>>
 <<#m.patchAdded>>
 ==Patch changes==
 * {{Patch <<m.patchAdded>>|note=Added.}}

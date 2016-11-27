@@ -6,6 +6,7 @@ import static org.lucidfox.questfiller.parser.ParseUtils.getRegexGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -111,8 +112,50 @@ final class MissionParser implements IParser<Mission> {
 	}
 
 	private void parseRewards(final Mission mission, final Element mainContainer) {
-		// TODO Auto-generated method stub
+		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
 		
+		getFirstWithOwnText(headingsSize3, "Rewards").ifPresent(rewardsHeading -> {
+			// Look through everything between Rewards and the next header (or end of parent)
+			for (Element el = rewardsHeading.nextElementSibling();
+					el != null && !(el.tagName().equals("h3") && el.hasClass("heading-size-3"));
+					el = el.nextElementSibling()) {
+				if (el.tagName().equals("table") && el.hasClass("icontab")) {
+					parseItemRewards(mission, el);
+				} else if (el.tagName().equals("ul")) {
+					// Non-item rewards
+					parseNonItemRewards(mission, el.getElementsByTag("li"));
+				}
+			}
+		});
+	}
+	
+	private void parseItemRewards(final Mission mission, final Element icontab) {
+		ParseUtils.collectItemRewards(icontab, reward -> {
+			if (reward.getName().equals(mission.getResourceName())) {
+				mission.setBonusResources(reward.getQuantity());
+			} else {
+				mission.getBonusItems().add(reward);
+			}
+		});
+	}
+
+	private void parseNonItemRewards(final Mission mission, final Elements listItems) {
+		// This is a bit messy because Wowhead lumps all rewards together
+		for (final Element li : listItems) {
+			final String ownText = li.ownText();
+			final Optional<String> maybeXP = getRegexGroup(ownText, "([0-9,]*) experience", 1);
+			
+			if (maybeXP.isPresent()) {
+				mission.setBonusXP(Integer.parseInt(maybeXP.get().replace(",", "")));
+				continue;
+			}
+			
+			final int money = ParseUtils.getMoney(li);
+			
+			if (money != 0) {
+				mission.setBonusMoney(money);
+			}
+		}
 	}
 
 	private void parseInfobox(final Mission mission, final Document html) {

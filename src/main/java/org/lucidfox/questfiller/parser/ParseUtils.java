@@ -1,5 +1,6 @@
 package org.lucidfox.questfiller.parser;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.jsoup.select.Elements;
 import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
 import org.lucidfox.questfiller.model.core.ItemReward;
+import org.lucidfox.questfiller.model.quest.Quest;
 
 final class ParseUtils {
 	private ParseUtils() { }
@@ -169,5 +171,49 @@ final class ParseUtils {
 			
 			collector.accept(new ItemReward(itemName, itemQuantity));
 		});
+	}
+	
+	static int getMoney(final Element container) {
+		// Money rewards
+		final List<Element> allMoneyElements = new ArrayList<Element>();
+		allMoneyElements.addAll(container.select("span.moneygold"));
+		allMoneyElements.addAll(container.select("span.moneysilver"));
+		allMoneyElements.addAll(container.select("span.moneycopper"));
+		
+		if (allMoneyElements.isEmpty()) {
+			return 0;
+		}
+		
+		// Find the leftmost money element (so we parse only the first group - second group is max level rewards)
+		int money = 0;
+		Element leftEl = null;
+		
+		for (final Element el: allMoneyElements) {
+			if (leftEl == null || el.siblingIndex() < leftEl.siblingIndex()) {
+				leftEl = el;
+			}
+		}
+		
+		// Parse all directly adjacent span nodes, possibly with whitespace in between
+		for (Node node = leftEl;
+				(node instanceof Element && ((Element) node).tagName().equals("span"))
+					|| (node instanceof TextNode && ((TextNode) node).text().trim().isEmpty());
+				node = node.nextSibling()) {
+			if (!(node instanceof Element)) {
+				continue;
+			}
+			
+			final Element el = (Element) node;
+			
+			if (el.hasClass("moneygold")) {
+				money += Integer.parseInt(el.ownText()) * 10000;
+			} else if (el.hasClass("moneysilver")) {
+				money += Integer.parseInt(el.ownText()) * 100;
+			} else if (el.hasClass("moneycopper")) {
+				money += Integer.parseInt(el.ownText());
+			}
+		}
+		
+		return money;
 	}
 }

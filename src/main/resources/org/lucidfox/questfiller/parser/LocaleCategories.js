@@ -11,6 +11,9 @@ mn_quests.forEach(function(element) {
 });
 
 // Assemble mission threat IDs into map
+mn_missionMechanics.forEach(function(element) {
+	missionThreats.put(element[0], element[1][0]);
+});
 mn_missionThreats.forEach(function(element) {
 	missionThreats.put(element[0], element[1][0]);
 });

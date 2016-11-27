@@ -5,7 +5,6 @@ import static org.lucidfox.questfiller.parser.ParseUtils.getFirstWithOwnText;
 import static org.lucidfox.questfiller.parser.ParseUtils.getRegexGroup;
 import static org.lucidfox.questfiller.parser.ParseUtils.textOf;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -161,45 +160,7 @@ final class QuestParser implements IParser<Quest> {
 	}
 		
 	private void parseMoney(final Quest quest, final Element mainContainer) {
-		// Money rewards
-		final List<Element> allMoneyElements = new ArrayList<Element>();
-		allMoneyElements.addAll(mainContainer.select("span.moneygold"));
-		allMoneyElements.addAll(mainContainer.select("span.moneysilver"));
-		allMoneyElements.addAll(mainContainer.select("span.moneycopper"));
-		
-		// Find the leftmost money element (so we parse only the first group - second group is max level rewards)
-		if (!allMoneyElements.isEmpty()) {
-			int money = 0;
-			Element leftEl = null;
-			
-			for (final Element el: allMoneyElements) {
-				if (leftEl == null || el.siblingIndex() < leftEl.siblingIndex()) {
-					leftEl = el;
-				}
-			}
-			
-			// Parse all directly adjacent span nodes, possibly with whitespace in between
-			for (Node node = leftEl;
-					(node instanceof Element && ((Element) node).tagName().equals("span"))
-						|| (node instanceof TextNode && ((TextNode) node).text().trim().isEmpty());
-					node = node.nextSibling()) {
-				if (!(node instanceof Element)) {
-					continue;
-				}
-				
-				final Element el = (Element) node;
-				
-				if (el.hasClass("moneygold")) {
-					money += Integer.parseInt(el.ownText()) * 10000;
-				} else if (el.hasClass("moneysilver")) {
-					money += Integer.parseInt(el.ownText()) * 100;
-				} else if (el.hasClass("moneycopper")) {
-					money += Integer.parseInt(el.ownText());
-				}
-			}
-			
-			quest.setMoney(money);
-		}
+		quest.setMoney(ParseUtils.getMoney(mainContainer));
 	}
 		
 	private void parseRewards(final Quest quest, final Element mainContainer) {

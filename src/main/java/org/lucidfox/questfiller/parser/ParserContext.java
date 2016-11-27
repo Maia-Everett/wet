@@ -32,6 +32,8 @@ public final class ParserContext {
 		// Obtain localization for quest categories
 		final String fullScript = new BufferedReader(localeJsReader).lines().collect(Collectors.joining("\n"));
 		final String questScript = getRegexGroup(fullScript, "var mn_quests=[^;]+;", 0).get();
+		final String missionMechanicsScript = "var mn_missionMechanics = " + getRegexGroup(fullScript,
+				"missionMechanics:LANGfiMakeOptGroups\\((.+?)\\,g_threat_categories_by_follower_type", 1).get();
 		final String missionThreatsScript = "var mn_missionThreats = " + getRegexGroup(fullScript,
 				"missionThreats:LANGfiMakeOptGroups\\((.+?)\\,g_threat_categories_by_follower_type", 1).get();
 		
@@ -42,6 +44,7 @@ public final class ParserContext {
 			js.eval(questScript);
 			js.put("questCategories", questCategories);
 			
+			js.eval(missionMechanicsScript);
 			js.eval(missionThreatsScript);
 			js.put("missionThreats", missionThreats);
 			

@@ -1,7 +1,9 @@
 package org.lucidfox.questfiller.model.mission;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.lucidfox.questfiller.model.core.CharacterClass;
 import org.lucidfox.questfiller.model.core.Faction;
@@ -20,7 +22,6 @@ public abstract class Mission implements IDumpable {
 	private Integer followerItemLevel;
 	private String type;
 	private Integer groupSize;
-	private Integer experience;
 	private Integer cost;
 	private boolean rare;
 	private int followerXP;
@@ -184,14 +185,6 @@ public abstract class Mission implements IDumpable {
 		this.groupSize = groupSize;
 	}
 
-	public Integer getExperience() {
-		return experience;
-	}
-
-	public void setExperience(final Integer experience) {
-		this.experience = experience;
-	}
-
 	public Integer getCost() {
 		return cost;
 	}
@@ -212,6 +205,26 @@ public abstract class Mission implements IDumpable {
 		return quantity == 0 ? null : quantity;
 	}
 	
+	public boolean hasNonItemRewards() {
+		return bonusXP != 0 || bonusMoney != 0 || bonusResources != 0;
+	}
+	
+	public boolean hasMoney() {
+		return bonusMoney != 0;
+	}
+	
+	public boolean hasResources() {
+		return bonusResources != 0;
+	}
+
+	public String getBonusXPStr() {
+		if (bonusXP == 0) {
+			return null;
+		}
+		
+		return NumberFormat.getNumberInstance(Locale.US).format(bonusXP);
+	}
+	
 	public Integer getGold() {
 		return getNonzeroOrNull(bonusMoney / 10000); 
 	}
@@ -229,6 +242,7 @@ public abstract class Mission implements IDumpable {
 	}
 	
 	public abstract String getInfoboxTemplate();
+	public abstract String getResourceName();
 	
 	@Override
 	public String toString() {

@@ -5,4 +5,9 @@ public final class GarrisonMission extends Mission {
 	public String getInfoboxTemplate() {
 		return "Missionbox";
 	}
+
+	@Override
+	public String getResourceName() {
+		return "Garrison Resources";
+	}
 }
