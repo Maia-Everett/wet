@@ -56,9 +56,7 @@
 <<#q.isRepeatable>>
  | repeatable = Yes
 <</q.isRepeatable>>
-<<^q.isShareable>>
- | shareable = No
-<</q.isShareable>>
+ | shareable = <<#q.shareableStr>>
  | previous = <<#q.previousQuests>>[[Quest:<<this>>]]<<^-last>>, <</-last>><</q.previousQuests>>
  | next = <<#q.nextQuests>>[[Quest:<<this>>]]<<^-last>>, <</-last>><</q.nextQuests>>
  <<^q.isNeutral>>
