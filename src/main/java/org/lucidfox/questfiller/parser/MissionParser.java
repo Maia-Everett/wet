@@ -100,10 +100,10 @@ final class MissionParser implements IParser<Mission> {
 		
 		// Find the icontab that describes the mission cost
 		getFirstWithOwnText(headingsSize3, "Cost").ifPresent(costHeading -> {
-			Element icontab;
+			Element icontab = costHeading;
 			
 			do {
-				icontab = costHeading.nextElementSibling();
+				icontab = icontab.nextElementSibling();
 			} while (!icontab.tagName().equals("table") || !icontab.hasClass("icontab"));
 			
 			// Mission cost is the quantity of the only item in the icontab
