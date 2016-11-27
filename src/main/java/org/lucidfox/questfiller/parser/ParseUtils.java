@@ -1,8 +1,11 @@
 package org.lucidfox.questfiller.parser;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -15,6 +18,7 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
+import org.lucidfox.questfiller.model.core.ItemReward;
 
 final class ParseUtils {
 	private ParseUtils() { }
@@ -118,5 +122,52 @@ final class ParseUtils {
 		}
 		
 		return sb.toString();
+	}
+	
+	static void collectItemRewards(final Element icontab, final Consumer<ItemReward> collector) {
+		final Map<String, String> itemNamesByIconId = new LinkedHashMap<>();
+		final Map<String, Integer> itemQuantitiesByIconId = new LinkedHashMap<>();
+		
+		// Item names are contained in the actual icontab, as are placeholders for the icon and quantity
+		for (final Element iconPlaceholder : icontab.select("th[id]")) {
+			final String iconId = iconPlaceholder.id();
+			// the next element is a td with the link to the actual item
+			final String itemName = iconPlaceholder.nextElementSibling().getElementsByTag("a").first().ownText();
+			itemNamesByIconId.put(iconId, itemName);
+		}
+		
+		// Item quantities are filled through JavaScript.
+		// Find the first script element immediately after this icontab
+		Element nextScript;
+		for (nextScript = icontab.nextElementSibling(); !nextScript.tagName().equals("script");
+				nextScript = nextScript.nextElementSibling()) { }
+		
+		// Parse JavaScript lines like
+		// $WH.ge('icontab-icon1').appendChild(g_items.createIcon(115793, 1, "3"));
+		// We're interested in what's inside ge() - the icon box ID -
+		// and the contents of the last quotes (item quantity)
+		final Pattern iconInitRegex = Pattern.compile(
+				Pattern.quote("$WH.ge('")
+				+ "([^']+)"
+				+ Pattern.quote("').appendChild(") + "[A-Za-z0-9_]+" + Pattern.quote(".createIcon(")
+				+ "[^\"]+\"([^\"]+)\""
+				+ Pattern.quote("));"));
+		final Matcher matcher = iconInitRegex.matcher(nextScript.data());
+		
+		while (matcher.find()) {
+			// group 1 is icon box element ID, group 2 is item quantity (or 0 if no quantity should be displayed)
+			itemQuantitiesByIconId.put(matcher.group(1), Integer.parseInt(matcher.group(2)));
+		}
+		
+		itemNamesByIconId.forEach((iconId, itemName) -> {
+			Integer itemQuantity = itemQuantitiesByIconId.get(iconId);
+			
+			// "0" means draw no quantity on the icon
+			if (itemQuantity != null && (itemQuantity == 0 || itemQuantity == 1)) {
+				itemQuantity = null;
+			}
+			
+			collector.accept(new ItemReward(itemName, itemQuantity));
+		});
 	}
 }

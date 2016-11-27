@@ -43,6 +43,7 @@ final class MissionParser implements IParser<Mission> {
 		
 		parseDescription(mission, mainContainer, html);
 		parseEncounters(mission, mainContainer);
+		parseCost(mission, mainContainer);
 		parseRewards(mission, mainContainer);
 		parseInfobox(mission, html);
 		return mission;
@@ -91,6 +92,22 @@ final class MissionParser implements IParser<Mission> {
 			
 			mission.getEnemies().add(new MissionEnemy(enemyName, enemyCounters));
 		}
+	}
+
+	private void parseCost(final Mission mission, final Element mainContainer) {
+		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
+		
+		// Find the icontab that describes the mission cost
+		getFirstWithOwnText(headingsSize3, "Cost").ifPresent(costHeading -> {
+			Element icontab;
+			
+			do {
+				icontab = costHeading.nextElementSibling();
+			} while (!icontab.tagName().equals("table") || !icontab.hasClass("icontab"));
+			
+			// Mission cost is the quantity of the only item in the icontab
+			ParseUtils.collectItemRewards(icontab, reward -> mission.setCost(reward.getQuantity()));
+		});
 	}
 
 	private void parseRewards(final Mission mission, final Element mainContainer) {
