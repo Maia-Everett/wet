@@ -151,8 +151,8 @@ final class MissionParser implements IParser<Mission> {
 	private void parseNonItemRewards(final Mission mission, final Elements listItems) {
 		// This is a bit messy because Wowhead lumps all rewards together
 		for (final Element li : listItems) {
-			final String ownText = li.ownText();
-			final Optional<String> maybeXP = getRegexGroup(ownText, "([0-9,]*) experience", 1);
+			final String text = li.text();
+			final Optional<String> maybeXP = getRegexGroup(text, "([0-9,]*) experience", 1);
 			
 			if (maybeXP.isPresent()) {
 				mission.setBonusXP(Integer.parseInt(maybeXP.get().replace(",", "")));
