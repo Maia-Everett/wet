@@ -10,6 +10,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import javax.script.ScriptEngine;
@@ -19,6 +20,7 @@ import javax.script.ScriptException;
 public final class ParserContext {
 	private final Map<Integer, String> questCategories = new HashMap<>();
 	private final Map<Integer, String> missionThreats = new HashMap<>();
+	private final Map<Integer, String> legionMissionThreats = new HashMap<>();
 	
 	public static ParserContext load() throws IOException {
 		final String url = "http://wow.zamimg.com/js/locale_enus.js";
@@ -55,6 +57,16 @@ public final class ParserContext {
 		} catch (final ScriptException e) {
 			throw new RuntimeException(e);
 		}
+		
+		try (final Reader reader = new InputStreamReader(
+				getClass().getResourceAsStream("LegionMissionThreats.properties"), StandardCharsets.UTF_8)) {
+			final Properties p = new Properties();
+			p.load(reader);
+			
+			for (final String id: p.stringPropertyNames()) {
+				legionMissionThreats.put(Integer.parseInt(id), p.getProperty(id));
+			}
+		}
 	}
 	
 	public String getQuestCategory(final int categoryId) {
@@ -63,5 +75,9 @@ public final class ParserContext {
 	
 	public String getMissionThreat(final int threatId) {
 		return missionThreats.get(threatId);
+	}
+	
+	public String getLegionMissionThreat(final int threatId) {
+		return legionMissionThreats.get(threatId);
 	}
 }

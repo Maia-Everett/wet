@@ -78,6 +78,8 @@ final class MissionParser implements IParser<Mission> {
 	}
 
 	private void parseEncounters(final Mission mission, final Element mainContainer) {
+		final boolean useLegionThreats = mission instanceof ClassHallMission;
+		
 		for (final Element td : mainContainer.select("td.garrison-encounter-enemy")) {
 			if (td.hasClass("empty")) {
 				continue;
@@ -87,8 +89,15 @@ final class MissionParser implements IParser<Mission> {
 			final List<String> enemyCounters = new ArrayList<>();
 			
 			for (final Element mechanic : td.select("div.garrison-encounter-enemy-mechanic")) {
-				final int mechanicId = Integer.parseInt(mechanic.attr("data-mechanic"));
-				enemyCounters.add(context.getMissionThreat(mechanicId));
+				if (!useLegionThreats) {
+					final int mechanicId = Integer.parseInt(mechanic.attr("data-mechanic"));
+					enemyCounters.add(context.getMissionThreat(mechanicId));
+				} else {
+					final String abilityLink = mechanic.attr("data-href");
+					final int mechanicId = Integer.parseInt(
+							getRegexGroup(abilityLink, "/mission-ability=([0-9]+)", 1).get());
+					enemyCounters.add(context.getLegionMissionThreat(mechanicId));
+				}
 			}
 			
 			mission.getEnemies().add(new MissionEnemy(enemyName, enemyCounters));
