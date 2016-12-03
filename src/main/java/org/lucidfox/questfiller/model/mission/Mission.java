@@ -24,6 +24,7 @@ public abstract class Mission implements IDumpable {
 	private Integer groupSize;
 	private Integer cost;
 	private boolean rare;
+	private boolean exhausting;
 	private int followerXP;
 	private String description;
 	private List<MissionEnemy> enemies = new ArrayList<>();
@@ -55,6 +56,14 @@ public abstract class Mission implements IDumpable {
 
 	public void setRare(final boolean rare) {
 		this.rare = rare;
+	}
+	
+	public boolean isExhausting() {
+		return exhausting;
+	}
+	
+	public void setExhausting(final boolean exhausting) {
+		this.exhausting = exhausting;
 	}
 
 	public int getFollowerXP() {

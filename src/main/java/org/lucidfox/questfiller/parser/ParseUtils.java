@@ -20,7 +20,6 @@ import org.jsoup.select.Elements;
 import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
 import org.lucidfox.questfiller.model.core.ItemReward;
-import org.lucidfox.questfiller.model.quest.Quest;
 
 final class ParseUtils {
 	private ParseUtils() { }

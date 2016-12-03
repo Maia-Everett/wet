@@ -178,6 +178,11 @@ final class MissionParser implements IParser<Mission> {
 				continue;
 			}
 			
+			if (infoboxLine.startsWith("Exhausting")) {
+				mission.setExhausting(true);
+				continue;
+			}
+			
 			getRegexGroup(infoboxLine, "Level: ([0-9]+)", 1).ifPresent(levelStr -> {
 				mission.setLevel(Integer.parseInt(levelStr));
 			});
