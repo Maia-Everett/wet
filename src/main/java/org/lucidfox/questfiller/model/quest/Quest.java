@@ -39,7 +39,7 @@ public final class Quest implements IDumpable {
 	private List<String> buffRewards = new ArrayList<>();
 	private int money;
 	private boolean repeatable;
-	private Boolean shareable;
+	private boolean shareable;
 	private Set<String> previousQuests = new TreeSet<>();
 	private Set<String> nextQuests = new TreeSet<>();
 
@@ -224,7 +224,7 @@ public final class Quest implements IDumpable {
 		return shareable;
 	}
 
-	public void setShareable(final Boolean shareable) {
+	public void setShareable(final boolean shareable) {
 		this.shareable = shareable;
 	}
 
@@ -331,16 +331,6 @@ public final class Quest implements IDumpable {
 	
 	public String getExperienceStr() {
 		return NumberFormat.getNumberInstance(Locale.US).format(experience);
-	}
-	
-	public String getShareableStr() {
-		if (shareable == null) {
-			return null;
-		} else if (shareable) {
-			return "Yes";
-		} else {
-			return "No";
-		}
 	}
 	
 	public boolean hasGains() {
