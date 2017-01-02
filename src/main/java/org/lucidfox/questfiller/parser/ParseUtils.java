@@ -194,8 +194,10 @@ final class ParseUtils {
 			}
 		}
 		
+		Node node;
+		
 		// Parse all directly adjacent span nodes, possibly with whitespace in between
-		for (Node node = leftEl;
+		for (node = leftEl;
 				(node instanceof Element && ((Element) node).tagName().equals("span"))
 					|| (node instanceof TextNode && ((TextNode) node).text().trim().isEmpty());
 				node = node.nextSibling()) {
@@ -212,6 +214,12 @@ final class ParseUtils {
 			} else if (el.hasClass("moneycopper")) {
 				money += Integer.parseInt(el.ownText());
 			}
+		}
+		
+		// If the money group we just parsed is followed immediately by max level text, then it means that the only
+		// money group is the max-level money group, so we should skip it.
+		if (node instanceof TextNode && ((TextNode) node).text().trim().startsWith("if completed at level")) {
+			return 0;
 		}
 		
 		return money;
