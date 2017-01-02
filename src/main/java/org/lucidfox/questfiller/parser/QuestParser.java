@@ -56,6 +56,7 @@ final class QuestParser implements IParser<Quest> {
 		parseGains(quest, mainContainer);
 		parseInfobox(quest, html);
 		parseSeries(quest, mainContainer);
+		parseRemoved(quest, mainContainer);
 		return quest;
 	}
 
@@ -354,5 +355,14 @@ final class QuestParser implements IParser<Quest> {
 			final String[] nextQuests = textOf(questCells.get(ourQuestIndex + 1)).split("\n");
 			Stream.of(nextQuests).forEach(quest.getNextQuests()::add);
 		}
+	}
+	
+	private void parseRemoved(final Quest quest, final Element mainContainer) {
+		// Set a removed flag if there is an obsolete warning on the quest page
+		mainContainer.select("b[style=\"color: red\"]")
+			.stream()
+			.filter(el -> el.ownText().startsWith("This quest was marked obsolete"))
+			.findFirst()
+			.ifPresent(el -> quest.setRemoved(true));
 	}
 }

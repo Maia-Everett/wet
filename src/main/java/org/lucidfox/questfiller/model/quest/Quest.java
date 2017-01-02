@@ -49,6 +49,7 @@ public final class Quest implements IDumpable {
 	private String progress;
 	private String completion;
 	private String patchAdded;
+	private boolean removed;
 
 	public int getId() {
 		return id;
@@ -296,6 +297,14 @@ public final class Quest implements IDumpable {
 
 	public void setPatchAdded(final String patchAdded) {
 		this.patchAdded = patchAdded;
+	}
+	
+	public boolean isRemoved() {
+		return removed;
+	}
+	
+	public void setRemoved(final boolean removed) {
+		this.removed = removed;
 	}
 	
 	public boolean hasItemRewards() {
