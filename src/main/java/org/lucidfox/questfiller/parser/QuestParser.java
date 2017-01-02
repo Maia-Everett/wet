@@ -54,7 +54,7 @@ final class QuestParser implements IParser<Quest> {
 		parseRewards(quest, mainContainer);
 		parseGains(quest, mainContainer);
 		parseInfobox(quest, html);
-		parseSeries(quest, html);
+		parseSeries(quest, mainContainer);
 		return quest;
 	}
 
@@ -209,17 +209,13 @@ final class QuestParser implements IParser<Quest> {
 	private void parseGains(final Quest quest, final Element mainContainer) {
 		// Gains section
 		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
-		final Optional<Element> gains = headingsSize3.stream()
-				.filter(el -> el.text().equals("Gains")).findFirst();
+		final Optional<Element> gainsData = headingsSize3.stream()
+				.filter(el -> el.text().equals("Gains"))
+				.findFirst()
+				.flatMap(gains -> ParseUtils.findNextElementSibling(gains, el -> el.tagName().equals("ul")));
 		
-		if (gains.isPresent()) {
-			Node gainsData = gains.get().nextSibling();
-			
-			while (!(gainsData instanceof Element && ((Element) gainsData).tagName().equals("ul"))) {
-				gainsData = gainsData.nextSibling();
-			}
-			
-			Elements divs = ((Element) gainsData).getElementsByTag("div");
+		if (gainsData.isPresent()) {
+			Elements divs = ((Element) gainsData.get()).getElementsByTag("div");
 			int firstNonXPDiv;
 			
 			if (divs.first().ownText().contains("experience")) {
@@ -322,16 +318,19 @@ final class QuestParser implements IParser<Quest> {
 		}
 	}
 	
-	private void parseSeries(final Quest quest, final Document html) {
+	private void parseSeries(final Quest quest, final Element mainContainer) {
 		// Try to determine previous and next quests
-		final Element seriesTable = html.select("#sidebar table.series").first();
+		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
+		final Optional<Element> seriesTable = getFirstWithOwnText(headingsSize3, "Series")
+				.flatMap(seriesHeader -> ParseUtils.findNextElementSibling(
+						seriesHeader, el -> "table".equals(el.tagName()) && el.hasClass("series")));
 		
-		if (seriesTable == null) {
+		if (!seriesTable.isPresent()) {
 			return;
 		}
 		
 		// Find the table cell with the current quest, in bold
-		final Element ourQuestItem = seriesTable.getElementsByTag("b").first();
+		final Element ourQuestItem = seriesTable.get().getElementsByTag("b").first();
 		Element ourQuestCell = ourQuestItem.parent();
 		
 		while (!ourQuestCell.tagName().equals("td")) {
@@ -339,7 +338,7 @@ final class QuestParser implements IParser<Quest> {
 		}
 		
 		// Find where in the table it is
-		final Elements questCells = seriesTable.getElementsByTag("td");
+		final Elements questCells = seriesTable.get().getElementsByTag("td");
 		final int ourQuestIndex = questCells.indexOf(ourQuestCell);
 		
 		if (ourQuestIndex > 0) {

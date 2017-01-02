@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -214,5 +215,15 @@ final class ParseUtils {
 		}
 		
 		return money;
+	}
+	
+	static Optional<Element> findNextElementSibling(final Element startElement, final Predicate<Element> condition) {
+		for (Element el = startElement.nextElementSibling(); el != null; el = el.nextElementSibling()) {
+			if (condition.test(el)) {
+				return Optional.of(el);
+			}
+		}
+		
+		return Optional.empty();
 	}
 }
