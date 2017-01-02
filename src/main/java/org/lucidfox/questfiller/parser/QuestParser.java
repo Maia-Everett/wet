@@ -23,6 +23,7 @@ import org.lucidfox.questfiller.model.core.Faction;
 import org.lucidfox.questfiller.model.core.ItemReward;
 import org.lucidfox.questfiller.model.core.Race;
 import org.lucidfox.questfiller.model.quest.Quest;
+import org.lucidfox.questfiller.model.quest.ReputationGain;
 
 final class QuestParser implements IParser<Quest> {
 	// Quest categories for which most quests scale with level
@@ -232,7 +233,10 @@ final class QuestParser implements IParser<Quest> {
 				if (div.ownText().contains("reputation with")) {
 					final String repValue = div.getElementsByTag("span").first().ownText();
 					final String faction = div.getElementsByTag("a").first().ownText();
-					quest.getReputationGains().put(faction, Integer.parseInt(repValue.replace(",", "")));
+					final String canonicalName = Substitutions.getCanonicalReputationFaction(faction);
+					quest.getReputationGains().add(new ReputationGain(faction,
+							canonicalName.equals(faction) ? null : canonicalName,
+							Integer.parseInt(repValue.replace(",", ""))));
 				} else {
 					// Non-reputation gain
 					quest.getOtherGains().add(div.text());
@@ -300,7 +304,7 @@ final class QuestParser implements IParser<Quest> {
 			});
 			
 			getRegexGroup(infoboxLine, "Added in patch ([0-9]+.[0-9]+.[0-9]+)", 1).ifPresent(patch -> {
-				quest.setPatchAdded(PatchVersions.getCanonicalVersion(patch));
+				quest.setPatchAdded(Substitutions.getCanonicalPatchVersion(patch));
 			});
 			
 			if ("Repeatable".equals(infoboxLine)) {

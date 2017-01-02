@@ -2,10 +2,8 @@ package org.lucidfox.questfiller.model.quest;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -30,7 +28,7 @@ public final class Quest implements IDumpable {
 	private Integer groupSize;
 	private String startEntity;
 	private String finishEntity;
-	private Map<String, Integer> reputationGains = new LinkedHashMap<>();
+	private List<ReputationGain> reputationGains = new ArrayList<>();
 	private int experience;
 	private List<String> otherGains = new ArrayList<>();
 	private List<ItemReward> choiceRewards = new ArrayList<>();
@@ -148,11 +146,11 @@ public final class Quest implements IDumpable {
 		this.finishEntity = finishEntity;
 	}
 
-	public Map<String, Integer> getReputationGains() {
+	public List<ReputationGain> getReputationGains() {
 		return reputationGains;
 	}
 
-	public void setReputationGains(final Map<String, Integer> reputationGains) {
+	public void setReputationGains(final List<ReputationGain> reputationGains) {
 		this.reputationGains = reputationGains;
 	}
 

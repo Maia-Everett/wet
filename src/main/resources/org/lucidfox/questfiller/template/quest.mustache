@@ -36,7 +36,7 @@
  | end = Automatic
 <</q.finishEntity>>
 <<^q.reputationGains.isEmpty>>
- | reputation = <<#q.reputationGains.entrySet>>+<<value>> [[<<key>>]]<<^-last>><br /><</-last>><</q.reputationGains.entrySet>>
+ | reputation = <<#q.reputationGains>><<this>><<^-last>><br /><</-last>><</q.reputationGains>>
 <</q.reputationGains.isEmpty>>
 <<#q.hasExperience>>
  | experience = <<q.experienceStr>>
@@ -137,9 +137,9 @@ You will <<#q.hasNonMoneyRewards>>also <</q.hasNonMoneyRewards>>receive: {{cost|
 <<#q.hasExperience>>
 * <<q.experienceStr>> [[XP]]
 <</q.hasExperience>>
-<<#q.reputationGains.entrySet>>
-* <<value>> reputation with [[<<key>>]]
-<</q.reputationGains.entrySet>>
+<<#q.reputationGains>>
+* <<fullText>>
+<</q.reputationGains>>
 <</q.hasGains>>
 <<#q.otherGains>>
 * <<this>>
