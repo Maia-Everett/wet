@@ -185,7 +185,8 @@ final class QuestParser implements IParser<Quest> {
 					collectNonItemRewards(icontab, quest.getAbilityRewards());
 				} else if (prevText.contains("The following spell will be cast on you:")) {
 					collectNonItemRewards(icontab, quest.getBuffRewards());
-				} else if (prevText.trim().isEmpty() && isMoneyRewardSpan(icontab.previousElementSibling())) {
+				} else if ((prevText.trim().isEmpty() || prevText.contains("if completed at level"))
+						&& isMoneyRewardSpan(icontab.previousElementSibling())) {
 					// This is probably an item tucked at the end after money rewards
 					collectItemRewards(icontab, quest.getNonChoiceRewards());
 				}
