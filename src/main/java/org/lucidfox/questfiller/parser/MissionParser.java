@@ -89,15 +89,21 @@ final class MissionParser implements IParser<Mission> {
 			final List<String> enemyCounters = new ArrayList<>();
 			
 			for (final Element mechanic : td.select("div.garrison-encounter-enemy-mechanic")) {
-				if (!useLegionThreats) {
-					final int mechanicId = Integer.parseInt(mechanic.attr("data-mechanic"));
-					enemyCounters.add(context.getMissionThreat(mechanicId));
-				} else {
+				if (useLegionThreats) {
+					// Try to parse Legion mission counter, if available
 					final String abilityLink = mechanic.attr("data-href");
-					final int mechanicId = Integer.parseInt(
-							getRegexGroup(abilityLink, "/mission-ability=([0-9]+)", 1).get());
-					enemyCounters.add(context.getLegionMissionThreat(mechanicId));
+					final Optional<String> abilityStr = getRegexGroup(abilityLink, "/mission-ability=([0-9]+)", 1);
+					
+					if (abilityStr.isPresent()) {
+						final int mechanicId = Integer.parseInt(abilityStr.get());
+						enemyCounters.add(context.getLegionMissionThreat(mechanicId));
+						continue;
+					}
 				}
+				
+				// Fallback
+				final int mechanicId = Integer.parseInt(mechanic.attr("data-mechanic"));
+				enemyCounters.add(context.getMissionThreat(mechanicId));
 			}
 			
 			mission.getEnemies().add(new MissionEnemy(enemyName, enemyCounters));
