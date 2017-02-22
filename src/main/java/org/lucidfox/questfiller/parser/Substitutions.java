@@ -13,7 +13,7 @@ final class Substitutions {
 	private static final Properties REPUTATION_SUBSTITUTIONS = readResource("ReputationSubstitutions.properties");
 	
 	private static Properties readResource(final String resourceName) {
-		try (final Reader reader = new InputStreamReader(Substitutions.class.getResourceAsStream(resourceName),
+		try (Reader reader = new InputStreamReader(Substitutions.class.getResourceAsStream(resourceName),
 				StandardCharsets.UTF_8)) {
 			final Properties props = new Properties();
 			props.load(reader);

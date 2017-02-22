@@ -37,7 +37,7 @@ public final class ArticleFormatter {
 	private Template createTemplate(final ParserType parserType) {
 		final String templateFile = String.format("%s/%s.mustache", TEMPLATE_PACKAGE, parserType.name().toLowerCase());
 		
-		try (final Reader reader = new InputStreamReader(
+		try (Reader reader = new InputStreamReader(
 				ArticleFormatter.class.getResourceAsStream(templateFile), StandardCharsets.UTF_8)) {
 			return TEMPLATE_COMPILER.compile(reader);
 		} catch (final IOException e) {

@@ -25,7 +25,7 @@ public final class ParserContext {
 	public static ParserContext load() throws IOException {
 		final String url = "http://wow.zamimg.com/js/locale_enus.js";
 		
-		try (final Reader reader = new InputStreamReader(new URL(url).openStream(), StandardCharsets.UTF_8)) {
+		try (Reader reader = new InputStreamReader(new URL(url).openStream(), StandardCharsets.UTF_8)) {
 			return new ParserContext(reader);
 		}
 	}
@@ -50,7 +50,7 @@ public final class ParserContext {
 			js.eval(missionThreatsScript);
 			js.put("missionThreats", missionThreats);
 			
-			try (final Reader reader = new InputStreamReader(
+			try (Reader reader = new InputStreamReader(
 					getClass().getResourceAsStream("LocaleCategories.js"), StandardCharsets.UTF_8)) {
 				js.eval(reader);
 			}
@@ -58,7 +58,7 @@ public final class ParserContext {
 			throw new RuntimeException(e);
 		}
 		
-		try (final Reader reader = new InputStreamReader(
+		try (Reader reader = new InputStreamReader(
 				getClass().getResourceAsStream("LegionMissionThreats.properties"), StandardCharsets.UTF_8)) {
 			final Properties p = new Properties();
 			p.load(reader);
