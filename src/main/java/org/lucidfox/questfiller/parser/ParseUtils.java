@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -127,6 +128,8 @@ final class ParseUtils {
 	}
 	
 	static void collectItemRewards(final Element icontab, final Consumer<ItemReward> collector) {
+		Objects.requireNonNull(icontab);
+		
 		final Map<String, String> itemNamesByIconId = new LinkedHashMap<>();
 		final Map<String, Integer> itemQuantitiesByIconId = new LinkedHashMap<>();
 		
@@ -139,26 +142,26 @@ final class ParseUtils {
 		}
 		
 		// Item quantities are filled through JavaScript.
-		// Find the first script element immediately after this icontab
-		Element nextScript;
-		for (nextScript = icontab.nextElementSibling(); !nextScript.tagName().equals("script");
-				nextScript = nextScript.nextElementSibling()) { }
+		// Find all script elements in the document containing icontab initialization code
+		final List<Element> itemScripts = icontab.ownerDocument().select("script:containsData(icontab)");
 		
-		// Parse JavaScript lines like
-		// $WH.ge('icontab-icon1').appendChild(g_items.createIcon(115793, 1, "3"));
-		// We're interested in what's inside ge() - the icon box ID -
-		// and the contents of the last quotes (item quantity)
-		final Pattern iconInitRegex = Pattern.compile(
-				Pattern.quote("$WH.ge('")
-				+ "([^']+)"
-				+ Pattern.quote("').appendChild(") + "[A-Za-z0-9_]+" + Pattern.quote(".createIcon(")
-				+ "[^\"]+\"([^\"]+)\""
-				+ Pattern.quote("));"));
-		final Matcher matcher = iconInitRegex.matcher(nextScript.data());
-		
-		while (matcher.find()) {
-			// group 1 is icon box element ID, group 2 is item quantity (or 0 if no quantity should be displayed)
-			itemQuantitiesByIconId.put(matcher.group(1), Integer.parseInt(matcher.group(2)));
+		for (final Element script : itemScripts) {
+			// Parse JavaScript lines like
+			// $WH.ge('icontab-icon1').appendChild(g_items.createIcon(115793, 1, "3"));
+			// We're interested in what's inside ge() - the icon box ID -
+			// and the contents of the last quotes (item quantity)
+			final Pattern iconInitRegex = Pattern.compile(
+					Pattern.quote("$WH.ge('")
+					+ "([^']+)"
+					+ Pattern.quote("').appendChild(") + "[A-Za-z0-9_]+" + Pattern.quote(".createIcon(")
+					+ "[^\"]+\"([^\"]+)\""
+					+ Pattern.quote("));"));
+			final Matcher matcher = iconInitRegex.matcher(script.data());
+			
+			while (matcher.find()) {
+				// group 1 is icon box element ID, group 2 is item quantity (or 0 if no quantity should be displayed)
+				itemQuantitiesByIconId.put(matcher.group(1), Integer.parseInt(matcher.group(2)));
+			}
 		}
 		
 		itemNamesByIconId.forEach((iconId, itemName) -> {
