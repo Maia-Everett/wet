@@ -106,7 +106,7 @@
 <<^q.choiceRewards.isEmpty>>
 {{itembox|You will be able to choose one of these rewards:
 <<#q.choiceRewards>>
-|q<<-index>>=<<quantity>>|<<name>>
+<<#quantity>>|q<<index>>=<<quantity>><</quantity>>|<<name>>
 <</q.choiceRewards>>
 }}
 
@@ -114,7 +114,7 @@
 <<^q.nonChoiceRewards.isEmpty>>
 {{itembox|You will <<^q.choiceRewards.isEmpty>>also <</q.choiceRewards.isEmpty>>receive:
 <<#q.nonChoiceRewards>>
-|q<<-index>>=<<quantity>>|<<name>>
+<<#quantity>>|q<<index>>=<<quantity>><</quantity>>|<<name>>
 <</q.nonChoiceRewards>>
 }}
 

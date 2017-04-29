@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,7 +21,6 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
-import org.lucidfox.questfiller.model.core.ItemReward;
 
 final class ParseUtils {
 	private ParseUtils() { }
@@ -127,7 +126,7 @@ final class ParseUtils {
 		return sb.toString();
 	}
 	
-	static void collectItemRewards(final Element icontab, final Consumer<ItemReward> collector) {
+	static void collectItemRewards(final Element icontab, final BiConsumer<String, Integer> collector) {
 		Objects.requireNonNull(icontab);
 		
 		final Map<String, String> itemNamesByIconId = new LinkedHashMap<>();
@@ -172,7 +171,7 @@ final class ParseUtils {
 				itemQuantity = null;
 			}
 			
-			collector.accept(new ItemReward(itemName, itemQuantity));
+			collector.accept(itemName, itemQuantity);
 		});
 	}
 	

@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.lucidfox.questfiller.model.core.CharacterClass;
+import org.lucidfox.questfiller.model.core.ItemReward;
 import org.lucidfox.questfiller.model.mission.ClassHallMission;
 import org.lucidfox.questfiller.model.mission.GarrisonMission;
 import org.lucidfox.questfiller.model.mission.Mission;
@@ -122,7 +123,7 @@ final class MissionParser implements IParser<Mission> {
 			} while (!icontab.tagName().equals("table") || !icontab.hasClass("icontab"));
 			
 			// Mission cost is the quantity of the only item in the icontab
-			ParseUtils.collectItemRewards(icontab, reward -> mission.setCost(reward.getQuantity()));
+			ParseUtils.collectItemRewards(icontab, (item, quantity) -> mission.setCost(quantity));
 		});
 	}
 
@@ -145,11 +146,11 @@ final class MissionParser implements IParser<Mission> {
 	}
 	
 	private void parseItemRewards(final Mission mission, final Element icontab) {
-		ParseUtils.collectItemRewards(icontab, reward -> {
-			if (reward.getName().equals(mission.getResourceName())) {
-				mission.setBonusResources(reward.getQuantity());
+		ParseUtils.collectItemRewards(icontab, (item, quantity) -> {
+			if (item.equals(mission.getResourceName())) {
+				mission.setBonusResources(quantity);
 			} else {
-				mission.getBonusItems().add(reward);
+				mission.getBonusItems().add(new ItemReward(item, quantity, mission.getBonusItems().size() + 1));
 			}
 		});
 	}

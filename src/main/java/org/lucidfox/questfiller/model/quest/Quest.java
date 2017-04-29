@@ -316,8 +316,9 @@ public final class Quest implements IDumpable {
 		final List<ItemReward> result = new ArrayList<>();
 		result.addAll(nonChoiceRewards);
 		// These are not actually item rewards, but the formatter will behave as if they're items with unknown quantity
-		Stream.concat(abilityRewards.stream(), buffRewards.stream()).forEach(
-				reward -> result.add(new ItemReward(reward, null)));
+		Stream.concat(abilityRewards.stream(), buffRewards.stream()).forEach(reward -> {
+			result.add(new ItemReward(reward, null, result.size() + 1));
+		});
 		return result;
 	}
 	

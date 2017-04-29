@@ -196,7 +196,9 @@ final class QuestParser implements IParser<Quest> {
 	
 	// Convenience collection adapter around ParseUtils.collectItemRewards, which expects a Consumer
 	private void collectItemRewards(final Element icontab, final Collection<ItemReward> collector) {
-		ParseUtils.collectItemRewards(icontab, collector::add);
+		ParseUtils.collectItemRewards(icontab, (item, quantity) -> {
+			collector.add(new ItemReward(item, quantity, collector.size() + 1));
+		});
 	}
 	
 	private void collectNonItemRewards(final Element icontab, final Collection<String> collector) {
