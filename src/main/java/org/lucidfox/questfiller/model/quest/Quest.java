@@ -4,6 +4,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -362,6 +363,10 @@ public final class Quest implements IDumpable {
 	
 	public boolean isNeutral() {
 		return faction == Faction.NEUTRAL;
+	}
+	
+	public boolean isStartAndFinishEqual() {
+		return Objects.equals(startEntity, finishEntity);
 	}
 	
 	@Override

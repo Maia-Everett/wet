@@ -38,7 +38,9 @@
  | start = Automatic
 <</q.startEntity>>
 <<#q.finishEntity>>
+<<^q.isStartAndFinishEqual>>
  | end = [[<<q.finishEntity>>]]
+<</q.isStartAndFinishEqual>>
 <</q.finishEntity>>
 <<^q.finishEntity>>
  | end = Automatic
