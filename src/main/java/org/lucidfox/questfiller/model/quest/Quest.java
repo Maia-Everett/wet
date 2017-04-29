@@ -322,6 +322,10 @@ public final class Quest implements IDumpable {
 		return result;
 	}
 	
+	public boolean hasChoiceAbilityOrBuffRewards() {
+		return !choiceRewards.isEmpty() || !abilityRewards.isEmpty() || !buffRewards.isEmpty();
+	}
+	
 	public boolean hasNonMoneyRewards() {
 		return hasItemRewards() || !abilityRewards.isEmpty() || !buffRewards.isEmpty();
 	}

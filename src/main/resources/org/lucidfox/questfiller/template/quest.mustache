@@ -111,14 +111,6 @@
 }}
 
 <</q.choiceRewards.isEmpty>>
-<<^q.nonChoiceRewards.isEmpty>>
-{{itembox|You will <<^q.choiceRewards.isEmpty>>also <</q.choiceRewards.isEmpty>>receive:
-<<#q.nonChoiceRewards>>
-<<#quantity>>|q<<index>>=<<quantity>><</quantity>>|<<name>>
-<</q.nonChoiceRewards>>
-}}
-
-<</q.nonChoiceRewards.isEmpty>>
 <<#q.abilityRewards>>
 You will <<#q.hasItemRewards>>also <</q.hasItemRewards>>learn: [[<<this>>]]
 
@@ -128,9 +120,17 @@ The following spell will be cast on you: [[<<this>>]]
 
 <</q.buffRewards>>
 <<#q.hasMoney>>
-You will <<#q.hasNonMoneyRewards>>also <</q.hasNonMoneyRewards>>receive: {{cost|<<q.gold>>|<<q.silver>>|<<q.copper>>}}
+You will <<#q.hasChoiceAbilityOrBuffRewards>>also <</q.hasChoiceAbilityOrBuffRewards>>receive: {{cost|<<q.gold>>|<<q.silver>>|<<q.copper>>}}
 
 <</q.hasMoney>>
+<<^q.nonChoiceRewards.isEmpty>>
+{{itembox|<<^q.hasMoney>>You will <<#q.hasChoiceAbilityOrBuffRewards>>also <</q.hasChoiceAbilityOrBuffRewards>>receive:<</q.hasMoney>>
+<<#q.nonChoiceRewards>>
+<<#quantity>>|q<<index>>=<<quantity>><</quantity>>|<<name>>
+<</q.nonChoiceRewards>>
+}}
+
+<</q.nonChoiceRewards.isEmpty>>
 <</q.hasRewards>>
 <<#q.progress>>
 ==Progress==
