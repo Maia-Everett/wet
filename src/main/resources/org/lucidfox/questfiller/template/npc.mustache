@@ -1,0 +1,82 @@
+{{=<< >>=}}
+{{Stub/NPC}}
+<<#n.location>>
+{{screenshot||<<n.location>>}}
+<</n.location>>
+{{NPCbox
+ | name = <<n.name>>
+ | image = Noimage.jpg <!-- Replace no image placeholder with picture file path -->
+<<#n.title>>
+ | title = <<n.title>>
+<</n.title>>
+ | level = <<n.levelLow>><<#n.levelHigh>>-<<n.levelHigh>><</n.levelHigh>> <<n.levelClassification>>
+<<#n.health>>
+ | health = <<n.health>>
+<</n.health>>
+<<#n.mana>>
+ | mana = <<n.mana>>
+<</n.mana>>
+ | faction = <<n.faction>>
+ | aggro = {{Aggro|<<n.allianceReaction>>|<<n.hordeReaction>>}}
+ | race = 
+ | creature = <<n.creatureType>>
+<<#n.repFaction>>
+ | repfaction = <<n.repFaction>>
+<</n.repFaction>>
+ | location = <<#n.location>>[[<<n.location>>]]<</n.location>>
+<<#n.petFamily>>
+ | pet = <<n.petFamily>>
+<</n.petFamily>>
+}}
+<<^n.itemsSold.isEmpty>>
+
+==Sells==
+{{Itembox
+<<#n.itemsSold>>
+|<<name>>|c<<-index>>={{Cost|<<gold>>|<<silver>>|<<copper>>}}
+<</n.itemsSold>>
+}}
+<</n.itemsSold.isEmpty>>
+<<^n.quests.isEmpty>>
+
+==Quests==
+<<#n.quests>>
+* <<name>> <<#isStarts>><<#isFinishes>>{{queststartfinish}}<</isFinishes>><<^isFinishes>>{{queststart}}<</isFinishes>><</isStarts>><<^isStarts>><<#isFinishes>>{{questfinish}}<</isFinishes>><</isStarts>>
+<</n.quests>>
+<</n.quests.isEmpty>>
+<<^n.quotes.isEmpty>>
+
+==Quotes==
+<<#n.quotes>>
+* <<this>>
+<</n.quotes>>
+<</n.quotes.isEmpty>>
+<<#n.patchAdded>>
+
+==Patch changes==
+* {{Patch <<n.patchAdded>>|note=Added.}}
+<</n.patchAdded>>
+
+==External links==
+{{subst:el}}
+{{Elinks-NPC|<<n.id>>}}
+
+<<#n.location>>
+[[Category:<<n.location>> NPCs]]
+<</n.location>>
+<<#n.isQuestGiver>>
+[[Category:Quest givers]]
+<</n.isQuestGiver>>
+<<#n.isQuestEnder>>
+[[Category:Quest enders]]
+<</n.isQuestEnder>>
+<<^n.itemsSold.isEmpty>>
+[[Category:Vendors]]
+<</n.itemsSold.isEmpty>>
+<<^n.location>>
+<<#n.quests.isEmpty>>
+<<#n.itemsSold.isEmpty>>
+[[Category:World of Warcraft NPCs]]
+<</n.itemsSold.isEmpty>>
+<</n.quests.isEmpty>>
+<</n.location>>

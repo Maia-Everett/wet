@@ -4,19 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lucidfox.questfiller.model.core.Faction;
+import org.lucidfox.questfiller.model.core.IDumpable;
 
-public final class NPC {
+public final class NPC implements IDumpable {
 	// Infobox
+	private int id;
 	private String name;
 	private String title;
 	private String gender;
-	private int level;
+	private Integer levelLow;
+	private Integer levelHigh;
 	private String levelClassification;
-	private long health;
-	private long mana;
-	private Faction faction;
+	private Long health;
+	private Long mana;
+	private String repFaction;
 	private CreatureType creatureType;
 	private Reaction allianceReaction;
+	private Reaction hordeReaction;
 	private String petFamily;
 	private String patchAdded;
 
@@ -24,8 +28,17 @@ public final class NPC {
 	private String location;
 	private List<NPCQuest> quests = new ArrayList<>();
 	private List<String> quotes = new ArrayList<>();
+	private List<SoldItem> itemsSold = new ArrayList<>();
 	
 	// Methods
+	
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;
@@ -50,15 +63,23 @@ public final class NPC {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
-
-	public int getLevel() {
-		return level;
+	
+	public Integer getLevelLow() {
+		return levelLow;
 	}
-
-	public void setLevel(int level) {
-		this.level = level;
+	
+	public void setLevelLow(Integer levelLow) {
+		this.levelLow = levelLow;
 	}
-
+	
+	public Integer getLevelHigh() {
+		return levelHigh;
+	}
+	
+	public void setLevelHigh(Integer levelHigh) {
+		this.levelHigh = levelHigh;
+	}
+	
 	public String getLevelClassification() {
 		return levelClassification;
 	}
@@ -67,28 +88,28 @@ public final class NPC {
 		this.levelClassification = levelClassification;
 	}
 
-	public long getHealth() {
+	public Long getHealth() {
 		return health;
 	}
 
-	public void setHealth(long health) {
+	public void setHealth(Long health) {
 		this.health = health;
 	}
 
-	public long getMana() {
+	public Long getMana() {
 		return mana;
 	}
 
-	public void setMana(long mana) {
+	public void setMana(Long mana) {
 		this.mana = mana;
 	}
 
-	public Faction getFaction() {
-		return faction;
+	public String getRepFaction() {
+		return repFaction;
 	}
 
-	public void setFaction(Faction faction) {
-		this.faction = faction;
+	public void setRepFaction(String faction) {
+		this.repFaction = faction;
 	}
 
 	public CreatureType getCreatureType() {
@@ -105,6 +126,14 @@ public final class NPC {
 
 	public void setAllianceReaction(Reaction allianceReaction) {
 		this.allianceReaction = allianceReaction;
+	}
+	
+	public Reaction getHordeReaction() {
+		return hordeReaction;
+	}
+	
+	public void setHordeReaction(Reaction hordeReaction) {
+		this.hordeReaction = hordeReaction;
 	}
 
 	public String getPetFamily() {
@@ -145,5 +174,39 @@ public final class NPC {
 
 	public void setQuotes(List<String> quotes) {
 		this.quotes = quotes;
+	}
+	
+	public List<SoldItem> getItemsSold() {
+		return itemsSold;
+	}
+	
+	public void setItemsSold(List<SoldItem> itemsSold) {
+		this.itemsSold = itemsSold;
+	}
+	
+	public boolean isQuestGiver() {
+		return quests.stream().anyMatch(NPCQuest::isStarts);
+	}
+	
+	public boolean isQuestEnder() {
+		return quests.stream().anyMatch(NPCQuest::isFinishes);
+	}
+	
+	public Faction getFaction() {
+		if (allianceReaction == null && hordeReaction == null) {
+			return null;
+		} else if (allianceReaction == Reaction.FRIENDLY && hordeReaction != Reaction.FRIENDLY) {
+			return Faction.ALLIANCE;
+		} else if (allianceReaction != Reaction.FRIENDLY && hordeReaction == Reaction.FRIENDLY) {
+			return Faction.HORDE;
+		} else if (allianceReaction != Reaction.HOSTILE && hordeReaction != Reaction.HOSTILE) {
+			return Faction.ALLIANCE;
+		} else if (allianceReaction == Reaction.HOSTILE && hordeReaction != Reaction.HOSTILE) {
+			return Faction.HORDE;
+		} else if (allianceReaction == Reaction.HOSTILE && hordeReaction == Reaction.HOSTILE) {
+			return Faction.COMBAT;
+		} else {
+			return Faction.NEUTRAL;
+		}
 	}
 }

@@ -3,7 +3,8 @@ package org.lucidfox.questfiller.model.core;
 public enum Faction {
 	ALLIANCE("A", "Alliance"),
 	HORDE("H", "Horde"),
-	NEUTRAL("N", "Neutral");
+	NEUTRAL("N", "Neutral"),
+	COMBAT("C", "Combat");
 	
 	private final String id;
 	private final String name;
