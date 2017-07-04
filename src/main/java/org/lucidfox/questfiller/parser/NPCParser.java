@@ -2,8 +2,13 @@ package org.lucidfox.questfiller.parser;
 
 import static org.lucidfox.questfiller.parser.ParseUtils.getRegexGroup;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -13,6 +18,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.lucidfox.questfiller.model.npc.CreatureType;
 import org.lucidfox.questfiller.model.npc.NPC;
+import org.lucidfox.questfiller.model.npc.NPCQuest;
 import org.lucidfox.questfiller.model.npc.Reaction;
 
 final class NPCParser implements IParser<NPC> {
@@ -41,6 +47,7 @@ final class NPCParser implements IParser<NPC> {
 		
 		parseCreatureType(npc, html);
 		parseLocation(npc, mainContainer);
+		parseLists(npc, html);
 		parseQuotes(npc, mainContainer);
 		parseHealth(npc, html);
 		parseInfobox(npc, html);
@@ -59,6 +66,62 @@ final class NPCParser implements IParser<NPC> {
 		
 		if (!locationLinks.isEmpty()) {
 			npc.setLocation(locationLinks.first().text());
+		}
+	}
+	
+	private void parseLists(final NPC npc, final Document html) {
+		final Optional<String> listViewScript = html.getElementsByTag("script")
+				.stream()
+				.map(Element::data)
+				.filter(data -> data.contains("new Listview"))
+				.findFirst();
+		
+		listViewScript.ifPresent(script -> {
+			// Parse quests
+			
+			final Set<String> startsQuests = new HashSet<>();
+			
+			getRegexGroup(script, "new Listview\\(\\{template: 'quest', id: 'starts', (.*)\\);", 1).ifPresent(s -> {
+				addQuests(startsQuests, s);
+			});
+			
+			final Set<String> finishesQuests = new HashSet<>();
+			
+			getRegexGroup(script, "new Listview\\(\\{template: 'quest', id: 'ends', (.*)\\);", 1).ifPresent(s -> {
+				addQuests(finishesQuests, s);
+			});
+			
+			// Split all quests into three groups: starts, finishes, both 
+			final Set<String> startsAndFinishesQuests = new HashSet<>(startsQuests);
+			startsAndFinishesQuests.retainAll(finishesQuests);
+			startsQuests.removeAll(startsAndFinishesQuests);
+			finishesQuests.removeAll(startsAndFinishesQuests);
+			
+			final List<NPCQuest> quests = new ArrayList<>();
+			
+			for (final String quest : startsAndFinishesQuests) {
+				quests.add(new NPCQuest(quest, true, true));
+			}
+			
+			for (final String quest : startsQuests) {
+				quests.add(new NPCQuest(quest, true, false));
+			}
+			
+			for (final String quest : finishesQuests) {
+				quests.add(new NPCQuest(quest, false, true));
+			}
+			
+			Collections.sort(quests);
+			npc.setQuests(quests);
+		});
+	}
+	
+	private void addQuests(final Collection<String> quests, final String jsPart) {
+		// Extract the name field from every quest in the list
+		final Matcher matcher = Pattern.compile("\"name\":\"([^\"]+)\"").matcher(jsPart);
+		
+		while (matcher.find()) {
+			quests.add(matcher.group(1));
 		}
 	}
 	
