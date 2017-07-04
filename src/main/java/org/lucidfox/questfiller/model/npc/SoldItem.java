@@ -1,6 +1,6 @@
 package org.lucidfox.questfiller.model.npc;
 
-public final class SoldItem {
+public final class SoldItem implements Comparable<SoldItem> {
 	private final String name;
 	private final int price;
 
@@ -31,5 +31,10 @@ public final class SoldItem {
 	
 	public Integer getCopper() {
 		return getNonzeroOrNull(price % 100); 
+	}
+
+	@Override
+	public int compareTo(SoldItem o) {
+		return name.compareTo(o.name);
 	}
 }

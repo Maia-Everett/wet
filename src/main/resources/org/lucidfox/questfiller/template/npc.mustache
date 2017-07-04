@@ -27,13 +27,25 @@
 <</n.petFamily>>
 }}
 <<^n.itemsSold.isEmpty>>
+'''<<n.name>>''' is a [[RACENAME]] located in [[<<n.location>>]].
 
 ==Sells==
+<<#n.isUseItembox>>
 {{Itembox
 <<#n.itemsSold>>
 |<<name>>|c<<-index>>={{Cost|<<gold>>|<<silver>>|<<copper>>}}
 <</n.itemsSold>>
 }}
+<</n.isUseItembox>>
+<<^n.isUseItembox>>
+{| class="darktable sortable zebra"
+! Item !! Cost
+<<#n.itemsSold>>
+|-
+| [[<<name>>]] || {{Cost|<<gold>>|<<silver>>|<<copper>>}}
+<</n.itemsSold>>
+|}
+<</n.isUseItembox>>
 <</n.itemsSold.isEmpty>>
 <<^n.quests.isEmpty>>
 

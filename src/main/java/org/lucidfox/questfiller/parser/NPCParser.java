@@ -20,6 +20,7 @@ import org.lucidfox.questfiller.model.npc.CreatureType;
 import org.lucidfox.questfiller.model.npc.NPC;
 import org.lucidfox.questfiller.model.npc.NPCQuest;
 import org.lucidfox.questfiller.model.npc.Reaction;
+import org.lucidfox.questfiller.model.npc.SoldItem;
 
 final class NPCParser implements IParser<NPC> {
 	// private final ParserContext context;
@@ -113,6 +114,20 @@ final class NPCParser implements IParser<NPC> {
 			
 			Collections.sort(quests);
 			npc.setQuests(quests);
+			
+			// Parse items
+			getRegexGroup(script, "new Listview\\(\\{template: 'item', id: 'sells', (.*)\\);", 1).ifPresent(s -> {
+				final List<SoldItem> soldItems = new ArrayList<>();
+				final Pattern pattern = Pattern.compile("\"name\":\"[0-9]([^\"]+)\",[^\\}]+,cost:\\[([0-9]+),");
+				final Matcher matcher = pattern.matcher(s);
+				
+				while (matcher.find()) {
+					soldItems.add(new SoldItem(matcher.group(1), Integer.parseInt(matcher.group(2))));
+				}
+				
+				Collections.sort(soldItems);
+				npc.setItemsSold(soldItems);
+			});
 		});
 	}
 	

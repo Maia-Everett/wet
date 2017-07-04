@@ -9,6 +9,8 @@ import org.lucidfox.questfiller.model.core.Faction;
 import org.lucidfox.questfiller.model.core.IDumpable;
 
 public final class NPC implements IDumpable {
+	private static final int MAX_ITEMBOX_ITEMS = 30;
+	
 	// Infobox
 	private int id;
 	private String name;
@@ -204,5 +206,8 @@ public final class NPC implements IDumpable {
 	public String getHealthStr() {
 		return NumberFormat.getNumberInstance(Locale.US).format(health);
 	}
-	
+
+	public boolean isUseItembox() {
+		return itemsSold.size() <= MAX_ITEMBOX_ITEMS;
+	}
 }
