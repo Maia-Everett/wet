@@ -12,11 +12,10 @@ public final class NPC implements IDumpable {
 	private String name;
 	private String title;
 	private String gender;
-	private Integer levelLow;
-	private Integer levelHigh;
+	private String levelLow;
+	private String levelHigh;
 	private String levelClassification;
 	private Long health;
-	private Long mana;
 	private String repFaction;
 	private CreatureType creatureType;
 	private Reaction allianceReaction;
@@ -64,19 +63,19 @@ public final class NPC implements IDumpable {
 		this.gender = gender;
 	}
 	
-	public Integer getLevelLow() {
+	public String getLevelLow() {
 		return levelLow;
 	}
 	
-	public void setLevelLow(Integer levelLow) {
+	public void setLevelLow(String levelLow) {
 		this.levelLow = levelLow;
 	}
 	
-	public Integer getLevelHigh() {
+	public String getLevelHigh() {
 		return levelHigh;
 	}
 	
-	public void setLevelHigh(Integer levelHigh) {
+	public void setLevelHigh(String levelHigh) {
 		this.levelHigh = levelHigh;
 	}
 	
@@ -94,14 +93,6 @@ public final class NPC implements IDumpable {
 
 	public void setHealth(Long health) {
 		this.health = health;
-	}
-
-	public Long getMana() {
-		return mana;
-	}
-
-	public void setMana(Long mana) {
-		this.mana = mana;
 	}
 
 	public String getRepFaction() {
@@ -199,11 +190,9 @@ public final class NPC implements IDumpable {
 			return Faction.ALLIANCE;
 		} else if (allianceReaction != Reaction.FRIENDLY && hordeReaction == Reaction.FRIENDLY) {
 			return Faction.HORDE;
-		} else if (allianceReaction != Reaction.HOSTILE && hordeReaction != Reaction.HOSTILE) {
-			return Faction.ALLIANCE;
-		} else if (allianceReaction == Reaction.HOSTILE && hordeReaction != Reaction.HOSTILE) {
-			return Faction.HORDE;
 		} else if (allianceReaction == Reaction.HOSTILE && hordeReaction == Reaction.HOSTILE) {
+			return Faction.COMBAT;
+		} else if (allianceReaction == Reaction.NEUTRAL && hordeReaction == Reaction.NEUTRAL) {
 			return Faction.COMBAT;
 		} else {
 			return Faction.NEUTRAL;

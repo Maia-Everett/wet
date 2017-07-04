@@ -14,7 +14,8 @@ import org.lucidfox.questfiller.model.core.IDumpable;
 
 public enum ParserType {
 	QUEST("Quest", "q", QuestParser::new),
-	MISSION("Mission", "m", MissionParser::new);
+	MISSION("Mission", "m", MissionParser::new),
+	NPC("NPC", "n", NPCParser::new);
 	
 	private final String name;
 	private final String templateObjectPrefix;

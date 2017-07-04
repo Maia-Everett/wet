@@ -176,7 +176,7 @@ final class MissionParser implements IParser<Mission> {
 
 	private void parseInfobox(final Mission mission, final Document html) {
 		// Infobox section
-		final List<String> infoboxLines = ParseUtils.getInfoboxLines(html);
+		final List<String> infoboxLines = ParseUtils.getInfoboxLines(html, true);
 		
 		// Pattern-match each infobox line
 		for (final String infoboxLine : infoboxLines) {

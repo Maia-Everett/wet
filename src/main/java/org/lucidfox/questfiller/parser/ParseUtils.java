@@ -39,7 +39,7 @@ final class ParseUtils {
 		return Stream.of(categoryIds).mapToInt(Integer::parseInt).toArray();
 	}
 	
-	static List<String> getInfoboxLines(final Document html) {
+	static List<String> getInfoboxLines(final Document html, final boolean stripColor) {
 		final Optional<String> infoboxData = html.getElementsByTag("script")
 				.stream()
 				.map(Element::data)
@@ -51,10 +51,10 @@ final class ParseUtils {
 		}
 		
 		final String infoboxMarkup = getRegexGroup(infoboxData.get(), "Markup\\.printHtml\\('([^']*)'", 1).get();
-		return unescapeInfoboxMarkup(infoboxMarkup);
+		return unescapeInfoboxMarkup(infoboxMarkup, stripColor);
 	}
 	
-	private static List<String> unescapeInfoboxMarkup(final String infoboxMarkup) {
+	private static List<String> unescapeInfoboxMarkup(final String infoboxMarkup, final boolean stripColor) {
 		// Convert \xNN escape sequences to their corresponding characters
 		final Matcher matcher = Pattern.compile("\\\\x([0-9A-Z]{2})").matcher(infoboxMarkup);
 		final StringBuffer sb = new StringBuffer();
@@ -70,6 +70,8 @@ final class ParseUtils {
 		return Stream.of(sb.toString().split(Pattern.quote("[/li][li]")))
 				.flatMap((String line) -> Stream.of(line.split(Pattern.quote("[br]"))))
 				.map(line -> line.replaceAll("\\[(?:race|class)=([0-9]+)\\]", "$1")) // replace [race/class=X] with X
+				.map(stripColor ? line -> line
+						: line -> line.replaceAll("\\[color=([^\\]]+)\\]", "<$1>"))
 				.map(line -> line.replaceAll("\\[[^\\]]+\\]", ""))          // remove all square bracket tags
 				.collect(Collectors.toList());
 	}

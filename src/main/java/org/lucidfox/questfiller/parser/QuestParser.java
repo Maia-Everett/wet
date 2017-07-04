@@ -251,7 +251,7 @@ final class QuestParser implements IParser<Quest> {
 	
 	private void parseInfobox(final Quest quest, final Document html) {
 		// Infobox section
-		final List<String> infoboxLines = ParseUtils.getInfoboxLines(html);
+		final List<String> infoboxLines = ParseUtils.getInfoboxLines(html, true);
 		
 		// Pattern-match each infobox line
 		for (final String infoboxLine : infoboxLines) {
