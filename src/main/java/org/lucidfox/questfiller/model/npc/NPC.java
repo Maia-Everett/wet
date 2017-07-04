@@ -1,7 +1,9 @@
 package org.lucidfox.questfiller.model.npc;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.lucidfox.questfiller.model.core.Faction;
 import org.lucidfox.questfiller.model.core.IDumpable;
@@ -198,4 +200,9 @@ public final class NPC implements IDumpable {
 			return Faction.NEUTRAL;
 		}
 	}
+	
+	public String getHealthStr() {
+		return NumberFormat.getNumberInstance(Locale.US).format(health);
+	}
+	
 }
