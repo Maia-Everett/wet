@@ -9,6 +9,7 @@
 <<#n.title>>
  | title = <<n.title>>
 <</n.title>>
+ | gender = <<n.gender>>
  | level = <<n.levelLow>><<#n.levelHigh>>-<<n.levelHigh>><</n.levelHigh>>
 <<#n.levelClassification>>
  | type = <<n.levelClassification>>
@@ -19,17 +20,17 @@
  | mana = 
  | faction = <<n.faction>>
  | aggro = {{Aggro|<<n.allianceReaction>>|<<n.hordeReaction>>}}
- | race = 
+ | race = <<n.race>>
  | creature = <<n.creatureType>>
 <<#n.repFaction>>
  | repfaction = <<n.repFaction>>
 <</n.repFaction>>
- | location = <<#n.location>>[[<<n.location>>]]<</n.location>>
+ | location = <<#n.location>>[[<<this>>]]<</n.location>>
 <<#n.petFamily>>
  | pet = <<n.petFamily>>
 <</n.petFamily>>
 }}
-'''<<n.name>>''' is a [[RACENAME]] located in [[<<n.location>>]].
+'''<<n.name>>''' is a<<#n.isRaceStartsWithVowel>>n<</n.isRaceStartsWithVowel>> [[<<n.raceLowerCase>>]] located in [[<<n.location>>]].
 <<^n.itemsSold.isEmpty>>
 
 ==Sells==

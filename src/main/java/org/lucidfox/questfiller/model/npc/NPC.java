@@ -21,6 +21,7 @@ public final class NPC implements IDumpable {
 	private String levelClassification;
 	private Long health;
 	private String repFaction;
+	private String race;
 	private CreatureType creatureType;
 	private Reaction allianceReaction;
 	private Reaction hordeReaction;
@@ -105,6 +106,14 @@ public final class NPC implements IDumpable {
 
 	public void setRepFaction(String faction) {
 		this.repFaction = faction;
+	}
+	
+	public String getRace() {
+		return race;
+	}
+	
+	public void setRace(String race) {
+		this.race = race;
 	}
 
 	public CreatureType getCreatureType() {
@@ -209,5 +218,13 @@ public final class NPC implements IDumpable {
 
 	public boolean isUseItembox() {
 		return itemsSold.size() <= MAX_ITEMBOX_ITEMS;
+	}
+	
+	public String getRaceLowerCase() {
+		return race == null ? null : race.toLowerCase();
+	}
+	
+	public boolean isRaceStartsWithVowel() {
+		return race == null || race.isEmpty() ? false : "AEIOU".indexOf(race.charAt(0)) != -1;
 	}
 }

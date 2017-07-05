@@ -78,57 +78,47 @@ final class NPCParser implements IParser<NPC> {
 				.findFirst();
 		
 		listViewScript.ifPresent(script -> {
-			// Parse quests
-			
-			final Set<String> startsQuests = new HashSet<>();
-			
-			getRegexGroup(script, "new Listview\\(\\{template: 'quest', id: 'starts', (.*)\\);", 1).ifPresent(s -> {
-				addQuests(startsQuests, s);
-			});
-			
-			final Set<String> finishesQuests = new HashSet<>();
-			
-			getRegexGroup(script, "new Listview\\(\\{template: 'quest', id: 'ends', (.*)\\);", 1).ifPresent(s -> {
-				addQuests(finishesQuests, s);
-			});
-			
-			// Split all quests into three groups: starts, finishes, both 
-			final Set<String> startsAndFinishesQuests = new HashSet<>(startsQuests);
-			startsAndFinishesQuests.retainAll(finishesQuests);
-			startsQuests.removeAll(startsAndFinishesQuests);
-			finishesQuests.removeAll(startsAndFinishesQuests);
-			
-			final List<NPCQuest> quests = new ArrayList<>();
-			
-			for (final String quest : startsAndFinishesQuests) {
-				quests.add(new NPCQuest(quest, true, true));
-			}
-			
-			for (final String quest : startsQuests) {
-				quests.add(new NPCQuest(quest, true, false));
-			}
-			
-			for (final String quest : finishesQuests) {
-				quests.add(new NPCQuest(quest, false, true));
-			}
-			
-			Collections.sort(quests);
-			npc.setQuests(quests);
-			
-			// Parse items
-			getRegexGroup(script, "new Listview\\(\\{template: 'item', id: 'sells', (.*)\\);", 1).ifPresent(s -> {
-				final List<SoldItem> soldItems = new ArrayList<>();
-				final Pattern pattern = Pattern.compile("\"name\":\"[0-9]([^\"]+)\",[^\\}]+,cost:\\[([0-9]+),");
-				final Matcher matcher = pattern.matcher(s);
-				
-				while (matcher.find()) {
-					soldItems.add(new SoldItem(matcher.group(1), Integer.parseInt(matcher.group(2))));
-				}
-				
-				Collections.sort(soldItems);
-				npc.setItemsSold(soldItems);
-			});
+			parseQuests(npc, script);
+			parseItems(npc, script);
+			parseSounds(npc, script);
 		});
+	}
+	
+	private void parseQuests(final NPC npc, final String script) {
+		final Set<String> startsQuests = new HashSet<>();
+		
+		getRegexGroup(script, "new Listview\\(\\{template: 'quest', id: 'starts', (.*)\\);", 1).ifPresent(s -> {
+			addQuests(startsQuests, s);
+		});
+		
+		final Set<String> finishesQuests = new HashSet<>();
+		
+		getRegexGroup(script, "new Listview\\(\\{template: 'quest', id: 'ends', (.*)\\);", 1).ifPresent(s -> {
+			addQuests(finishesQuests, s);
+		});
+		
+		// Split all quests into three groups: starts, finishes, both 
+		final Set<String> startsAndFinishesQuests = new HashSet<>(startsQuests);
+		startsAndFinishesQuests.retainAll(finishesQuests);
+		startsQuests.removeAll(startsAndFinishesQuests);
+		finishesQuests.removeAll(startsAndFinishesQuests);
+		
+		final List<NPCQuest> quests = new ArrayList<>();
+		
+		for (final String quest : startsAndFinishesQuests) {
+			quests.add(new NPCQuest(quest, true, true));
+		}
+		
+		for (final String quest : startsQuests) {
+			quests.add(new NPCQuest(quest, true, false));
+		}
+		
+		for (final String quest : finishesQuests) {
+			quests.add(new NPCQuest(quest, false, true));
+		}
+		
+		Collections.sort(quests);
+		npc.setQuests(quests);
 	}
 	
 	private void addQuests(final Collection<String> quests, final String jsPart) {
@@ -138,6 +128,66 @@ final class NPCParser implements IParser<NPC> {
 		while (matcher.find()) {
 			quests.add(matcher.group(1));
 		}
+	}
+	
+	private void parseItems(final NPC npc, final String script) {
+		getRegexGroup(script, "new Listview\\(\\{template: 'item', id: 'sells', (.*)\\);", 1).ifPresent(s -> {
+			final List<SoldItem> soldItems = new ArrayList<>();
+			final Pattern pattern = Pattern.compile("\"name\":\"[0-9]([^\"]+)\",[^\\}]+,cost:\\[([0-9]+),");
+			final Matcher matcher = pattern.matcher(s);
+			
+			while (matcher.find()) {
+				soldItems.add(new SoldItem(matcher.group(1), Integer.parseInt(matcher.group(2))));
+			}
+			
+			Collections.sort(soldItems);
+			npc.setItemsSold(soldItems);
+		});
+	}
+	
+	private void parseSounds(final NPC npc, final String script) {
+		getRegexGroup(script, "new Listview\\(\\{template: 'sound', id: 'sounds', (.*)\\);", 1).ifPresent(s -> {
+			// First, try to determine both race and gender from the attack sound
+			final Pattern raceGenderPattern =
+					Pattern.compile("\"name\":\"([A-Za-z0-9_]+)(Male|Female)[A-Za-z0-9_]*Attack\"");
+			final Matcher matcher = raceGenderPattern.matcher(s);	
+			
+			if (matcher.find()) {
+				npc.setRace(normalizeRaceName(matcher.group(1)));
+				npc.setGender(matcher.group(2));
+			} else {
+				// Try to determine just race
+				getRegexGroup(s, "\"name\":\"([A-Za-z0-9_]+)Attack\"", 1).ifPresent(race -> {
+					npc.setRace(normalizeRaceName(race));
+				});
+			}
+		});
+	}
+	
+	private static String normalizeRaceName(final String raceName) {
+		final char[] src = raceName.replace("Player", "").toCharArray();
+		
+		if (src.length == 0) {
+			return "";
+		}
+		
+		// Convert CamelCase to normal name (e.g. NightElf -> Night elf)
+		final StringBuilder sb = new StringBuilder();
+		sb.append(src[0]);
+		
+		for (int i = 1; i < src.length; i++) {
+			char ch = src[i];
+			
+			// Convert every uppercase character into a pair of space + lowercase
+			if (ch >= 'A' && ch <= 'Z') {
+				sb.append(' ');
+				sb.append(Character.toLowerCase(ch));
+			} else {
+				sb.append(ch);
+			}
+		}
+		
+		return sb.toString();
 	}
 	
 	private void parseQuotes(final NPC npc, final Element mainContainer) {
