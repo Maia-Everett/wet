@@ -149,15 +149,29 @@ final class NPCParser implements IParser<NPC> {
 		getRegexGroup(script, "new Listview\\(\\{template: 'sound', id: 'sounds', (.*)\\);", 1).ifPresent(s -> {
 			// First, try to determine both race and gender from the attack sound
 			final Pattern raceGenderPattern =
-					Pattern.compile("\"name\":\"([A-Za-z0-9_]+)(Male|Female)[A-Za-z0-9_]*Attack\"");
+					Pattern.compile("\"name\":\"([A-Za-z0-9_]+)"
+							+ "(Male|Female|_MALE|_FEMALE)"
+							+ "[A-Za-z0-9_]*"
+							+ "(?:Attack|ATTACK)\"");
 			final Matcher matcher = raceGenderPattern.matcher(s);	
 			
 			if (matcher.find()) {
 				npc.setRace(normalizeRaceName(matcher.group(1)));
-				npc.setGender(matcher.group(2));
+				
+				switch (matcher.group(2)) {
+				case "_MALE":
+					npc.setGender("Male");
+					break;
+				case "_FEMALE":
+					npc.setGender("Female");
+					break;
+				default:
+					npc.setGender(matcher.group(2));
+					break;
+				}
 			} else {
 				// Try to determine just race
-				getRegexGroup(s, "\"name\":\"([A-Za-z0-9_]+)Attack\"", 1).ifPresent(race -> {
+				getRegexGroup(s, "\"name\":\"([A-Za-z0-9_]+)(?:Attack|ATTACK)\"", 1).ifPresent(race -> {
 					npc.setRace(normalizeRaceName(race));
 				});
 			}
@@ -165,29 +179,56 @@ final class NPCParser implements IParser<NPC> {
 	}
 	
 	private static String normalizeRaceName(final String raceName) {
-		final char[] src = raceName.replace("Player", "").toCharArray();
+		final String transformed = raceName
+				.replace("Player", "")
+				.replaceAll("^MON_", "")
+				.replaceAll("^VO_[0-9]*", "");
 		
-		if (src.length == 0) {
+		if (transformed.isEmpty()) {
 			return "";
-		}
-		
-		// Convert CamelCase to normal name (e.g. NightElf -> Night elf)
-		final StringBuilder sb = new StringBuilder();
-		sb.append(src[0]);
-		
-		for (int i = 1; i < src.length; i++) {
-			char ch = src[i];
+		} else if (transformed.matches("[A-Z0-9_]+")) {
+			// Convert UPPERCASE_WITH_UNDERSCORES_CONVENTION to normal name (e.g. FROST_NYMPH -> Frost nymph)
+			final char[] src = transformed.replace('_', ' ').trim().toCharArray();
+			final StringBuilder sb = new StringBuilder();
+			sb.append(src[0]);
 			
-			// Convert every uppercase character into a pair of space + lowercase
-			if (ch >= 'A' && ch <= 'Z') {
-				sb.append(' ');
-				sb.append(Character.toLowerCase(ch));
-			} else {
-				sb.append(ch);
+			for (int i = 1; i < src.length; i++) {
+				char ch = src[i];
+				
+				// Convert every uppercase character except the first to lowercase, and every underscore to space
+				if (ch >= 'A' && ch <= 'Z') {
+					sb.append(Character.toLowerCase(ch));
+				} else {
+					sb.append(ch);
+				}
 			}
+			
+			return sb.toString();
+		} else {
+			// Convert CamelCase to normal name (e.g. NightElf -> Night elf)
+			final char[] src = transformed.replace("_", "").toCharArray();
+			
+			if (src.length == 0) {
+				return "";
+			}
+			
+			final StringBuilder sb = new StringBuilder();
+			sb.append(src[0]);
+			
+			for (int i = 1; i < src.length; i++) {
+				char ch = src[i];
+				
+				// Convert every uppercase character into a pair of space + lowercase
+				if (ch >= 'A' && ch <= 'Z') {
+					sb.append(' ');
+					sb.append(Character.toLowerCase(ch));
+				} else {
+					sb.append(ch);
+				}
+			}
+			
+			return sb.toString();
 		}
-		
-		return sb.toString();
 	}
 	
 	private void parseQuotes(final NPC npc, final Element mainContainer) {
