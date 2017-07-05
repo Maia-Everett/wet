@@ -29,6 +29,9 @@
 <<#n.petFamily>>
  | pet = <<n.petFamily>>
 <</n.petFamily>>
+<<#n.hasMoney>>
+ | money = {{Cost|<<n.gold>>|<<n.silver>>|<<n.copper>>}}
+<</n.hasMoney>>
 }}
 '''<<n.name>>''' is a<<#n.isRaceStartsWithVowel>>n<</n.isRaceStartsWithVowel>> [[<<n.raceLowerCase>>]] located in [[<<n.location>>]].
 <<^n.itemsSold.isEmpty>>

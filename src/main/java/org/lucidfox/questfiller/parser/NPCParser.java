@@ -263,6 +263,7 @@ final class NPCParser implements IParser<NPC> {
 	private void parseInfobox(final NPC npc, final Document html) {
 		// Infobox section
 		final List<String> infoboxLines = ParseUtils.getInfoboxLines(html, false);
+		infoboxLines.forEach(System.out::println);
 		
 		// Pattern-match each infobox line
 		for (final String infoboxLine : infoboxLines) {
@@ -296,6 +297,10 @@ final class NPCParser implements IParser<NPC> {
 			
 			getRegexGroup(infoboxLine, "Tameable \\((.+)\\)", 1).ifPresent(petFamily -> {
 				npc.setPetFamily(petFamily);
+			});
+			
+			getRegexGroup(infoboxLine, "Worth: ([0-9]+)", 1).ifPresent(money -> {
+				npc.setMoney(Integer.parseInt(money));
 			});
 
 			getRegexGroup(infoboxLine, "Added in patch ([0-9]+.[0-9]+.[0-9]+)", 1).ifPresent(patch -> {

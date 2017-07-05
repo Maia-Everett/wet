@@ -27,6 +27,7 @@ public final class NPC implements IDumpable {
 	private Reaction hordeReaction;
 	private String petFamily;
 	private String patchAdded;
+	private int money;
 
 	// Other
 	private String location;
@@ -163,6 +164,14 @@ public final class NPC implements IDumpable {
 	public void setLocation(String location) {
 		this.location = location;
 	}
+	
+	public int getMoney() {
+		return money;
+	}
+	
+	public void setMoney(int money) {
+		this.money = money;
+	}
 
 	public List<NPCQuest> getQuests() {
 		return quests;
@@ -226,5 +235,25 @@ public final class NPC implements IDumpable {
 	
 	public boolean isRaceStartsWithVowel() {
 		return race == null || race.isEmpty() ? false : "AEIOU".indexOf(race.charAt(0)) != -1;
+	}
+	
+	public boolean hasMoney() {
+		return money != 0;
+	}
+	
+	private static Integer getNonzeroOrNull(final int quantity) {
+		return quantity == 0 ? null : quantity;
+	}
+	
+	public Integer getGold() {
+		return getNonzeroOrNull(money / 10000); 
+	}
+	
+	public Integer getSilver() {
+		return getNonzeroOrNull((money % 10000) / 100); 
+	}
+	
+	public Integer getCopper() {
+		return getNonzeroOrNull(money % 100); 
 	}
 }

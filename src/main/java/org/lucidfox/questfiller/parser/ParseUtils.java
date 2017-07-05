@@ -69,7 +69,8 @@ final class ParseUtils {
 		// We'll get BBCode, convert it to a list of plain text lines
 		return Stream.of(sb.toString().split(Pattern.quote("[/li][li]")))
 				.flatMap((String line) -> Stream.of(line.split(Pattern.quote("[br]"))))
-				.map(line -> line.replaceAll("\\[(?:race|class)=([0-9]+)\\]", "$1")) // replace [race/class=X] with X
+				// replace [race/class/money=X] with X
+				.map(line -> line.replaceAll("\\[(?:race|class|money)=([0-9]+)\\]", "$1"))
 				.map(stripColor ? line -> line
 						: line -> line.replaceAll("\\[color=([^\\]]+)\\]", "<$1>"))
 				.map(line -> line.replaceAll("\\[[^\\]]+\\]", ""))          // remove all square bracket tags
