@@ -28,6 +28,9 @@
 <<#m.cost>>
  | cost = <<m.cost>>
 <</m.cost>>
+<<#m.followerXPStr>>
+ | experience = <<this>>
+<</m.followerXPStr>>
 <<#m.hasMoney>>
  | bonusgold = {{cost|<<m.gold>>|<<m.silver>>|<<m.copper>>}}
 <</m.hasMoney>>
@@ -57,6 +60,11 @@
 <<#m.enemies>>
 * <<name>>:<<#counters>> {{Garrison ability|<<this>>}}<</counters>>
 <</m.enemies>>
+<<#m.followerXPStr>>
+
+==Gains==
+* <<this>> follower XP
+<</m.followerXPStr>>
 
 ==Rewards==
 <<^m.bonusItems.isEmpty>>

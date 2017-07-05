@@ -46,6 +46,7 @@ final class MissionParser implements IParser<Mission> {
 		parseDescription(mission, mainContainer, html);
 		parseEncounters(mission, mainContainer);
 		parseCost(mission, mainContainer);
+		parseGains(mission, mainContainer);
 		parseRewards(mission, mainContainer);
 		parseInfobox(mission, html);
 		return mission;
@@ -127,6 +128,24 @@ final class MissionParser implements IParser<Mission> {
 		});
 	}
 
+	private void parseGains(final Mission mission, final Element mainContainer) {
+		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
+		final Optional<Element> gainsList = getFirstWithOwnText(headingsSize3, "Gains")
+				.flatMap(heading -> ParseUtils.findNextElementSibling(heading, el -> "ul".equals(el.tagName())));
+		
+		gainsList.ifPresent(ul -> {
+			for (final Element li : ul.getElementsByTag("li")) {
+				final String text = li.text();
+				final Optional<String> maybeXP = getRegexGroup(text, "([0-9,]*) experience", 1);
+				
+				if (maybeXP.isPresent()) {
+					mission.setFollowerXP(Integer.parseInt(maybeXP.get().replace(",", "")));
+					break;
+				}
+			}
+		});
+	}
+
 	private void parseRewards(final Mission mission, final Element mainContainer) {
 		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
 		
@@ -173,7 +192,6 @@ final class MissionParser implements IParser<Mission> {
 			}
 		}
 	}
-
 	private void parseInfobox(final Mission mission, final Document html) {
 		// Infobox section
 		final List<String> infoboxLines = ParseUtils.getInfoboxLines(html, true);

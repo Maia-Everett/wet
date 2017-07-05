@@ -226,6 +226,14 @@ public abstract class Mission implements IDumpable {
 		return bonusResources != 0;
 	}
 
+	public String getFollowerXPStr() {
+		if (followerXP == 0) {
+			return null;
+		}
+		
+		return NumberFormat.getNumberInstance(Locale.US).format(followerXP);
+	}
+
 	public String getBonusXPStr() {
 		if (bonusXP == 0) {
 			return null;
