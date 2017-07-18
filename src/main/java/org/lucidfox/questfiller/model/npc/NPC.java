@@ -20,6 +20,7 @@ public final class NPC implements IDumpable {
 	private String levelHigh;
 	private String levelClassification;
 	private Long health;
+	private Long mana;
 	private String repFaction;
 	private String race;
 	private CreatureType creatureType;
@@ -99,6 +100,14 @@ public final class NPC implements IDumpable {
 
 	public void setHealth(Long health) {
 		this.health = health;
+	}
+	
+	public Long getMana() {
+		return mana;
+	}
+	
+	public void setMana(Long mana) {
+		this.mana = mana;
 	}
 
 	public String getRepFaction() {
@@ -223,6 +232,10 @@ public final class NPC implements IDumpable {
 	
 	public String getHealthStr() {
 		return NumberFormat.getNumberInstance(Locale.US).format(health);
+	}
+	
+	public String getManaStr() {
+		return NumberFormat.getNumberInstance(Locale.US).format(mana);
 	}
 
 	public boolean isUseItembox() {

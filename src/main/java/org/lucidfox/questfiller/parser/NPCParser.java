@@ -302,6 +302,10 @@ final class NPCParser implements IParser<NPC> {
 			getRegexGroup(infoboxLine, "Worth: ([0-9]+)", 1).ifPresent(money -> {
 				npc.setMoney(Integer.parseInt(money));
 			});
+			
+			getRegexGroup(infoboxLine, "Mana: ([0-9,]+)", 1).ifPresent(mana -> {
+				npc.setMana(Long.parseLong(mana.replace(",", "")));
+			});
 
 			getRegexGroup(infoboxLine, "Added in patch ([0-9]+.[0-9]+.[0-9]+)", 1).ifPresent(patch -> {
 				npc.setPatchAdded(Substitutions.getCanonicalPatchVersion(patch));
