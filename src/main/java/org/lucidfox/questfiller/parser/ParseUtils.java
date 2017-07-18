@@ -43,14 +43,14 @@ final class ParseUtils {
 		final Optional<String> infoboxData = html.getElementsByTag("script")
 				.stream()
 				.map(Element::data)
-				.filter(data -> data.contains("Markup.printHtml"))
+				.filter(data -> data.contains("arkup.printHtml"))
 				.findFirst();
 		
 		if (!infoboxData.isPresent()) {
 			return Collections.emptyList();
 		}
 		
-		final String infoboxMarkup = getRegexGroup(infoboxData.get(), "Markup\\.printHtml\\('([^']*)'", 1).get();
+		final String infoboxMarkup = getRegexGroup(infoboxData.get(), "[Mm]arkup\\.printHtml\\('([^']*)'", 1).get();
 		return unescapeInfoboxMarkup(infoboxMarkup, stripColor);
 	}
 	
