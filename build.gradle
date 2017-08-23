@@ -1,6 +1,6 @@
 apply plugin: 'java'
 
-version = '1.2.2'
+version = '1.2.3'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -23,6 +23,33 @@ dependencies {
 	
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+
+sourceSets {
+	main {
+		java {
+			srcDirs "$buildDir/generated-src"
+		} 
+	} 
+}
+
+task generateSources {
+	outputs.dir file("$buildDir/generated-src")
+	
+	doFirst {
+		def srcFile = new File("$buildDir/generated-src/org/lucidfox/questfiller/model/Version.java")
+		srcFile.parentFile.mkdirs()
+		srcFile.write("""
+package org.lucidfox.questfiller.model;
+		
+public class Version {
+	public static String getVersion() { return "$project.version"; }
+}
+""")
+	}
+}
+
+compileJava.dependsOn generateSources
+compileJava.source generateSources.outputs.files, sourceSets.main.java
 
 jar {
 	from {

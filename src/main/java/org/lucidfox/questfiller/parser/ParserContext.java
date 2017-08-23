@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -17,15 +18,21 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.lucidfox.questfiller.model.Version;
+
 public final class ParserContext {
+	public static final String USER_AGENT = "QuestFiller/" + Version.getVersion();
+	
 	private final Map<Integer, String> questCategories = new HashMap<>();
 	private final Map<Integer, String> missionThreats = new HashMap<>();
 	private final Map<Integer, String> legionMissionThreats = new HashMap<>();
 	
 	public static ParserContext load() throws IOException {
-		final String url = "http://wow.zamimg.com/js/locale_enus.js";
+		final String url = "http://wow.zamimg.com/js/enus.js";
+		final HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+		conn.setRequestProperty("User-Agent", USER_AGENT);
 		
-		try (Reader reader = new InputStreamReader(new URL(url).openStream(), StandardCharsets.UTF_8)) {
+		try (Reader reader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)) {
 			return new ParserContext(reader);
 		}
 	}

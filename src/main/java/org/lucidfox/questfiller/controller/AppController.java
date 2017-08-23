@@ -8,6 +8,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.lucidfox.questfiller.model.Version;
 import org.lucidfox.questfiller.parser.ParserContext;
 import org.lucidfox.questfiller.ui.MainWindow;
 
@@ -77,7 +78,7 @@ public class AppController {
 		parserInit.thenApplyAsync(context -> {
 			// Worker thread
 			try {
-				final Document htmlDoc = Jsoup.connect(url).get();
+				final Document htmlDoc = Jsoup.connect(url).userAgent(ParserContext.USER_AGENT).get();
 				return new ArticleFormatter().format(htmlDoc, context);
 			} catch (final IOException e) {
 				throw new UncheckedIOException(e);
