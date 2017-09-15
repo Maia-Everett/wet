@@ -77,8 +77,14 @@ final class ParseUtils {
 				.collect(Collectors.toList());
 	}
 
-	static Optional<String> getRegexGroup(final String str, final String regex, final int group) {
-		final Matcher matcher = Pattern.compile(regex).matcher(str);
+	static Optional<String> getRegexGroup(final String str, final String regex, final int group, final int... flags) {
+		int combinedFlags = 0;
+		
+		for (int flag: flags) {
+			combinedFlags |= flag;
+		}
+		
+		final Matcher matcher = Pattern.compile(regex, combinedFlags).matcher(str);
 		
 		if (!matcher.find()) {
 			return Optional.empty();

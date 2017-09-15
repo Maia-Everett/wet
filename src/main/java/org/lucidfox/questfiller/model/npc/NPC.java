@@ -235,7 +235,7 @@ public final class NPC implements IDumpable {
 	}
 	
 	public String getManaStr() {
-		return NumberFormat.getNumberInstance(Locale.US).format(mana);
+		return mana == null ? null : NumberFormat.getNumberInstance(Locale.US).format(mana);
 	}
 
 	public boolean isUseItembox() {

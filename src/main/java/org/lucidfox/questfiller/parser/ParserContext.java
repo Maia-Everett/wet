@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.script.ScriptEngine;
@@ -40,11 +41,13 @@ public final class ParserContext {
 	private ParserContext(final Reader localeJsReader) throws IOException {	
 		// Obtain localization for quest categories
 		final String fullScript = new BufferedReader(localeJsReader).lines().collect(Collectors.joining("\n"));
-		final String questScript = getRegexGroup(fullScript, "var mn_quests=[^;]+;", 0).get();
+		final String questScript = getRegexGroup(fullScript, "var mn_quests[^;]+;", 0).get();
 		final String missionMechanicsScript = "var mn_missionMechanics = " + getRegexGroup(fullScript,
-				"missionMechanics:LANGfiMakeOptGroups\\((.+?)\\,g_threat_categories_by_follower_type", 1).get();
+				"missionMechanics:\\s*LANGfiMakeOptGroups\\((.+?),\\s*g_threat_categories_by_follower_type",
+				1, Pattern.DOTALL).get();
 		final String missionThreatsScript = "var mn_missionThreats = " + getRegexGroup(fullScript,
-				"missionThreats:LANGfiMakeOptGroups\\((.+?)\\,g_threat_categories_by_follower_type", 1).get();
+				"missionThreats:\\s*LANGfiMakeOptGroups\\((.+?),\\s*g_threat_categories_by_follower_type",
+				1, Pattern.DOTALL).get();
 		
 		final ScriptEngine js = new ScriptEngineManager().getEngineByName("nashorn");
 		
