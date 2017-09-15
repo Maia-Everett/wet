@@ -8,7 +8,6 @@ import java.util.concurrent.CompletableFuture;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.lucidfox.questfiller.model.Version;
 import org.lucidfox.questfiller.parser.ParserContext;
 import org.lucidfox.questfiller.ui.MainWindow;
 
