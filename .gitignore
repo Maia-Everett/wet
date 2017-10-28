@@ -12,3 +12,4 @@
 *.iml
 /.idea
 /out
+/gradle.properties
