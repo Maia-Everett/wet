@@ -51,11 +51,10 @@ final class ParseUtils {
 		}
 		
 		final String infoboxMarkup = getRegexGroup(infoboxData.get(),
-				"[Mm]arkup\\.printHtml\\((['\"])([^']*)\\1", 2).get();
-		return unescapeInfoboxMarkup(infoboxMarkup, stripColor);
-	}
-	
-	private static List<String> unescapeInfoboxMarkup(final String infoboxMarkup, final boolean stripColor) {
+				"[Mm]arkup\\.printHtml\\((['\"])(.*)\\1, 'infobox-contents'", 2)
+					.get()
+					.replace("\\/", "/"); // wowhead now escapes forward slashes
+		
 		// Convert \xNN escape sequences to their corresponding characters
 		final Matcher matcher = Pattern.compile("\\\\x([0-9A-Z]{2})").matcher(infoboxMarkup);
 		final StringBuffer sb = new StringBuffer();
