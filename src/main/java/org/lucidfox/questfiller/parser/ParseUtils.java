@@ -50,7 +50,8 @@ final class ParseUtils {
 			return Collections.emptyList();
 		}
 		
-		final String infoboxMarkup = getRegexGroup(infoboxData.get(), "[Mm]arkup\\.printHtml\\('([^']*)'", 1).get();
+		final String infoboxMarkup = getRegexGroup(infoboxData.get(),
+				"[Mm]arkup\\.printHtml\\((['\"])([^']*)\\1", 2).get();
 		return unescapeInfoboxMarkup(infoboxMarkup, stripColor);
 	}
 	
