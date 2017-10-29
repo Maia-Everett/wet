@@ -1,0 +1,15 @@
+html, body {
+	height: 100%;
+	overflow: hidden;
+}
+
+body {
+	margin: 10px;
+	background: #eee;
+}
+
+#content {
+	box-sizing: border-box;
+	width: 100%;
+	height: calc(100% - 20px);
+}
