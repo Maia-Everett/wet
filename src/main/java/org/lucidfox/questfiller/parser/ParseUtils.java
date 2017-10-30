@@ -51,7 +51,7 @@ final class ParseUtils {
 		}
 		
 		final String infoboxMarkup = getRegexGroup(infoboxData.get(),
-				"[Mm]arkup\\.printHtml\\((['\"])(.*)\\1, 'infobox-contents'", 2)
+				"[Mm]arkup\\.printHtml\\((['\"])(.*)\\1, 'infobox", 2)
 					.get()
 					.replace("\\/", "/"); // wowhead now escapes forward slashes
 		
