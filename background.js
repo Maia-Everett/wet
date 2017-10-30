@@ -1,10 +1,13 @@
 let lastResult = null;
 let popupTab = null;
+let browserInfo = null;
+
+if (typeof browser !== "undefined") {
+	browser.runtime.getBrowserInfo().then(info => browserInfo = info);
+}
 
 function isSupported(url) {
-	console.log("url: " + url);
 	let result = /https?:\/\/(www\.)?wowhead.com\/(quest|mission|npc)=/.test(url);
-	console.log("result: " + result);
 	return result;
 }
 
@@ -40,10 +43,15 @@ chrome.pageAction.onClicked.addListener(tab => {
 	}, result => {
 		lastResult = result;
 
+		// Work around Firefox 57 beta bug with blank popup window
+		var isFirefox57 = browserInfo
+			&& browserInfo.name === "Firefox"
+			&& +browserInfo.version >= 57;
+
 		chrome.windows.create({
-			width: 600,
-			height: 500,
-			type: "popup",
+			width: 800,
+			height: 600,
+			type: isFirefox57 ? null : "popup",
 			url: "/result/result.html"
 		}, window => {
 			popupTab = window.tabs[0];
