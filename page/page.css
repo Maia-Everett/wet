@@ -1,0 +1,25 @@
+#questfiller-popup {
+	background: #eee;
+	color: black;
+	position: fixed;
+	z-index: 1000;
+	left: 20px;
+	top: 50px;
+	right: 20px;
+	bottom: 50px;
+	text-align: center;
+	padding: 6px;
+}
+
+#questfiller-content {
+	box-sizing: border-box;
+	width: 100%;
+	height: calc(100% - 46px);
+	margin-bottom: 6px;
+	font-family: monospace;
+}
+
+#questfiller-copy {
+	height: 40px;
+	margin-top: 0;
+}
