@@ -1,5 +1,5 @@
 import { $, $$ } from "./common/shortcuts";
-import u from "./common/utils";
+import u from "./parsers/utils";
 import ParserContext from "./parsers/ParserContext";
 import QuestParser from "./parsers/QuestParser";
 import MissionParser from "./parsers/MissionParser";
