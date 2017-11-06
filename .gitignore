@@ -1,5 +1,6 @@
 /web-ext-artifacts
 /.vscode
 /node_modules
+/package-lock.json
 /page/page.js
 /page/page.js.map
