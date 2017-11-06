@@ -1,2 +1,5 @@
 /web-ext-artifacts
 /.vscode
+/node_modules
+/page/page.js
+/page/page.js.map

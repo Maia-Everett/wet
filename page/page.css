@@ -15,11 +15,17 @@
 	box-sizing: border-box;
 	width: 100%;
 	height: calc(100% - 46px);
-	margin-bottom: 6px;
+	margin-bottom: 3px;
 	font-family: monospace;
 }
 
 #questfiller-copy {
 	height: 40px;
 	margin-top: 0;
+	text-shadow: none;
+}
+
+#questfiller-copy:focus {
+	outline: 2px solid #333;
+	outline-offset: -4px;
 }
