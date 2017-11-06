@@ -1,6 +1,16 @@
+let pageTypes = [
+	"quest",
+	"mission",
+	"npc"
+];
+
 function isSupported(url) {
-	let result = /https?:\/\/(www\.)?wowhead.com\/(quest|mission|npc)=/.test(url);
-	return result;
+	if (!url) {
+		return false;
+	}
+
+	let result = url.match(/https?:\/\/(?:www\.)?wowhead.com\/([a-z]+)=/);
+	return result != null && pageTypes.indexOf(result[1]) != -1;
 }
 
 chrome.tabs.onActivated.addListener(activeInfo => {

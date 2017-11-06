@@ -1,7 +1,10 @@
-import { $, $$ } from "./shortcuts";
+import { $, $$ } from "./common/shortcuts";
+import Parsers from "./Parsers";
 
+// Remove any existing popups, if any
 $$("#questfiller-popup").forEach(element => element.parentElement.removeChild(element));
 
+// Create popup
 let popup = document.createElement("div");
 popup.setAttribute("id", "questfiller-popup");
 document.body.appendChild(popup);
@@ -19,6 +22,11 @@ $("#questfiller-copy").addEventListener("click", e => {
 	popup.parentElement.removeChild(popup);
 });
 
-content.value = "Hello World!";
-$("#questfiller-copy").focus();
+Parsers.create().then(parsers => {
+	let value = parsers.format();
 
+	if (value) {
+		content.value = value;
+		$("#questfiller-copy").focus();
+	}
+});
