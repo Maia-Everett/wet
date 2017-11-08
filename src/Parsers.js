@@ -41,7 +41,7 @@ class Parsers {
 		}
 
 		let parseResult = parserType.parser.parse();
-		return parseResult;
+		return JSON.stringify(parseResult, null, 4);
 	}
 };
 

@@ -1,8 +1,8 @@
-let pageTypes = [
+const PAGE_TYPES = new Set([
 	"quest",
 	"mission",
 	"npc"
-];
+]);
 
 function isSupported(url) {
 	if (!url) {
@@ -10,7 +10,7 @@ function isSupported(url) {
 	}
 
 	let result = url.match(/https?:\/\/(?:www\.)?wowhead.com\/([a-z]+)=/);
-	return result != null && pageTypes.indexOf(result[1]) != -1;
+	return result != null && PAGE_TYPES.has(result[1]);
 }
 
 chrome.tabs.onActivated.addListener(activeInfo => {
