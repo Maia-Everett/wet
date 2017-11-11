@@ -10,5 +10,8 @@ export default class Quest {
 
 		this.reputationGains = [];
 		this.otherGains = [];
+
+		this.previousQuests = [];
+		this.nextQuests = [];
 	}
 }

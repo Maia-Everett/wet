@@ -31,10 +31,8 @@ export default function QuestParser(context) {
 		parseRewards(quest, mainContainer);
 		parseGains(quest, mainContainer);
 		parseInfobox(quest);
-		/*
 		parseSeries(quest, mainContainer);
 		parseRemoved(quest, mainContainer);
-		*/
 
 		return quest;
 	}
@@ -90,7 +88,7 @@ export default function QuestParser(context) {
 					parent = parent.parentElement;
 				}
 				
-				quest.stages.push(parent.textContent);
+				quest.stages.push(parent.textContent.trim());
 			}
 
 			// Suggested players
@@ -114,7 +112,7 @@ export default function QuestParser(context) {
 				}
 				
 				for (let itemLink of maybeProvided.querySelectorAll("td a")) {
-					quest.providedItems.push(itemLink.textContent);
+					quest.providedItems.push(itemLink.textContent.trim());
 				}
 			}
 		}
@@ -213,7 +211,7 @@ export default function QuestParser(context) {
 	 */
 	function collectNonItemRewards(icontab, collector) {
 		for (let link of icontab.querySelectorAll("td > a")) {
-			collector.push(link.textContent);
+			collector.push(link.textContent.trim());
 		}
 	}
 	
@@ -264,7 +262,7 @@ export default function QuestParser(context) {
 							parseInt(repValue.replace(",", ""))));
 				} else {
 					// Non-reputation gain
-					quest.otherGains.push(div.textContent);
+					quest.otherGains.push(div.textContent.trim());
 				}
 			}
 		}
@@ -337,48 +335,58 @@ export default function QuestParser(context) {
 		}
 	}
 	
-	/*
-	private void parseSeries(final Quest quest, final Element mainContainer) {
+	/**
+	 * @param {Quest} quest 
+	 * @param {Element} mainContainer
+	 */
+	function parseSeries(quest, mainContainer) {
 		// Try to determine previous and next quests
-		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
-		final Optional<Element> seriesTable = getFirstWithOwnText(headingsSize3, "Series")
-				.flatMap(seriesHeader -> ParseUtils.findNextElementSibling(
-						seriesHeader, el -> "table".equals(el.tagName()) && el.hasClass("series")));
-		
-		if (!seriesTable.isPresent()) {
+		let headingsSize3 = mainContainer.querySelectorAll("h2.heading-size-3");
+		/** @type {Element} */
+		let seriesTable = null;
+
+		u.getFirstWithOwnText(headingsSize3, "Series", seriesHeader => {
+			seriesTable = u.findNextElementSibling(seriesHeader,
+					el => u.tagName(el) === "table" && el.classList.contains("series"));
+		});
+
+		if (!seriesTable) {
 			return;
 		}
 		
 		// Find the table cell with the current quest, in bold
-		final Element ourQuestItem = seriesTable.get().getElementsByTag("b").first();
-		Element ourQuestCell = ourQuestItem.parent();
+		let ourQuestItem = seriesTable.getElementsByTagName("b")[0];
+		let ourQuestCell = ourQuestItem.parentElement;
 		
-		while (!ourQuestCell.tagName().equals("td")) {
-			ourQuestCell = ourQuestCell.parent();
+		while (u.tagName(ourQuestCell) !== "td") {
+			ourQuestCell = ourQuestCell.parentElement;
 		}
 		
 		// Find where in the table it is
-		final Elements questCells = seriesTable.get().getElementsByTag("td");
-		final int ourQuestIndex = questCells.indexOf(ourQuestCell);
+		let questCells = Array.from(seriesTable.getElementsByTagName("td"));
+		let ourQuestIndex = questCells.indexOf(ourQuestCell);
 		
 		if (ourQuestIndex > 0) {
-			final String[] previousQuests = textOf(questCells.get(ourQuestIndex - 1)).split("\n");
-			Stream.of(previousQuests).forEach(quest.getPreviousQuests()::add);
+			let previousQuests = u.textOf(questCells[ourQuestIndex - 1]).split("\n");
+			previousQuests.forEach(q => quest.previousQuests.push(q));
 		}
 		
-		if (ourQuestIndex < questCells.size() - 1) {
-			final String[] nextQuests = textOf(questCells.get(ourQuestIndex + 1)).split("\n");
-			Stream.of(nextQuests).forEach(quest.getNextQuests()::add);
+		if (ourQuestIndex < questCells.length - 1) {
+			let nextQuests = u.textOf(questCells[ourQuestIndex + 1]).split("\n");
+			nextQuests.forEach(q => quest.nextQuests.push(q));
 		}
 	}
 	
-	private void parseRemoved(final Quest quest, final Element mainContainer) {
+	/**
+	 * @param {Quest} quest 
+	 * @param {Element} mainContainer
+	 */
+	function parseRemoved(quest, mainContainer) {
 		// Set a removed flag if there is an obsolete warning on the quest page
-		mainContainer.select("b[style=\"color: red\"]")
-			.stream()
-			.filter(el -> el.ownText().startsWith("This quest was marked obsolete"))
-			.findFirst()
-			.ifPresent(el -> quest.setRemoved(true));
+		for (let el of mainContainer.querySelectorAll("b[style=\"color: red\"]")) {
+			if (el.textContent.startsWith("This quest was marked obsolete")) {
+				quest.removed = true;
+			}
+		}
 	}
-	*/
 }
