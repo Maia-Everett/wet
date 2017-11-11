@@ -32,22 +32,6 @@ export default {
 	},
 
 	/**
-	 * @param {Element} element
-	 * @param {string} tagName
-	 * @param {string} text
-	 * @return {Element}
-	 */
-	getElementContainingOwnText: function(element, tagName, text) {
-		for (let child of element.getElementsByTagName(tagName)) {
-			if (child.textContent.includes(text)) {
-				return child;
-			}
-		}
-
-		return null;
-	},
-
-	/**
 	 * @param {string} str
 	 * @param {string|RegExp} regex
 	 * @param {number} group
@@ -65,5 +49,79 @@ export default {
 		}
 
 		return result[group];
-	}
+	},
+
+	/**
+	 * @param {Element} el
+	 * @return {string}
+	 */
+	textOf: function(el) {
+		let result = "";
+
+		for (let node of el.childNodes) {
+			if (node instanceof Text) {
+				result += node.textContent;
+			} else if (node instanceof Element) {
+				if (this.tagName(node) === "br") {
+					result += "\n";
+				} else {
+					result += this.textOf(node);
+				}
+			}
+		}
+
+		return result.trim();
+	},
+	
+	/**
+	 * @param {Element} header
+	 * @param {string} nextTagName
+	 * @return {string}
+	 */
+	collectTextUntilNextTag: function(header, nextTagName) {
+		let result = "";
+		
+		for (let node = header.nextSibling;
+				!(node instanceof Element && this.tagName(node) === nextTagName);
+				node = node.nextSibling) {
+			if (node instanceof Text) {
+				result += node.textContent;
+			} else if (node instanceof Element && this.tagName(node) === "br") {
+				result += "\n";
+			}
+		}
+		
+		return result;
+	},
+
+	/**
+	 * @param {Element} element
+	 * @param {string} tagName
+	 * @param {string} text
+	 * @param {function} onFound
+	 * @return {Element}
+	 */
+	getElementContainingOwnText: function(element, tagName, text, onFound) {
+		return this.getFirstWithOwnText(element.getElementsByTagName(tagName), text, onFound);
+	},
+
+	/**
+	 * @param {NodeList} elements
+	 * @param {string} text
+	 * @param {function} onFound
+	 * @return {Element}
+	 */
+	getFirstWithOwnText: function(elements, text, onFound) {
+		for (let child of elements) {
+			if (child.textContent.includes(text)) {
+				if (onFound) {
+					onFound(child);
+				}
+
+				return child;
+			}
+		}
+
+		return null;
+	},
 };

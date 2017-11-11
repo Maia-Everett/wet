@@ -23,8 +23,8 @@ export default function QuestParser(context) {
 		
 		parseCategory(quest);
 		parseObjectives(quest, mainContainer, questName);
-		/*
 		parseQuestText(quest, mainContainer);
+		/*
 		parseMoney(quest, mainContainer);
 		parseRewards(quest, mainContainer);
 		parseGains(quest, mainContainer);
@@ -114,38 +114,38 @@ export default function QuestParser(context) {
 		}
 	}
 
-	/*
-	private void parseQuestText(final Quest quest, final Element mainContainer, final Document html) {
+	function parseQuestText(quest, mainContainer) {
 		// Description section
-		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
+		let headingsSize3 = mainContainer.querySelectorAll("h2.heading-size-3");
 		
-		getFirstWithOwnText(headingsSize3, "Description").ifPresent(descriptionHeading -> {
-			quest.setDescription(collectTextUntilNextTag(descriptionHeading, "h2").trim());
+		u.getFirstWithOwnText(headingsSize3, "Description", descriptionHeading => {
+			quest.description = u.collectTextUntilNextTag(descriptionHeading, "h2").trim();
 		});
 		
 		// Progress section
-		final Element progressHeading = html.getElementById("lknlksndgg-progress");
+		let progressHeading = document.getElementById("lknlksndgg-progress");
 		
 		if (progressHeading != null) {
-			quest.setProgress(textOf(progressHeading));
+			quest.progress = u.textOf(progressHeading);
 		} else {
-			getFirstWithOwnText(headingsSize3, "Progress").ifPresent(fallbackProgressHeading -> {
-				quest.setProgress(collectTextUntilNextTag(fallbackProgressHeading, "h2").trim());
+			u.getFirstWithOwnText(headingsSize3, "Progress", fallbackProgressHeading => {
+				quest.progress = u.collectTextUntilNextTag(fallbackProgressHeading, "h2").trim();
 			});
 		}
 		
 		// Completion section
-		final Element completionHeading = html.getElementById("lknlksndgg-completion");
+		let completionHeading = document.getElementById("lknlksndgg-completion");
 		
 		if (completionHeading != null) {
-			quest.setCompletion(textOf(completionHeading));
+			quest.completion = u.textOf(completionHeading);
 		} else {
-			getFirstWithOwnText(headingsSize3, "Completion").ifPresent(fallbackCompletionHeading -> {
-				quest.setCompletion(collectTextUntilNextTag(fallbackCompletionHeading, "h2").trim());
+			u.getFirstWithOwnText(headingsSize3, "Completion", fallbackCompletionHeading => {
+				quest.completion = u.collectTextUntilNextTag(fallbackCompletionHeading, "h2").trim();
 			});
 		}
 	}
 		
+	/*
 	private void parseMoney(final Quest quest, final Element mainContainer) {
 		quest.setMoney(ParseUtils.getMoney(mainContainer));
 	}
