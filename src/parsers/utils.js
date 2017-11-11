@@ -124,4 +124,57 @@ export default {
 
 		return null;
 	},
+	
+	/**
+	 * @param {Element} container
+	 * @return {number}
+	 */
+	getMoney: function(container) {
+		let allMoneyElements = [];
+		allMoneyElements.push.apply(allMoneyElements, container.querySelectorAll("span.moneygold"));
+		allMoneyElements.push.apply(allMoneyElements, container.querySelectorAll("span.moneysilver"));
+		allMoneyElements.push.apply(allMoneyElements, container.querySelectorAll("span.moneycopper"));
+		
+		if (allMoneyElements.length === 0) {
+			return 0;
+		}
+		
+		// Find the leftmost money element (so we parse only the first group - second group is max level rewards)
+		let money = 0;
+		let leftEl = null;
+		
+		for (let el of allMoneyElements) {
+			if (leftEl === null || el.siblingIndex < leftEl.siblingIndex) {
+				leftEl = el;
+			}
+		}
+		
+		let node;
+		
+		// Parse all directly adjacent span nodes, possibly with whitespace in between
+		for (node = leftEl;
+				(node instanceof Element && this.tagName(node) === "span")
+					|| (node instanceof Text && node.textContent.trim().length === 0);
+				node = node.nextSibling) {
+			if (!(node instanceof Element)) {
+				continue;
+			}
+			
+			if (node.classList.contains("moneygold")) {
+				money += parseInt(node.textContent) * 10000;
+			} else if (node.classList.contains("moneysilver")) {
+				money += parseInt(node.textContent) * 100;
+			} else if (node.classList.contains("moneycopper")) {
+				money += parseInt(node.textContent);
+			}
+		}
+		
+		// If the money group we just parsed is followed immediately by max level text, then it means that the only
+		// money group is the max-level money group, so we should skip it.
+		if (node instanceof Text && node.textContent.trim().startsWith("if completed at level")) {
+			return 0;
+		}
+		
+		return money;
+	}
 };

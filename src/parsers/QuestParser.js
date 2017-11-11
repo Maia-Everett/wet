@@ -24,8 +24,8 @@ export default function QuestParser(context) {
 		parseCategory(quest);
 		parseObjectives(quest, mainContainer, questName);
 		parseQuestText(quest, mainContainer);
-		/*
 		parseMoney(quest, mainContainer);
+		/*
 		parseRewards(quest, mainContainer);
 		parseGains(quest, mainContainer);
 		parseInfobox(quest);
@@ -36,6 +36,9 @@ export default function QuestParser(context) {
 		return quest;
 	}
 
+	/**
+	 * @param {Quest} quest
+	 */
 	function parseCategory(quest) {
 		let categoryIds = u.getCategoryIds();
 		let categoryId = categoryIds[categoryIds.length - 1];
@@ -114,6 +117,10 @@ export default function QuestParser(context) {
 		}
 	}
 
+	/**
+	 * @param {Quest} quest 
+	 * @param {Element} mainContainer
+	 */
 	function parseQuestText(quest, mainContainer) {
 		// Description section
 		let headingsSize3 = mainContainer.querySelectorAll("h2.heading-size-3");
@@ -145,11 +152,19 @@ export default function QuestParser(context) {
 		}
 	}
 		
-	/*
-	private void parseMoney(final Quest quest, final Element mainContainer) {
-		quest.setMoney(ParseUtils.getMoney(mainContainer));
+	/**
+	 * @param {Quest} quest 
+	 * @param {Element} mainContainer
+	 */
+	function parseMoney(quest, mainContainer) {
+		quest.money = u.getMoney(mainContainer);
 	}
-		
+	
+	/**
+	 * @param {Quest} quest 
+	 * @param {Element} mainContainer
+	 */
+	/*
 	private void parseRewards(final Quest quest, final Element mainContainer) {
 		// Non-money rewards
 		final Elements icontabs = mainContainer.select("table.icontab.icontab-box");
