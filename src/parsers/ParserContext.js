@@ -5,16 +5,10 @@ function arrayToDict(array, dict) {
 }
 
 class ParserContext {
-	constructor(jsFile) {
-		let ctx = {};
-		new Function("g_staticUrl", jsFile + `
-			this.mn_quests = mn_quests;
-			this.LANG = LANG;
-		`).call(ctx, window.g_staticUrl);
-
+	constructor(localeData) {
 		this.questCategories = {};
 
-		ctx.mn_quests.forEach(element => {
+		localeData.mn_quests.forEach(element => {
 			let sublist = element[3];
 			
 			if (Array.isArray(sublist)) {
@@ -25,10 +19,10 @@ class ParserContext {
 			}
 		});
 
-		this.missionMechanics = arrayToDict(ctx.LANG.fidropdowns.missionMechanics);
-		arrayToDict(ctx.LANG.fidropdowns.missionThreats, this.missionMechanics);
-		this.races = arrayToDict(ctx.LANG.fidropdowns.race);
-		this.classes = arrayToDict(ctx.LANG.fidropdowns.classs);
+		this.missionMechanics = arrayToDict(localeData.fidropdowns.missionMechanics);
+		arrayToDict(localeData.fidropdowns.missionThreats, this.missionMechanics);
+		this.races = arrayToDict(localeData.fidropdowns.race);
+		this.classes = arrayToDict(localeData.fidropdowns.classs);
 
 		// This has to be hardcoded for now :(
 		this.legionMissionMechanics = {
@@ -52,9 +46,26 @@ class ParserContext {
 
 export default {
 	create: function() {
-		return fetch("http://wow.zamimg.com/js/enus.js")
-				.then(response => response.text())
-				.then(jsFile => new ParserContext(jsFile))
-				.catch(error => console.log(error));
+		return new Promise((resolve, reject) => {
+			// Hack: inject script to pass Wowhead localization data from window into content script
+			function onMessage(e) {
+				if (e.source === window && e.data.questFillerTag) {
+					window.removeEventListener("message", onMessage);
+					resolve(new ParserContext(e.data));
+				}
+			}
+
+			window.addEventListener("message", onMessage);
+
+			var script = document.createElement("script");
+			script.text = `
+				window.postMessage({
+					questFillerTag: "questFillerTag",
+					mn_quests: window.mn_quests,
+					fidropdowns: window.LANG.fidropdowns
+				}, "*");
+			`;
+			document.head.appendChild(script);
+		});
 	}
 };

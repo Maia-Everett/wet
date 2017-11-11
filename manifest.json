@@ -12,9 +12,6 @@
 	},
 
 	"permissions" : [
-		"http://wow.zamimg.com/*",
-		"http://wowhead.com/*",
-		"http://www.wowhead.com/*",
 		"tabs",
 		"activeTab",
 		"clipboardWrite"
