@@ -124,6 +124,75 @@ export default {
 
 		return null;
 	},
+
+	/**
+	 * @param {Element} element
+	 * @param {string} tagName
+	 * @param {string} text
+	 * @return {Array.<Element>}
+	 */
+	getElementsContainingOwnText: function(element, tagName, text) {
+		let result = [];
+
+		for (let child of document.getElementsByTagName(tagName)) {
+			if (child.textContent.includes(text)) {
+				result.push(child);
+			}
+		}
+
+		return result;
+	},
+	
+	/**
+	 * @param {Element} icontab
+	 * @param {function} collector
+	 */
+	collectItemRewards: function(icontab, collector) {
+		let itemNamesByIconId = new Map();
+		let itemQuantitiesByIconId = new Map();
+		
+		// Item names are contained in the actual icontab, as are placeholders for the icon and quantity
+		for (let iconPlaceholder of icontab.querySelectorAll("th[id]")) {
+			let iconId = iconPlaceholder.id;
+			// the next element is a td with the link to the actual item
+			let itemName = iconPlaceholder.nextElementSibling.getElementsByTagName("a")[0].textContent;
+			itemNamesByIconId.set(iconId, itemName);
+		}
+		
+		// Item quantities are filled through JavaScript.
+		// Find all script elements in the document containing icontab initialization code
+		for (let script of this.getElementsContainingOwnText(document, "script", "icontab")) {
+			// Parse JavaScript lines like
+			// $WH.ge('icontab-icon1').appendChild(g_items.createIcon(115793, 1, "3"));
+			// We're interested in what's inside ge() - the icon box ID -
+			// and the contents of the last quotes (item quantity)
+			let iconInitRegex = new RegExp(
+					escapeRegExp("$WH.ge('")
+					+ "([^']+)"
+					+ escapeRegExp("').appendChild(") + "[A-Za-z0-9_]+" + escapeRegExp(".createIcon(")
+					+ "[^\"]+\"([^\"]+)\""
+					+ escapeRegExp("));"), "g");
+			
+			let scriptText = script.textContent;
+			let result;
+			
+			while ((result = iconInitRegex.exec(scriptText)) !== null) {
+				// group 1 is icon box element ID, group 2 is item quantity (or 0 if no quantity should be displayed)
+				itemQuantitiesByIconId.set(matcher[1], parseInt(matcher[2]));
+			}
+		}
+		
+		itemNamesByIconId.forEach((itemName, iconId) => {
+			let itemQuantity = itemQuantitiesByIconId.get(iconId);
+			
+			// "0" means draw no quantity on the icon
+			if (itemQuantity === undefined || itemQuantity == 0 || itemQuantity == 1) {
+				itemQuantity = null;
+			}
+			
+			collector(itemName, itemQuantity);
+		});
+	},
 	
 	/**
 	 * @param {Element} container

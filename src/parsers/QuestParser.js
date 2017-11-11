@@ -1,6 +1,7 @@
 import { $, $$ } from "../common/shortcuts";
 import u from "./utils";
 import Quest from "../model/quest/Quest";
+import ItemReward from "../model/quest/ItemReward";
 
 const LEGION_SCALING_QUEST_CATEGORIES = new Set([
 	"Azsuna", "Val'sharah", "Highmountain", "Stormheim", "Artifact"
@@ -25,8 +26,8 @@ export default function QuestParser(context) {
 		parseObjectives(quest, mainContainer, questName);
 		parseQuestText(quest, mainContainer);
 		parseMoney(quest, mainContainer);
-		/*
 		parseRewards(quest, mainContainer);
+		/*
 		parseGains(quest, mainContainer);
 		parseInfobox(quest);
 		parseSeries(quest, mainContainer);
@@ -164,53 +165,64 @@ export default function QuestParser(context) {
 	 * @param {Quest} quest 
 	 * @param {Element} mainContainer
 	 */
-	/*
-	private void parseRewards(final Quest quest, final Element mainContainer) {
+	function parseRewards(quest, mainContainer) {
 		// Non-money rewards
-		final Elements icontabs = mainContainer.select("table.icontab.icontab-box");
+		let icontabs = mainContainer.querySelectorAll("table.icontab.icontab-box");
 		
-		for (final Element icontab : icontabs) {
-			final Node prevNode = icontab.previousSibling();
+		for (let icontab of icontabs) {
+			let prevNode = icontab.previousSibling;
 			
-			if (icontab.id().equals("dynamic-rewards")) {
-				collectItemRewards(icontab, quest.getChoiceRewards());
-			} else if (prevNode instanceof TextNode) {
-				final String prevText = ((TextNode) prevNode).text();
+			if (icontab.id === "dynamic-rewards") {
+				collectItemRewards(icontab, quest.choiceRewards);
+			} else if (prevNode instanceof Text) {
+				let prevText = prevNode.textContent;
 				
-				if (prevText.contains("You will receive:") || prevText.contains("You will also receive:")) {
-					collectItemRewards(icontab, quest.getNonChoiceRewards());
-				} else if (prevText.contains("You will be able to choose one of these rewards:")) {
-					collectItemRewards(icontab, quest.getChoiceRewards());
-				} else if (prevText.contains("You will learn:")) {
-					collectNonItemRewards(icontab, quest.getAbilityRewards());
-				} else if (prevText.contains("The following spell will be cast on you:")) {
-					collectNonItemRewards(icontab, quest.getBuffRewards());
-				} else if ((prevText.trim().isEmpty() || prevText.contains("if completed at level"))
-						&& isMoneyRewardSpan(icontab.previousElementSibling())) {
+				if (prevText.includes("You will receive:") || prevText.includes("You will also receive:")) {
+					collectItemRewards(icontab, quest.nonChoiceRewards);
+				} else if (prevText.includes("You will be able to choose one of these rewards:")) {
+					collectItemRewards(icontab, quest.choiceRewards);
+				} else if (prevText.includes("You will learn:")) {
+					collectNonItemRewards(icontab, quest.abilityRewards);
+				} else if (prevText.includes("The following spell will be cast on you:")) {
+					collectNonItemRewards(icontab, quest.buffRewards);
+				} else if ((prevText.trim().length === 0 || prevText.includes("if completed at level"))
+						&& isMoneyRewardSpan(icontab.previousElementSibling)) {
 					// This is probably an item tucked at the end after money rewards
-					collectItemRewards(icontab, quest.getNonChoiceRewards());
+					collectItemRewards(icontab, quest.nonChoiceRewards);
 				}
 			}
 		}
 	}
 	
 	// Convenience collection adapter around ParseUtils.collectItemRewards, which expects a Consumer
-	private void collectItemRewards(final Element icontab, final Collection<ItemReward> collector) {
-		ParseUtils.collectItemRewards(icontab, (item, quantity) -> {
-			collector.add(new ItemReward(item, quantity, collector.size() + 1));
+	/**
+	 * @param {Element} icontab
+	 * @param {Array.<ItemReward>} collector
+	 */
+	function collectItemRewards(icontab, collector) {
+		u.collectItemRewards(icontab, (item, quantity) => {
+			collector.push(new ItemReward(item, quantity, collector.length + 1));
 		});
 	}
 	
-	private void collectNonItemRewards(final Element icontab, final Collection<String> collector) {
-		for (final Element link : icontab.getElementsByTag("a")) {
-			collector.add(link.ownText());
+	/**
+	 * @param {Element} icontab
+	 * @param {Array.<string>} collector
+	 */
+	function collectNonItemRewards(icontab, collector) {
+		for (let link of icontab.querySelectorAll("td > a")) {
+			collector.push(link.textContent);
 		}
 	}
 	
-	private boolean isMoneyRewardSpan(final Element element) {
-		return "span".equals(element.tagName()) && element.className().matches(".*money(?:gold|silver|copper).*");
+	/**
+	 * @param {Element} element
+	 */
+	function isMoneyRewardSpan(element) {
+		return u.tagName(element) === "span" && /money(?:gold|silver|copper)/.test(element.className);
 	}
 
+	/*
 	private void parseGains(final Quest quest, final Element mainContainer) {
 		// Gains section
 		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
