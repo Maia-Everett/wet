@@ -14,4 +14,20 @@ export default class Quest {
 		this.previousQuests = [];
 		this.nextQuests = [];
 	}
+
+	getGold() {
+		return Math.floor(this.money / 10000) || "";
+	}
+
+	getSilver() {
+		return (Math.floor(this.money / 100) % 100) || "";
+	}
+
+	getCopper() {
+		return (this.money % 100) || "";
+	}
+
+	getExperienceStr() {
+		return new Intl.NumberFormat("en-US").format(this.experience);
+	}
 }

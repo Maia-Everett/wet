@@ -1,6 +1,9 @@
 import { $, $$ } from "../common/shortcuts";
 import u from "./utils";
 import substitutions from "./substitutions";
+
+import questEJS from "../templates/quest.ejs";
+
 import Quest from "../model/quest/Quest";
 import ItemReward from "../model/core/ItemReward";
 import ReputationGain from "../model/quest/ReputationGain";
@@ -13,6 +16,10 @@ const LEGION_SCALING_QUEST_CATEGORIES = new Set([
  * @return {Quest}
  */
 export default function QuestParser(context) {
+	this.name = "Quest";
+	this.templatePrefix = "q";
+	this.template = questEJS;
+
 	this.parse = function() {
 		let quest = new Quest();
 		
@@ -64,8 +71,8 @@ export default function QuestParser(context) {
 		
 		// If there is a h2.heading-size-3 right before the "objectives" text, it is probably not objectives,
 		// but rather progress or completion, like on the quest "Draenei Tail"
-		if (!(beforeObjectives instanceof Element && u.tagName(beforeObjectives) === "h2")
-				&& beforeObjectives.classList.contains("heading-size-3")) {
+		if (!(beforeObjectives instanceof Element && u.tagName(beforeObjectives) === "h2"
+				&& beforeObjectives.classList.contains("heading-size-3"))) {
 			quest.objectives = objectivesNode.data.trim();
 		}
 		

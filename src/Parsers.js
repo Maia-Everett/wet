@@ -1,5 +1,6 @@
 import { $, $$ } from "./common/shortcuts";
 import u from "./parsers/utils";
+
 import ParserContext from "./parsers/ParserContext";
 import QuestParser from "./parsers/QuestParser";
 import MissionParser from "./parsers/MissionParser";
@@ -7,23 +8,9 @@ import NPCParser from "./parsers/NPCParser";
 
 class Parsers {
 	constructor(context) {
-		this.quest = {
-			name: "Quest",
-			templatePrefix: "q",
-			parser: new QuestParser(context)
-		};
-
-		this.mission = {
-			name: "Quest",
-			templatePrefix: "m",
-			parser: new MissionParser(context)
-		};
-
-		this.npc = {
-			name: "NPC",
-			templatePrefix: "n",
-			parser: new NPCParser(context)
-		};
+		this.quest = new QuestParser(context);
+		this.mission = new MissionParser(context);
+		this.npc = new NPCParser(context);
 	}
 
 	format() {
@@ -34,14 +21,18 @@ class Parsers {
 		}
 
 		let articleType = u.getRegexGroup(url, /\/([a-z-]+)=[0-9]+\//, 1);
-		let parserType = this[articleType];
+		let parser = this[articleType];
 
-		if (!parserType) {
+		if (!parser) {
 			return null;
 		}
 
-		let parseResult = parserType.parser.parse();
-		return JSON.stringify(parseResult, null, 4);
+		let parseResult = parser.parse();
+
+		// Format
+		let context = {};
+		context[parser.templatePrefix] = parseResult;
+		return parser.template(context);
 	}
 };
 

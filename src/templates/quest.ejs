@@ -1,0 +1,176 @@
+<% if (q.removed) { -%>
+{{Removed|patch=}}
+<% } else { -%>
+{{Stub/Quest}}
+<% } -%>
+{{Questbox
+<% if (q.removed) { -%>
+ | doc =
+<% } -%>
+ | id = <%-q.id%>
+ | name = <%-q.name%>
+ | category = <%-q.category%>
+<% if (q.faction) { -%>
+ | faction = <%-q.faction%>
+<% } -%>
+<% if (q.race) { -%>
+ | race = <%-q.race%>
+<% } -%>
+<% if (q.characterClass) { -%>
+ | class = <%-q.characterClass%>
+<% } -%>
+ | level = <%-q.level%>
+<% if (q.levelRequired) { -%>
+ | levelreq = <%-q.levelRequired%>
+<% } -%>
+<% if (q.type) { -%>
+ | type = <%-q.type%>
+<% } -%>
+<% if (q.groupSize) { -%>
+ | groupsize = <%-q.groupSize%>
+<% } -%>
+<% if (q.startEntity) { -%>
+ | start = [[<%-q.startEntity%>]]
+<% } else { -%>
+ | start = Automatic
+<% } -%>
+<% if (q.finishEntity && q.startEntity !== q.finishEntity) { -%>
+ | end = [[<%-q.finishEntity%>]]
+<% } else if (!q.finishEntity) { -%>
+ | end = Automatic
+<% } -%>
+<% if (q.reputationGains.length) { -%>
+ | reputation = <%
+	q.reputationGains.forEach(function(gain, index) {
+		%><%- gain %><%
+		if (index < q.reputationGains.length - 1) {
+			%><br /><%
+		}
+	}) %>
+<% } -%>
+<% if (q.experience) { -%>
+ | experience = <%-q.getExperienceStr()%>
+<% } -%>
+<% if (q.hasNonMoneyRewards) { -%>
+ | rewards =
+<% if (q.choiceRewards) { -%>
+<<^-first>>or <</-first>><% if (quantity) { -%><<this>>x <% } -%>[[<<name>>]]<<^-last>><br /><</-last>>
+<% } -%>
+<% if (q.allNonChoiceRewards) { -%>
+<<#-first>><% if (!q.choiceRewards.isEmpty) { -%><br /><br /><% } -%><</-first>><% if (quantity) { -%><<this>>x <% } -%>[[<<name>>]]<<^-last>><br /><</-last>>
+<% } -%>
+<% } -%>
+<% if (q.money) { -%>
+ | money = {{cost|<%- q.getGold() %>|<%- q.getSilver() %>|<%- q.getCopper() %>}}
+<% } -%>
+<% if (q.repeatable) { -%>
+ | repeatable = Yes
+<% } -%>
+<% if (!q.shareable) { -%>
+ | shareable = No
+<% } -%>
+ | previous = <% q.previousQuests.forEach(function(quest, index) {
+	%>[[Quest:<%- quest %>]]<%
+		if (index < q.previousQuests.length - 1) {
+			%>, <%
+		}
+	}) %>
+ | next = <% q.nextQuests.forEach(function(quest, index) {
+	%>[[Quest:<%- quest %>]]<%
+		if (index < q.nextQuests.length - 1) {
+			%>, <%
+		}
+	}) %>
+<% if (q.faction && q.faction !== "Neutral") { -%>
+ | other-faction =
+ <% } -%>
+}}
+
+==Objectives==
+<% if (q.objectives) { -%>
+<%- q.objectives %>
+<% } else { -%>
+...
+<% } -%>
+<% q.stages.forEach(function(stage) { -%>
+* <%- stage %>
+<% }) -%>
+<% q.providedItems.forEach(function(item) { -%>
+* [[<%- item %>]] (provided)
+<% }) -%>
+<% if (q.groupSize) { -%>
+* Suggested players: <%- q.groupSize %>
+<% } -%>
+
+==Description==
+<% if (q.description) { -%>
+<%- q.description %>
+<% } else { -%>
+...
+<% } -%>
+
+<% if (q.hasRewards) { -%>
+==Rewards==
+<% if (!q.choiceRewards.isEmpty) { -%>
+{{itembox|You will be able to choose one of these rewards:
+<% if (q.choiceRewards) { -%>
+<% if (quantity) { -%>|q<<index>>=<<quantity>><% } -%>|<<name>>
+<% } -%>
+}}
+
+<% } -%>
+<% if (q.abilityRewards) { -%>
+You will <% if (q.hasItemRewards) { -%>also <% } -%>learn: [[<<this>>]]
+
+<% } -%>
+<% if (q.buffRewards) { -%>
+The following spell will be cast on you: [[<<this>>]]
+
+<% } -%>
+<% if (q.hasMoney) { -%>
+You will <% if (q.hasChoiceAbilityOrBuffRewards) { -%>also <% } -%>receive: {{cost|<%-q.gold%>|<%-q.silver%>|<%-q.copper%>}}
+
+<% } -%>
+<% if (!q.nonChoiceRewards.isEmpty) { -%>
+{{itembox|<% if (!q.hasMoney) { -%>You will <% if (q.hasChoiceAbilityOrBuffRewards) { -%>also <% } -%>receive:<% } -%>
+<% if (q.nonChoiceRewards) { -%>
+<% if (quantity) { -%>|q<<index>>=<<quantity>><% } -%>|<<name>>
+<% } -%>
+}}
+
+<% } -%>
+<% } -%>
+<% if (q.progress) { -%>
+==Progress==
+<%-q.progress%>
+
+<% } -%>
+<% if (q.completion) { -%>
+==Completion==
+<%-q.completion%>
+<% } -%>
+
+<% if (q.hasGains) { -%>
+==Gains==
+<% if (q.hasExperience) { -%>
+* <%-q.experienceStr%> [[XP]]
+<% } -%>
+<% if (q.reputationGains) { -%>
+* <<fullText>>
+<% } -%>
+<% } -%>
+<% if (q.otherGains) { -%>
+* <<this>>
+<% } -%>
+
+==Progression==
+...
+<% if (q.patchAdded) { -%>
+
+==Patch changes==
+* {{Patch <%-q.patchAdded%>|note=Added.}}
+<% } -%>
+
+==External links==
+{{subst:el}}
+{{Elinks-quest|<%-q.id%>}}

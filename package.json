@@ -1,11 +1,7 @@
 {
 	"name": "questfiller",
 	"version": "2.0.0",
-	"babel": {
-		"presets": [
-			"env"
-		]
-	},
 	"devDependencies": {
+		"ejs-compiled-loader": "^1.1.0"
 	}
 }
