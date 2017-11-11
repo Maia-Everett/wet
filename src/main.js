@@ -10,7 +10,7 @@ popup.setAttribute("id", "questfiller-popup");
 document.body.appendChild(popup);
 
 popup.innerHTML = `
-	<textarea id="questfiller-content"></textarea>
+	<textarea id="questfiller-content" spellcheck="false"></textarea>
 	<button id="questfiller-copy">Copy to clipboard and close</button>
 `;
 

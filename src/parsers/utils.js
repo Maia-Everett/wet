@@ -245,5 +245,19 @@ export default {
 		}
 		
 		return money;
+	},
+	
+	/**
+	 * @param {Element} startElement
+	 * @param {function} condition
+	 */
+	findNextElementSibling: function(startElement, condition) {
+		for (let el = startElement.nextElementSibling; el != null; el = el.nextElementSibling) {
+			if (condition(el)) {
+				return el;
+			}
+		}
+		
+		return null;
 	}
 };

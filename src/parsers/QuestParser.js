@@ -1,7 +1,9 @@
 import { $, $$ } from "../common/shortcuts";
 import u from "./utils";
+import substitutions from "./substitutions";
 import Quest from "../model/quest/Quest";
-import ItemReward from "../model/quest/ItemReward";
+import ItemReward from "../model/core/ItemReward";
+import ReputationGain from "../model/quest/ReputationGain";
 
 const LEGION_SCALING_QUEST_CATEGORIES = new Set([
 	"Azsuna", "Val'sharah", "Highmountain", "Stormheim", "Artifact"
@@ -27,8 +29,8 @@ export default function QuestParser(context) {
 		parseQuestText(quest, mainContainer);
 		parseMoney(quest, mainContainer);
 		parseRewards(quest, mainContainer);
-		/*
 		parseGains(quest, mainContainer);
+		/*
 		parseInfobox(quest);
 		parseSeries(quest, mainContainer);
 		parseRemoved(quest, mainContainer);
@@ -217,50 +219,58 @@ export default function QuestParser(context) {
 	
 	/**
 	 * @param {Element} element
+	 * @return {boolean}
 	 */
 	function isMoneyRewardSpan(element) {
 		return u.tagName(element) === "span" && /money(?:gold|silver|copper)/.test(element.className);
 	}
 
-	/*
-	private void parseGains(final Quest quest, final Element mainContainer) {
+	/**
+	 * @param {Quest} quest 
+	 * @param {Element} mainContainer
+	 */
+	function parseGains(quest, mainContainer) {
 		// Gains section
-		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
-		final Optional<Element> gainsData = headingsSize3.stream()
-				.filter(el -> el.text().equals("Gains"))
-				.findFirst()
-				.flatMap(gains -> ParseUtils.findNextElementSibling(gains, el -> el.tagName().equals("ul")));
-		
-		if (gainsData.isPresent()) {
-			Elements divs = ((Element) gainsData.get()).getElementsByTag("div");
-			int firstNonXPDiv;
+		let gainsData = null;
+
+		for (let heading of mainContainer.querySelectorAll("h2.heading-size-3")) {
+			if (heading.textContent === "Gains") {
+				gainsData = u.findNextElementSibling(heading, el => u.tagName(el) === "ul");
+				break;
+			}
+		}
+
+		if (gainsData) {
+			let divs = gainsData.getElementsByTagName("div");
+			let firstNonXPDiv;
 			
-			if (divs.first().ownText().contains("experience")) {
+			if (divs[0].textContent.includes("experience")) {
 				firstNonXPDiv = 1;
-				final String xpValue = getRegexGroup(divs.first().ownText(), "([0-9,]*) experience", 1).get();
-				quest.setExperience(Integer.parseInt(xpValue.replace(",", "")));
+				let xpValue = u.getRegexGroup(divs[0].textContent, "([0-9,]*) experience", 1);
+				quest.experience = parseInt(xpValue.replace(",", ""));
 			} else {
 				firstNonXPDiv = 0;
 			}
 			
-			for (int i = firstNonXPDiv; i < divs.size(); i++) {
-				final Element div = divs.get(i);
+			for (let i = firstNonXPDiv; i < divs.length; i++) {
+				let div = divs[i];
 				
-				if (div.ownText().contains("reputation with")) {
-					final String repValue = div.getElementsByTag("span").first().ownText();
-					final String faction = div.getElementsByTag("a").first().ownText();
-					final String canonicalName = Substitutions.getCanonicalReputationFaction(faction);
-					quest.getReputationGains().add(new ReputationGain(faction,
-							canonicalName.equals(faction) ? null : canonicalName,
-							Integer.parseInt(repValue.replace(",", ""))));
+				if (div.textContent.includes("reputation with")) {
+					let repValue = div.getElementsByTagName("span")[0].textContent;
+					let faction = div.getElementsByTagName("a")[0].textContent;
+					let canonicalName = substitutions.getCanonicalReputationFaction(faction);
+					quest.reputationGains.push(new ReputationGain(faction,
+							canonicalName === faction ? null : canonicalName,
+							parseInt(repValue.replace(",", ""))));
 				} else {
 					// Non-reputation gain
-					quest.getOtherGains().add(div.text());
+					quest.otherGains.push(div.textContent);
 				}
 			}
 		}
 	}
 	
+	/*
 	private void parseInfobox(final Quest quest, final Document html) {
 		// Infobox section
 		final List<String> infoboxLines = ParseUtils.getInfoboxLines(html, true);

@@ -7,5 +7,8 @@ export default class Quest {
 		this.nonChoiceRewards = [];
 		this.abilityRewards = [];
 		this.buffRewards = [];
+
+		this.reputationGains = [];
+		this.otherGains = [];
 	}
 }
