@@ -22,6 +22,39 @@ export default {
 		let regex = escapeRegExp("PageTemplate.set({breadcrumb: [") + "([0-9,-]+)" + escapeRegExp("]});");
 		return this.getRegexGroup(breadcrumbData, regex, 1).split(",");
 	},
+	
+	/**
+	 * @param {boolean} stripColor
+	 * @return {Array.<string>}
+	 */
+	getInfoboxLines: function(stripColor) {
+		let infoboxData = null;
+		
+		this.getElementContainingOwnText(document, "script", "arkup.printHtml", script => {
+			infoboxData = script.textContent;
+		});
+		
+		if (!infoboxData) {
+			return [];
+		}
+		
+		let infoboxMarkup = this.getRegexGroup(infoboxData, "[Mm]arkup\\.printHtml\\((['\"])(.*)\\1, 'infobox", 2)
+					.replace(/\\\//g, "/") // unescape forward slashes (the regex matches the string \/)
+					.replace(/\\x([0-9A-Z]{2})/g, escapeSeq => String.fromCharCode(parseInt(hex, 16)));
+					// Convert \xNN escape sequences to their corresponding characters
+		
+		// We'll get BBCode, convert it to a list of plain text lines
+		let lines = [];
+
+		for (let line of infoboxMarkup.split("[/li][li]")) {
+			lines.push.apply(lines, line.split("[br]"));
+		}
+
+		return lines.map(line => line.replace(/\[(?:race|class|money)=([0-9]+)\]/g, "$1"))
+				.map(stripColor ? line => line
+						: line => line.replace(/\[color=([^\]]+)\]/g, "<$1>"))
+				.map(line => line.replace(/\[[^\]]+\]/g, ""));          // remove all square bracket tags
+	},
 
 	/**
 	 * @param {Element} element
@@ -35,20 +68,27 @@ export default {
 	 * @param {string} str
 	 * @param {string|RegExp} regex
 	 * @param {number} group
+	 * @param {function} onFound
 	 * @return {string}
 	 */
-	getRegexGroup: function(str, regex, group) {
+	getRegexGroup: function(str, regex, group, onFound) {
 		if (!regex instanceof RegExp) {
 			regex = new Regex(regex);
 		}
 		
-		let result = str.match(regex);
+		let match = str.match(regex);
 
-		if (result == null) {
+		if (match === null) {
 			return null;
 		}
 
-		return result[group];
+		let result = match[group];
+
+		if (onFound) {
+			onFound(result);
+		}
+		
+		return result;
 	},
 
 	/**

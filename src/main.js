@@ -29,4 +29,7 @@ Parsers.create().then(parsers => {
 		content.value = value;
 		$("#questfiller-copy").focus();
 	}
+}).catch(e => {
+	content.value = e.message;
+	console.log(e);
 });

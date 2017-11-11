@@ -30,8 +30,8 @@ export default function QuestParser(context) {
 		parseMoney(quest, mainContainer);
 		parseRewards(quest, mainContainer);
 		parseGains(quest, mainContainer);
-		/*
 		parseInfobox(quest);
+		/*
 		parseSeries(quest, mainContainer);
 		parseRemoved(quest, mainContainer);
 		*/
@@ -270,84 +270,74 @@ export default function QuestParser(context) {
 		}
 	}
 	
-	/*
-	private void parseInfobox(final Quest quest, final Document html) {
+	/**
+	 * @param {Quest} quest
+	 */
+	function parseInfobox(quest) {
 		// Infobox section
-		final List<String> infoboxLines = ParseUtils.getInfoboxLines(html, true);
-		
 		// Pattern-match each infobox line
-		for (final String infoboxLine : infoboxLines) {
-			getRegexGroup(infoboxLine, "Level: ([0-9]+)", 1).ifPresent(levelStr -> {
-				quest.setLevel(Integer.parseInt(levelStr));
+		for (let infoboxLine of u.getInfoboxLines(true)) {
+			u.getRegexGroup(infoboxLine, "Level: ([0-9]+)", 1, levelStr => {
+				quest.level = parseInt(levelStr);
 			});
 			
-			getRegexGroup(infoboxLine, "Requires level ([0-9]+)", 1).ifPresent(levelStr -> {
-				quest.setLevelRequired(Integer.parseInt(levelStr));
+			u.getRegexGroup(infoboxLine, "Requires level ([0-9]+)", 1, levelStr => {
+				quest.levelRequired = parseInt(levelStr);
 			});
 			
-			getRegexGroup(infoboxLine, "Type: (.+)", 1).ifPresent(type -> {
-				if (type.equals("Artifact")) {
+			u.getRegexGroup(infoboxLine, "Type: (.+)", 1, type => {
+				if (type === "Artifact") {
 					// This is what wowpedia uses
-					quest.setType("Legendary");
+					quest.type = "Legendary";
 				} else {
-					quest.setType(type);
+					quest.type = type;
 				}
 			});
 			
-			getRegexGroup(infoboxLine, "Side: (.+)", 1).ifPresent(side -> {
-				switch (side) {
-				case "Alliance":
-					quest.setFaction(Faction.ALLIANCE);
-					break;
-				case "Horde":
-					quest.setFaction(Faction.HORDE);
-					break;
-				case "Both":
-					quest.setFaction(Faction.NEUTRAL);
-					break;
-				default:
-					System.err.printf("Unknown side %s\n", side);
-					// Unknown faction
-					quest.setFaction(null);
-					break;
+			u.getRegexGroup(infoboxLine, "Side: (.+)", 1, side => {
+				if (side === "Both") {
+					quest.faction = "Neutral";
+				} else {
+					quest.faction = side;
 				}
 			});
 			
-			getRegexGroup(infoboxLine, "Race: ([0-9]+)", 1).ifPresent(raceId -> {
-				quest.setRace(Race.getById(Integer.parseInt(raceId)));
+			u.getRegexGroup(infoboxLine, "Race: ([0-9]+)", 1, raceId => {
+				quest.race = context.races[raceId];
 			});
 			
-			getRegexGroup(infoboxLine, "Class: ([0-9]+)", 1).ifPresent(classId -> {
-				quest.setCharacterClass(CharacterClass.getById(Integer.parseInt(classId)));
+			u.getRegexGroup(infoboxLine, "Class: ([0-9]+)", 1, classId => {
+				quest.characterClass = context.classes[classId];
 			});
 			
-			getRegexGroup(infoboxLine, "Start: (.+)", 1).ifPresent(startEntity -> {
-				quest.setStartEntity(startEntity);
+			u.getRegexGroup(infoboxLine, "Start: (.+)", 1, startEntity => {
+				quest.startEntity = startEntity;
 			});
 			
-			getRegexGroup(infoboxLine, "End: (.+)", 1).ifPresent(finishEntity -> {
-				quest.setFinishEntity(finishEntity);
+			u.getRegexGroup(infoboxLine, "End: (.+)", 1, finishEntity => {
+				quest.finishEntity = finishEntity;
 			});
 			
-			getRegexGroup(infoboxLine, "Added in patch ([0-9]+.[0-9]+.[0-9]+)", 1).ifPresent(patch -> {
-				quest.setPatchAdded(Substitutions.getCanonicalPatchVersion(patch));
+			u.getRegexGroup(infoboxLine, "Added in patch ([0-9]+.[0-9]+.[0-9]+)", 1, patch => {
+				quest.patchAdded = substitutions.getCanonicalPatchVersion(patch);
 			});
 			
-			if ("Repeatable".equals(infoboxLine)) {
-				quest.setRepeatable(true);
-			} else if ("Sharable".equals(infoboxLine)) {
-				quest.setShareable(true);
-			} else if ("Not sharable".equals(infoboxLine)) {
-				quest.setShareable(false);
+			if (infoboxLine === "Repeatable") {
+				quest.repeatable = true;
+			} else if (infoboxLine === "Sharable") {
+				quest.shareable = true;
+			} else if (infoboxLine === "Not sharable") {
+				quest.shareable = false;
 			}
 			
 			// If we still don't know the level, and it's a Legion quest, its level probably scales
-			if (quest.getLevel() == null && LEGION_SCALING_QUEST_CATEGORIES.contains(quest.getCategory())) {
-				quest.setLevel(100);
+			if (!quest.level && LEGION_SCALING_QUEST_CATEGORIES.has(quest.category)) {
+				quest.level = "100 - 110";
 			}
 		}
 	}
 	
+	/*
 	private void parseSeries(final Quest quest, final Element mainContainer) {
 		// Try to determine previous and next quests
 		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
