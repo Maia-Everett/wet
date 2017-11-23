@@ -74,7 +74,7 @@ export default function NPCParser(context) {
 		u.getElementContainingOwnText(document, "script", "new Listview", script => {
 			parseQuests(npc, script.textContent);
 			parseItems(npc, script.textContent);
-			// parseSounds(npc, script.textContent);
+			parseSounds(npc, script.textContent);
 		});
 	}
 	
@@ -161,93 +161,79 @@ export default function NPCParser(context) {
 		});
 	}
 	
-	/*
-	private void parseSounds(final NPC npc, final String script) {
-		getRegexGroup(script, "new Listview\\(\\{template: 'sound', id: 'sounds', (.*)\\);", 1).ifPresent(s -> {
+	/**
+	 * @param {NPC} npc 
+	 * @param {string} script
+	 */
+	function parseSounds(npc, script) {
+		u.getRegexGroup(script, "new Listview\\(\\{template: 'sound', id: 'sounds', (.*)\\);", 1, s => {
 			// First, try to determine both race and gender from the attack sound
-			final Pattern raceGenderPattern =
-					Pattern.compile("\"name\":\"([A-Za-z0-9_]+)"
-							+ "(Male|Female|_MALE|_FEMALE)"
-							+ "[A-Za-z0-9_]*"
-							+ "(?:Attack|ATTACK)\"");
-			final Matcher matcher = raceGenderPattern.matcher(s);	
+			let raceGenderPattern = new RegExp(
+					"\"name\":\"([A-Za-z0-9_]+)"
+					+ "(Male|Female|_MALE|_FEMALE)"
+					+ "[A-Za-z0-9_]*"
+					+ "(?:Attack|ATTACK)\"");
 			
-			if (matcher.find()) {
-				npc.setRace(normalizeRaceName(matcher.group(1)));
+			let match = s.match(raceGenderPattern);
+
+			if (match) {
+				npc.race = normalizeRaceName(match[1]);
 				
-				switch (matcher.group(2)) {
+				switch (match[2]) {
 				case "_MALE":
-					npc.setGender("Male");
+					npc.gender = "Male";
 					break;
 				case "_FEMALE":
-					npc.setGender("Female");
+					npc.gender = "Female";
 					break;
 				default:
-					npc.setGender(matcher.group(2));
+					npc.gender = match[2];
 					break;
 				}
 			} else {
 				// Try to determine just race
-				getRegexGroup(s, "\"name\":\"([A-Za-z0-9_]+)(?:Attack|ATTACK)\"", 1).ifPresent(race -> {
-					npc.setRace(normalizeRaceName(race));
+				u.getRegexGroup(s, "\"name\":\"([A-Za-z0-9_]+)(?:Attack|ATTACK)\"", 1, race => {
+					npc.race = normalizeRaceName(race);
 				});
 			}
 		});
 	}
 	
-	private static String normalizeRaceName(final String raceName) {
-		final String transformed = raceName
-				.replace("Player", "")
-				.replaceAll("^MON_", "")
-				.replaceAll("^VO_[0-9]*", "");
+	/**
+	 * 
+	 * @param {string} raceName 
+	 */
+	function normalizeRaceName(raceName) {
+		let transformed = raceName
+				.replace(/Player/g, "")
+				.replace(/^MON_/, "")
+				.replace(/^VO_[0-9]*/, "");
 		
-		if (transformed.isEmpty()) {
+		if (transformed.length === 0) {
 			return "";
-		} else if (transformed.matches("[A-Z0-9_]+")) {
+		} else if (/^[A-Z0-9_]+$/.test(transformed)) {
 			// Convert UPPERCASE_WITH_UNDERSCORES_CONVENTION to normal name (e.g. FROST_NYMPH -> Frost nymph)
-			final char[] src = transformed.replace('_', ' ').trim().toCharArray();
-			final StringBuilder sb = new StringBuilder();
-			sb.append(src[0]);
+			// Convert every uppercase character except the first to lowercase, and every underscore to space
+			let src = transformed.replace(/_/g, " ").trim();
 			
-			for (int i = 1; i < src.length; i++) {
-				char ch = src[i];
-				
-				// Convert every uppercase character except the first to lowercase, and every underscore to space
-				if (ch >= 'A' && ch <= 'Z') {
-					sb.append(Character.toLowerCase(ch));
-				} else {
-					sb.append(ch);
-				}
-			}
-			
-			return sb.toString();
-		} else {
-			// Convert CamelCase to normal name (e.g. NightElf -> Night elf)
-			final char[] src = transformed.replace("_", "").toCharArray();
-			
-			if (src.length == 0) {
+			if (src.length === 0) {
 				return "";
 			}
 			
-			final StringBuilder sb = new StringBuilder();
-			sb.append(src[0]);
+			return src.charAt(0) + src.substring(1).toLowerCase();
+		} else {
+			// Convert CamelCase to normal name (e.g. NightElf -> Night elf)
+			let src = transformed.replace(/_/g, "");
 			
-			for (int i = 1; i < src.length; i++) {
-				char ch = src[i];
-				
-				// Convert every uppercase character into a pair of space + lowercase
-				if (ch >= 'A' && ch <= 'Z') {
-					sb.append(' ');
-					sb.append(Character.toLowerCase(ch));
-				} else {
-					sb.append(ch);
-				}
+			if (src.length === 0) {
+				return "";
 			}
 			
-			return sb.toString();
+			return src.charAt(0) + src.substring(1).replace(/[A-Z]/g, ch => " " + ch.toLowerCase());
 		}
 	}
 	
+	/*
 	private void parseQuotes(final NPC npc, final Element mainContainer) {
 		final Optional<Element> quotesDiv = mainContainer.select("a.disclosure-off")
 				.stream()
