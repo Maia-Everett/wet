@@ -6,6 +6,7 @@ import npcEJS from "../templates/npc.ejs";
 
 import NPC from "../model/npc/NPC";
 import NPCQuest from "../model/npc/NPCQuest";
+import SoldItem from "../model/npc/SoldItem";
 
 /**
  * @param {ParserContext} context 
@@ -72,8 +73,8 @@ export default function NPCParser(context) {
 	function parseLists(npc) {
 		u.getElementContainingOwnText(document, "script", "new Listview", script => {
 			parseQuests(npc, script.textContent);
-			// parseItems(npc, script);
-			// parseSounds(npc, script);
+			parseItems(npc, script.textContent);
+			// parseSounds(npc, script.textContent);
 		});
 	}
 	
@@ -141,22 +142,26 @@ export default function NPCParser(context) {
 		}
 	}
 	
-	/*
-	private void parseItems(final NPC npc, final String script) {
-		getRegexGroup(script, "new Listview\\(\\{template: 'item', id: 'sells', (.*)\\);", 1).ifPresent(s -> {
-			final List<SoldItem> soldItems = new ArrayList<>();
-			final Pattern pattern = Pattern.compile("\"name\":\"[0-9]([^\"]+)\",[^\\}]+,cost:\\[([0-9]+),");
-			final Matcher matcher = pattern.matcher(s);
+	/**
+	 * @param {NPC} npc 
+	 * @param {string} script
+	 */
+	function parseItems(npc, script) {
+		u.getRegexGroup(script, /new Listview\(\{template: 'item', id: 'sells', (.*)\);/, 1, s => {
+			let soldItems = [];
+			let regex = /"name":"[0-9]([^"]+)".+?cost:\[([0-9]+)/g;
+			let match;
 			
-			while (matcher.find()) {
-				soldItems.add(new SoldItem(matcher.group(1), Integer.parseInt(matcher.group(2))));
+			while ((match = regex.exec(s)) !== null) {
+				soldItems.push(new SoldItem(match[1], parseInt(match[2])));
 			}
 			
-			Collections.sort(soldItems);
-			npc.setItemsSold(soldItems);
+			soldItems.sort((s1, s2) => s1.compareTo(s2));
+			npc.itemsSold = soldItems;
 		});
 	}
 	
+	/*
 	private void parseSounds(final NPC npc, final String script) {
 		getRegexGroup(script, "new Listview\\(\\{template: 'sound', id: 'sounds', (.*)\\);", 1).ifPresent(s -> {
 			// First, try to determine both race and gender from the attack sound
