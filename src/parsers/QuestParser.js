@@ -25,7 +25,7 @@ export default function QuestParser(context) {
 		
 		let url = $("link[rel=canonical]").getAttribute("href");
 		let idStr = u.getRegexGroup(url, "/quest=([0-9]+)/", 1);
-		quest.id = parseInt(idStr);
+		quest.id = parseInt(idStr, 10);
 		
 		let mainContainer = $("#main-contents > div.text");
 		let questName = $("h1.heading-size-1");

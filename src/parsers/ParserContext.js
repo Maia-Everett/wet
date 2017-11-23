@@ -23,6 +23,7 @@ class ParserContext {
 		arrayToDict(localeData.fidropdowns.missionThreats, this.missionMechanics);
 		this.races = arrayToDict(localeData.fidropdowns.race);
 		this.classes = arrayToDict(localeData.fidropdowns.classs);
+		this.npcTypes = localeData.g_npc_types;
 
 		// This has to be hardcoded for now :(
 		this.legionMissionMechanics = {
@@ -61,6 +62,7 @@ export default {
 			script.text = `
 				window.postMessage({
 					questFillerTag: "questFillerTag",
+					g_npc_types: window.g_npc_types,
 					mn_quests: window.mn_quests,
 					fidropdowns: window.LANG.fidropdowns
 				}, "*");
