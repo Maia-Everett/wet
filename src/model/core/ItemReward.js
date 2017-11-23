@@ -10,4 +10,15 @@ export default class ItemReward {
 		this.quantity = quantity;
 		this.index = index;
 	}
+
+	/**
+	 * @return {string}
+	 */
+	toString() {
+		if (this.quantity == null) {
+			return this.name;
+		}
+		
+		return this.name + " (" + this.quantity + ")";
+	}
 }

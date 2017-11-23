@@ -51,15 +51,15 @@
 <% if (q.experience) { -%>
  | experience = <%-q.getExperienceStr()%>
 <% } -%>
-<% if (q.hasNonMoneyRewards) { -%>
+<% if (q.hasNonMoneyRewards()) { -%>
  | rewards =
-<% if (q.choiceRewards) { -%>
-<<^-first>>or <</-first>><% if (quantity) { -%><<this>>x <% } -%>[[<<name>>]]<<^-last>><br /><</-last>>
-<% } -%>
-<% if (q.allNonChoiceRewards) { -%>
-<<#-first>><% if (!q.choiceRewards.isEmpty) { -%><br /><br /><% } -%><</-first>><% if (quantity) { -%><<this>>x <% } -%>[[<<name>>]]<<^-last>><br /><</-last>>
-<% } -%>
-<% } -%>
+<% q.choiceRewards.forEach(function(reward, index) { -%>
+<% if (index > 0) { -%>or <% } -%><% if (reward.quantity) { -%><%- reward.quantity %>x <% } -%>[[<%- reward.name %>]]<% if (index < q.choiceRewards.length - 1) { -%><br /><% } -%>
+<% }) -%>
+<% q.getAllNonChoiceRewards().forEach(function(reward, index, array) { -%>
+<% if (index === 0) { -%><% if (q.choiceRewards.length) { -%><br /><br /><% } } -%><% if (reward.quantity) { -%><%- reward.quantity %>x <% } -%>[[<%- reward.name %>]]<% if (index < array.length - 1) { -%><br /><% } -%>
+<% }) -%>
+<% } %>
 <% if (q.money) { -%>
  | money = {{cost|<%- q.getGold() %>|<%- q.getSilver() %>|<%- q.getCopper() %>}}
 <% } -%>
@@ -109,37 +109,37 @@
 ...
 <% } -%>
 
-<% if (q.hasRewards) { -%>
+<% if (q.hasRewards()) { -%>
 ==Rewards==
-<% if (!q.choiceRewards.isEmpty) { -%>
+<% if (q.choiceRewards.length) { -%>
 {{itembox|You will be able to choose one of these rewards:
-<% if (q.choiceRewards) { -%>
-<% if (quantity) { -%>|q<<index>>=<<quantity>><% } -%>|<<name>>
-<% } -%>
+<% q.choiceRewards.forEach(function(reward, index) { -%>
+<% if (reward.quantity) { %>|q<%- (index+1) %>=<%-reward.quantity%><% } %>|<%-reward.name%>
+<% }) -%>
 }}
 
 <% } -%>
-<% if (q.abilityRewards) { -%>
-You will <% if (q.hasItemRewards) { -%>also <% } -%>learn: [[<<this>>]]
+<% q.abilityRewards.forEach(function(reward, index) { -%>
+You will <% if (q.hasItemRewards()) { -%>also <% } -%>learn: [[<%-reward%>]]
+
+<% }) %>
+<% q.buffRewards.forEach(function(reward, index) { -%>
+The following spell will be cast on you: [[<%-reward%>]]
+
+<% }) -%>
+<% if (q.money) { -%>
+You will <% if (q.hasChoiceAbilityOrBuffRewards()) { -%>also <% } -%>receive: {{cost|<%-q.getGold()%>|<%-q.getSilver()%>|<%-q.getCopper()%>}}
 
 <% } -%>
-<% if (q.buffRewards) { -%>
-The following spell will be cast on you: [[<<this>>]]
-
-<% } -%>
-<% if (q.hasMoney) { -%>
-You will <% if (q.hasChoiceAbilityOrBuffRewards) { -%>also <% } -%>receive: {{cost|<%-q.gold%>|<%-q.silver%>|<%-q.copper%>}}
-
-<% } -%>
-<% if (!q.nonChoiceRewards.isEmpty) { -%>
-{{itembox|<% if (!q.hasMoney) { -%>You will <% if (q.hasChoiceAbilityOrBuffRewards) { -%>also <% } -%>receive:<% } -%>
-<% if (q.nonChoiceRewards) { -%>
-<% if (quantity) { -%>|q<<index>>=<<quantity>><% } -%>|<<name>>
-<% } -%>
+<% if (q.nonChoiceRewards.length) { -%>
+{{itembox|<% if (!q.money) { -%>You will <% if (q.hasChoiceAbilityOrBuffRewards()) { -%>also <% } -%>receive:<% } -%>
+<% q.nonChoiceRewards.forEach(function(reward, index) { -%>
+<% if (reward.quantity) { %>|q<%- (index+1) %>=<%-reward.quantity%><% } %>|<%-reward.name%>
+<% }) -%>
 }}
 
 <% } -%>
-<% } -%>
+<% } %>
 <% if (q.progress) { -%>
 ==Progress==
 <%-q.progress%>
@@ -150,18 +150,18 @@ You will <% if (q.hasChoiceAbilityOrBuffRewards) { -%>also <% } -%>receive: {{co
 <%-q.completion%>
 <% } -%>
 
-<% if (q.hasGains) { -%>
+<% if (q.hasGains()) { -%>
 ==Gains==
-<% if (q.hasExperience) { -%>
-* <%-q.experienceStr%> [[XP]]
+<% if (q.experience) { -%>
+* <%-q.getExperienceStr()%> [[XP]]
 <% } -%>
-<% if (q.reputationGains) { -%>
-* <<fullText>>
+<% q.reputationGains.forEach(function(gain) { -%>
+* <%-gain.getFullText()%>
+<% }) -%>
 <% } -%>
-<% } -%>
-<% if (q.otherGains) { -%>
-* <<this>>
-<% } -%>
+<% q.otherGains.forEach(function(gain) { -%>
+* <%-gain%>
+<% }) -%>
 
 ==Progression==
 ...

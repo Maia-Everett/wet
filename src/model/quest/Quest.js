@@ -1,3 +1,5 @@
+import ItemReward from "../core/ItemReward";
+
 export default class Quest {
 	constructor() {
 		this.stages = [];
@@ -26,8 +28,41 @@ export default class Quest {
 	getCopper() {
 		return (this.money % 100) || "";
 	}
+	
+	hasItemRewards() {
+		return this.choiceRewards.length > 0 || this.nonChoiceRewards.length > 0;
+	}
+	
+	getAllNonChoiceRewards() {
+		let result = this.nonChoiceRewards.slice();
+		
+		// These are not actually item rewards, but the formatter will behave as if they're items with unknown quantity
+		function insertReward(reward) {
+			result.push(new ItemReward(reward, null, result.length + 1));
+		}
+
+		this.abilityRewards.forEach(insertReward);
+		this.buffRewards.forEach(insertReward);
+		return result;
+	}
+	
+	hasChoiceAbilityOrBuffRewards() {
+		return this.choiceRewards.length > 0 || this.abilityRewards.length > 0 || this.buffRewards.length > 0;
+	}
+	
+	hasNonMoneyRewards() {
+		return this.hasItemRewards() || this.abilityRewards.length > 0 || this.buffRewards.length > 0;
+	}
+	
+	hasRewards() {
+		return !!this.money || this.hasNonMoneyRewards();
+	}
 
 	getExperienceStr() {
 		return new Intl.NumberFormat("en-US").format(this.experience);
+	}
+	
+	hasGains() {
+		return !!this.experience || this.reputationGains.length > 0;
 	}
 }
