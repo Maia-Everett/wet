@@ -5,6 +5,7 @@ import substitutions from "./substitutions";
 import npcEJS from "../templates/npc.ejs";
 
 import NPC from "../model/npc/NPC";
+import NPCQuest from "../model/npc/NPCQuest";
 
 /**
  * @param {ParserContext} context 
@@ -32,9 +33,9 @@ export default function NPCParser(context) {
 		});
 		
 		parseCreatureType(npc);
-		/*
 		parseLocation(npc, mainContainer);
 		parseLists(npc);
+		/*
 		parseQuotes(npc, mainContainer);
 		parseHealth(npc);
 		parseInfobox(npc);
@@ -43,6 +44,9 @@ export default function NPCParser(context) {
 		return npc;
 	}
 
+	/**
+	 * @param {NPC} npc 
+	 */
 	function parseCreatureType(npc) {
 		let categoryIds = u.getCategoryIds();
 		// third number in list is the creature type id
@@ -50,75 +54,94 @@ export default function NPCParser(context) {
 		npc.creatureType = context.npcTypes[creatureTypeId.toString()];
 	}
 	
-	/*
-	private void parseLocation(final NPC npc, final Element mainContainer) {
-		final Elements locationLinks = mainContainer.select("#locations a");
+	/**
+	 * @param {NPC} npc 
+	 * @param {Element} mainContainer
+	 */
+	function parseLocation(npc, mainContainer) {
+		let locationLink = mainContainer.querySelector("#locations a");
 		
-		if (!locationLinks.isEmpty()) {
-			npc.setLocation(locationLinks.first().text());
+		if (locationLink) {
+			npc.location = locationLink.textContent;
 		}
 	}
 	
-	private void parseLists(final NPC npc, final Document html) {
-		final Optional<String> listViewScript = html.getElementsByTag("script")
-				.stream()
-				.map(Element::data)
-				.filter(data -> data.contains("new Listview"))
-				.findFirst();
-		
-		listViewScript.ifPresent(script -> {
-			parseQuests(npc, script);
-			parseItems(npc, script);
-			parseSounds(npc, script);
+	/**
+	 * @param {NPC} npc 
+	 */
+	function parseLists(npc) {
+		u.getElementContainingOwnText(document, "script", "new Listview", script => {
+			parseQuests(npc, script.textContent);
+			// parseItems(npc, script);
+			// parseSounds(npc, script);
 		});
 	}
 	
-	private void parseQuests(final NPC npc, final String script) {
-		final Set<String> startsQuests = new HashSet<>();
+	/**
+	 * @param {NPC} npc 
+	 * @param {string} script
+	 */
+	function parseQuests(npc, script) {
+		let startsQuests = new Set();
 		
-		getRegexGroup(script, "new Listview\\(\\{template: 'quest', id: 'starts', (.*)\\);", 1).ifPresent(s -> {
+		u.getRegexGroup(script, "new Listview\\(\\{template: 'quest', id: 'starts', (.*)\\);", 1, s => {
 			addQuests(startsQuests, s);
 		});
 		
-		final Set<String> finishesQuests = new HashSet<>();
+		let finishesQuests = new Set();
 		
-		getRegexGroup(script, "new Listview\\(\\{template: 'quest', id: 'ends', (.*)\\);", 1).ifPresent(s -> {
+		u.getRegexGroup(script, "new Listview\\(\\{template: 'quest', id: 'ends', (.*)\\);", 1, s => {
 			addQuests(finishesQuests, s);
 		});
 		
 		// Split all quests into three groups: starts, finishes, both 
-		final Set<String> startsAndFinishesQuests = new HashSet<>(startsQuests);
-		startsAndFinishesQuests.retainAll(finishesQuests);
-		startsQuests.removeAll(startsAndFinishesQuests);
-		finishesQuests.removeAll(startsAndFinishesQuests);
+		let startsAndFinishesQuests = new Set();
 		
-		final List<NPCQuest> quests = new ArrayList<>();
+		for (let quest of startsQuests) {
+			if (finishesQuests.has(quest)) {
+				startsAndFinishesQuests.add(quest);
+			}
+		}
+
+		for (let quest of startsAndFinishesQuests) {
+			startsQuests.delete(quest);
+			finishesQuests.delete(quest);
+		};
 		
-		for (final String quest : startsAndFinishesQuests) {
-			quests.add(new NPCQuest(quest, true, true));
+		let quests = [];
+		
+		for (let quest of startsAndFinishesQuests) {
+			quests.push(new NPCQuest(quest, true, true));
 		}
 		
-		for (final String quest : startsQuests) {
-			quests.add(new NPCQuest(quest, true, false));
+		for (let quest of startsQuests) {
+			quests.push(new NPCQuest(quest, true, false));
 		}
 		
-		for (final String quest : finishesQuests) {
-			quests.add(new NPCQuest(quest, false, true));
+		for (let quest of finishesQuests) {
+			quests.push(new NPCQuest(quest, false, true));
 		}
 		
-		Collections.sort(quests);
-		npc.setQuests(quests);
+		quests.sort((q1, q2) => q1.compareTo(q2));
+		npc.quests = quests;
 	}
 	
-	private void addQuests(final Collection<String> quests, final String jsPart) {
+	/**
+	 * 
+	 * @param {Set} quests 
+	 * @param {string} jsPart 
+	 */
+	function addQuests(quests, jsPart) {
 		// Extract the name field from every quest in the list
-		final Matcher matcher = Pattern.compile("\"name\":\"([^\"]+)\"").matcher(jsPart);
+		let regex = /"name":"([^"]+)"/g;
+		let match;
 		
-		while (matcher.find()) {
-			quests.add(matcher.group(1));
+		while ((match = regex.exec(jsPart)) !== null) {
+			quests.add(match[1]);
 		}
 	}
 	
+	/*
 	private void parseItems(final NPC npc, final String script) {
 		getRegexGroup(script, "new Listview\\(\\{template: 'item', id: 'sells', (.*)\\);", 1).ifPresent(s -> {
 			final List<SoldItem> soldItems = new ArrayList<>();
