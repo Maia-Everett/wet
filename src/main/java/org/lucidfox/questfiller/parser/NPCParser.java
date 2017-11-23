@@ -133,7 +133,7 @@ final class NPCParser implements IParser<NPC> {
 	private void parseItems(final NPC npc, final String script) {
 		getRegexGroup(script, "new Listview\\(\\{template: 'item', id: 'sells', (.*)\\);", 1).ifPresent(s -> {
 			final List<SoldItem> soldItems = new ArrayList<>();
-			final Pattern pattern = Pattern.compile("\"name\":\"[0-9]([^\"]+)\",[^\\}]+,cost:\\[([0-9]+),");
+			final Pattern pattern = Pattern.compile("\"name\":\"[0-9]([^\"]+)\".+?cost:\\[([0-9]+)");
 			final Matcher matcher = pattern.matcher(s);
 			
 			while (matcher.find()) {
