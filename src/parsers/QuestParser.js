@@ -20,6 +20,9 @@ export default function QuestParser(context) {
 	this.templatePrefix = "q";
 	this.template = questEJS;
 
+	/**
+	 * @return {Quest}
+	 */
 	this.parse = function() {
 		let quest = new Quest();
 		
@@ -50,7 +53,7 @@ export default function QuestParser(context) {
 	function parseCategory(quest) {
 		let categoryIds = u.getCategoryIds();
 		let categoryId = categoryIds[categoryIds.length - 1];
-		quest.category = context.questCategories[categoryId];
+		quest.category = context.questCategories[categoryId.toString()];
 	}
 
 	/**

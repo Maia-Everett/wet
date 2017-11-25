@@ -4,7 +4,7 @@ function escapeRegExp(string) {
   
 export default {
 	/**
-	 * @return {Array.<string>}
+	 * @return {Array.<number>}
 	 */
 	getCategoryIds: function() {
 		let breadcrumbData;
@@ -16,11 +16,11 @@ export default {
 				breadcrumbData = text;
 				break;
 			}
-		};
+		}
 		
 		// ugh, parsing JS with regexes
 		let regex = escapeRegExp("PageTemplate.set({breadcrumb: [") + "([0-9,-]+)" + escapeRegExp("]});");
-		return this.getRegexGroup(breadcrumbData, regex, 1).split(",");
+		return this.getRegexGroup(breadcrumbData, regex, 1).split(",").map(id => parseInt(id, 10));
 	},
 	
 	/**

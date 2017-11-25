@@ -16,6 +16,9 @@ export default function NPCParser(context) {
 	this.templatePrefix = "n";
 	this.template = npcEJS;
 
+	/**
+	 * @return {NPC}
+	 */
 	this.parse = function() {
 		let npc = new NPC();
 		
