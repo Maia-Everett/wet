@@ -43,9 +43,7 @@ export default function MissionParser(context) {
 		parseCost(mission, mainContainer);
 		parseGains(mission, mainContainer);
 		parseRewards(mission, mainContainer);
-		/*
-		parseInfobox(mission, html);
-		*/
+		parseInfobox(mission);
 
 		return mission;
 	}
@@ -227,59 +225,55 @@ export default function MissionParser(context) {
 		}
 	}
 
-	/*
-	private void parseInfobox(final Mission mission, final Document html) {
+	function parseInfobox(mission) {
 		// Infobox section
-		final List<String> infoboxLines = ParseUtils.getInfoboxLines(html, true);
-		
 		// Pattern-match each infobox line
-		for (final String infoboxLine : infoboxLines) {
+		for (let infoboxLine of u.getInfoboxLines(true)) {
 			if (infoboxLine.startsWith("Rare")) {
-				mission.setRare(true);
+				mission.rare = true;
 				continue;
 			}
 			
 			if (infoboxLine.startsWith("Exhausting")) {
-				mission.setExhausting(true);
+				mission.exhausting = true;
 				continue;
 			}
 			
 			u.getRegexGroup(infoboxLine, "Level: ([0-9]+)", 1, levelStr => {
-				mission.setLevel(Integer.parseInt(levelStr));
+				mission.level = parseInt(levelStr);
 			});
 			
 			u.getRegexGroup(infoboxLine, "Required item level: ([0-9]+)", 1, levelStr => {
-				mission.setFollowerItemLevel(Integer.parseInt(levelStr));
+				mission.followerItemLevel = parseInt(levelStr);
 			});
 			
 			u.getRegexGroup(infoboxLine, "Location: (.+)", 1, location => {
-				mission.setLocation(location);
+				mission.location = location;
 			});
 			
 			u.getRegexGroup(infoboxLine, "Duration: (.+)", 1, duration => {
-				mission.setDuration(duration);
+				mission.duration = duration;
 			});
 			
 			u.getRegexGroup(infoboxLine, "Type: (.+)", 1, type => {
-				mission.setType(type);
+				mission.type = type;
 			});
 
 			u.getRegexGroup(infoboxLine, "Category: (.+)", 1, category => {
-				mission.setCategory(category);
+				mission.category = category;
 			});
 			
 			u.getRegexGroup(infoboxLine, "Class: ([0-9]+)", 1, classId => {
-				mission.setCharacterClass(CharacterClass.getById(Integer.parseInt(classId)));
+				mission.characterClass = context.classes[classId];
 			});
 			
 			u.getRegexGroup(infoboxLine, "Added in patch ([0-9]+.[0-9]+.[0-9]+)", 1, patch => {
-				mission.setPatchAdded(Substitutions.getCanonicalPatchVersion(patch));
+				mission.patchAdded = substitutions.getCanonicalPatchVersion(patch);
 			});
 			
 			u.getRegexGroup(infoboxLine, "(?:Followers|Champions|Ships): ([0-9]+)", 1, groupSize => {
-				mission.setGroupSize(Integer.parseInt(groupSize));
+				mission.groupSize = parseInt(groupSize);
 			});
 		}
 	}
-	*/
 }
