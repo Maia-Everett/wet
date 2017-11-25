@@ -138,7 +138,7 @@ export default {
 	 * @param {Element} element
 	 * @param {string} tagName
 	 * @param {string} text
-	 * @param {function} onFound
+	 * @param {(element: Element) => void} onFound
 	 * @return {Element}
 	 */
 	getElementContainingOwnText: function(element, tagName, text, onFound) {
@@ -148,7 +148,7 @@ export default {
 	/**
 	 * @param {NodeList} elements
 	 * @param {string} text
-	 * @param {function} onFound
+	 * @param {(element: Element) => void} onFound
 	 * @return {Element}
 	 */
 	getFirstWithOwnText: function(elements, text, onFound) {
@@ -185,7 +185,7 @@ export default {
 	
 	/**
 	 * @param {Element} icontab
-	 * @param {function} collector
+	 * @param {(itemName: string, itemQuantity: number) => void} collector
 	 */
 	collectItemRewards: function(icontab, collector) {
 		let itemNamesByIconId = new Map();
@@ -207,18 +207,18 @@ export default {
 			// We're interested in what's inside ge() - the icon box ID -
 			// and the contents of the last quotes (item quantity)
 			let iconInitRegex = new RegExp(
-					escapeRegExp("$WH.ge('")
+					escapeRegExp("WH.ge('")
 					+ "([^']+)"
 					+ escapeRegExp("').appendChild(") + "[A-Za-z0-9_]+" + escapeRegExp(".createIcon(")
 					+ "[^\"]+\"([^\"]+)\""
 					+ escapeRegExp("));"), "g");
 			
 			let scriptText = script.textContent;
-			let result;
+			let match;
 			
-			while ((result = iconInitRegex.exec(scriptText)) !== null) {
+			while ((match = iconInitRegex.exec(scriptText)) !== null) {
 				// group 1 is icon box element ID, group 2 is item quantity (or 0 if no quantity should be displayed)
-				itemQuantitiesByIconId.set(matcher[1], parseInt(matcher[2]));
+				itemQuantitiesByIconId.set(match[1], parseInt(match[2]));
 			}
 		}
 		
@@ -289,7 +289,7 @@ export default {
 	
 	/**
 	 * @param {Element} startElement
-	 * @param {function} condition
+	 * @param {(element: Element) => boolean} condition
 	 */
 	findNextElementSibling: function(startElement, condition) {
 		for (let el = startElement.nextElementSibling; el != null; el = el.nextElementSibling) {

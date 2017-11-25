@@ -8,6 +8,7 @@ import Mission from "../model/mission/Mission";
 import GarrisonMission from "../model/mission/GarrisonMission";
 import NavalMission from "../model/mission/NavalMission";
 import ClassHallMission from "../model/mission/ClassHallMission";
+import MissionEnemy from "../model/mission/MissionEnemy";
 
 // Magic numbers from breadcrumb bar
 const MISSION_SYSTEM_GARRISONS = 21;
@@ -37,9 +38,9 @@ export default function MissionParser(context) {
 		mission.name = mainContainer.querySelector("h1.heading-size-1").textContent.trim();
 
 		parseDescription(mission, mainContainer);
-		/*
 		parseEncounters(mission, mainContainer);
 		parseCost(mission, mainContainer);
+		/*
 		parseGains(mission, mainContainer);
 		parseRewards(mission, mainContainer);
 		parseInfobox(mission, html);
@@ -78,56 +79,67 @@ export default function MissionParser(context) {
 		});
 	}
 
-	/*
-	private void parseEncounters(final Mission mission, final Element mainContainer) {
-		final boolean useLegionThreats = mission instanceof ClassHallMission;
+
+	/**
+	 * 
+	 * @param {Mission} mission 
+	 * @param {Element} mainContainer 
+	 */
+	function parseEncounters(mission, mainContainer) {
+		let useLegionThreats = mission instanceof ClassHallMission;
 		
-		for (final Element td : mainContainer.select("td.garrison-encounter-enemy")) {
-			if (td.hasClass("empty")) {
+		for (let td of mainContainer.querySelectorAll("td.garrison-encounter-enemy")) {
+			if (td.classList.contains("empty")) {
 				continue;
 			}
 			
-			final String enemyName = td.select("span.garrison-encounter-enemy-name").text();
-			final List<String> enemyCounters = new ArrayList<>();
+			let enemyName = u.normalize(td.querySelector("span.garrison-encounter-enemy-name").textContent);
+			let enemyCounters = [];
 			
-			for (final Element mechanic : td.select("div.garrison-encounter-enemy-mechanic")) {
+			for (let mechanic of td.querySelectorAll("div.garrison-encounter-enemy-mechanic")) {
 				if (useLegionThreats) {
 					// Try to parse Legion mission counter, if available
-					final String abilityLink = mechanic.attr("data-href");
-					final Optional<String> abilityStr = getRegexGroup(abilityLink, "/mission-ability=([0-9]+)", 1);
+					let abilityLink = mechanic.getAttribute("data-href");
+					let abilityStr = u.getRegexGroup(abilityLink, "/mission-ability=([0-9]+)", 1);
 					
-					if (abilityStr.isPresent()) {
-						final int mechanicId = Integer.parseInt(abilityStr.get());
-						enemyCounters.add(context.getLegionMissionThreat(mechanicId));
+					if (abilityStr) {
+						let mechanicId = parseInt(abilityStr, 10);
+						enemyCounters.push(context.legionMissionMechanics[mechanicId]);
 						continue;
 					}
 				}
 				
 				// Fallback
-				final int mechanicId = Integer.parseInt(mechanic.attr("data-mechanic"));
-				enemyCounters.add(context.getMissionThreat(mechanicId));
+				let mechanicId = parseInt(mechanic.getAttribute("data-mechanic"), 10);
+				enemyCounters.push(context.missionMechanics[mechanicId]);
 			}
 			
-			mission.getEnemies().add(new MissionEnemy(enemyName, enemyCounters));
+			mission.enemies.push(new MissionEnemy(enemyName, enemyCounters));
 		}
 	}
 
-	private void parseCost(final Mission mission, final Element mainContainer) {
-		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
+	/**
+	 * 
+	 * @param {Mission} mission 
+	 * @param {Element} mainContainer 
+	 */
+	function parseCost(mission, mainContainer) {
+		let headingsSize3 = mainContainer.querySelectorAll("h2.heading-size-3");
 		
 		// Find the icontab that describes the mission cost
-		getFirstWithOwnText(headingsSize3, "Cost", costHeading => {
-			Element icontab = costHeading;
+		u.getFirstWithOwnText(headingsSize3, "Cost", costHeading => {
+			let icontab = costHeading;
 			
 			do {
-				icontab = icontab.nextElementSibling();
-			} while (!icontab.tagName().equals("table") || !icontab.hasClass("icontab"));
+				icontab = icontab.nextElementSibling;
+			} while (u.tagName(icontab) !== "table" || !icontab.classList.contains("icontab"));
 			
 			// Mission cost is the quantity of the only item in the icontab
-			ParseUtils.collectItemRewards(icontab, (item, quantity) -> mission.setCost(quantity));
+			u.collectItemRewards(icontab, (item, quantity) => mission.cost = quantity);
 		});
 	}
 
+	/*
 	private void parseGains(final Mission mission, final Element mainContainer) {
 		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
 		final Optional<Element> gainsList = getFirstWithOwnText(headingsSize3, "Gains")
@@ -136,7 +148,7 @@ export default function MissionParser(context) {
 		gainsList.ifPresent(ul -> {
 			for (final Element li : ul.getElementsByTag("li")) {
 				final String text = li.text();
-				final Optional<String> maybeXP = getRegexGroup(text, "([0-9,]*) experience", 1);
+				final Optional<String> maybeXP = u.getRegexGroup(text, "([0-9,]*) experience", 1);
 				
 				if (maybeXP.isPresent()) {
 					mission.setFollowerXP(Integer.parseInt(maybeXP.get().replace(",", "")));
@@ -178,7 +190,7 @@ export default function MissionParser(context) {
 		// This is a bit messy because Wowhead lumps all rewards together
 		for (final Element li : listItems) {
 			final String text = li.text();
-			final Optional<String> maybeXP = getRegexGroup(text, "([0-9,]*) experience", 1);
+			final Optional<String> maybeXP = u.getRegexGroup(text, "([0-9,]*) experience", 1);
 			
 			if (maybeXP.isPresent()) {
 				mission.setBonusXP(Integer.parseInt(maybeXP.get().replace(",", "")));
@@ -208,39 +220,39 @@ export default function MissionParser(context) {
 				continue;
 			}
 			
-			getRegexGroup(infoboxLine, "Level: ([0-9]+)", 1, levelStr => {
+			u.getRegexGroup(infoboxLine, "Level: ([0-9]+)", 1, levelStr => {
 				mission.setLevel(Integer.parseInt(levelStr));
 			});
 			
-			getRegexGroup(infoboxLine, "Required item level: ([0-9]+)", 1, levelStr => {
+			u.getRegexGroup(infoboxLine, "Required item level: ([0-9]+)", 1, levelStr => {
 				mission.setFollowerItemLevel(Integer.parseInt(levelStr));
 			});
 			
-			getRegexGroup(infoboxLine, "Location: (.+)", 1, location => {
+			u.getRegexGroup(infoboxLine, "Location: (.+)", 1, location => {
 				mission.setLocation(location);
 			});
 			
-			getRegexGroup(infoboxLine, "Duration: (.+)", 1, duration => {
+			u.getRegexGroup(infoboxLine, "Duration: (.+)", 1, duration => {
 				mission.setDuration(duration);
 			});
 			
-			getRegexGroup(infoboxLine, "Type: (.+)", 1, type => {
+			u.getRegexGroup(infoboxLine, "Type: (.+)", 1, type => {
 				mission.setType(type);
 			});
 
-			getRegexGroup(infoboxLine, "Category: (.+)", 1, category => {
+			u.getRegexGroup(infoboxLine, "Category: (.+)", 1, category => {
 				mission.setCategory(category);
 			});
 			
-			getRegexGroup(infoboxLine, "Class: ([0-9]+)", 1, classId => {
+			u.getRegexGroup(infoboxLine, "Class: ([0-9]+)", 1, classId => {
 				mission.setCharacterClass(CharacterClass.getById(Integer.parseInt(classId)));
 			});
 			
-			getRegexGroup(infoboxLine, "Added in patch ([0-9]+.[0-9]+.[0-9]+)", 1, patch => {
+			u.getRegexGroup(infoboxLine, "Added in patch ([0-9]+.[0-9]+.[0-9]+)", 1, patch => {
 				mission.setPatchAdded(Substitutions.getCanonicalPatchVersion(patch));
 			});
 			
-			getRegexGroup(infoboxLine, "(?:Followers|Champions|Ships): ([0-9]+)", 1, groupSize => {
+			u.getRegexGroup(infoboxLine, "(?:Followers|Champions|Ships): ([0-9]+)", 1, groupSize => {
 				mission.setGroupSize(Integer.parseInt(groupSize));
 			});
 		}
