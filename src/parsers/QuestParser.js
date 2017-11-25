@@ -76,7 +76,7 @@ export default function QuestParser(context) {
 		// but rather progress or completion, like on the quest "Draenei Tail"
 		if (!(beforeObjectives instanceof Element && u.tagName(beforeObjectives) === "h2"
 				&& beforeObjectives.classList.contains("heading-size-3"))) {
-			quest.objectives = objectivesNode.data.trim();
+			quest.objectives = u.normalize(objectivesNode.data.trim);
 		}
 		
 		// Objective completion stages
@@ -98,7 +98,7 @@ export default function QuestParser(context) {
 					parent = parent.parentElement;
 				}
 				
-				quest.stages.push(parent.textContent.trim());
+				quest.stages.push(u.normalize(parent.textContent));
 			}
 
 			// Suggested players
@@ -122,7 +122,7 @@ export default function QuestParser(context) {
 				}
 				
 				for (let itemLink of maybeProvided.querySelectorAll("td a")) {
-					quest.providedItems.push(itemLink.textContent.trim());
+					quest.providedItems.push(u.normalize(itemLink.textContent));
 				}
 			}
 		}
@@ -137,7 +137,7 @@ export default function QuestParser(context) {
 		let headingsSize3 = mainContainer.querySelectorAll("h2.heading-size-3");
 		
 		u.getFirstWithOwnText(headingsSize3, "Description", descriptionHeading => {
-			quest.description = u.collectTextUntilNextTag(descriptionHeading, "h2").trim();
+			quest.description = u.normalize(u.collectTextUntilNextTag(descriptionHeading, "h2"));
 		});
 		
 		// Progress section
@@ -147,7 +147,7 @@ export default function QuestParser(context) {
 			quest.progress = u.textOf(progressHeading);
 		} else {
 			u.getFirstWithOwnText(headingsSize3, "Progress", fallbackProgressHeading => {
-				quest.progress = u.collectTextUntilNextTag(fallbackProgressHeading, "h2").trim();
+				quest.progress = u.normalize(u.collectTextUntilNextTag(fallbackProgressHeading, "h2"));
 			});
 		}
 		
@@ -158,7 +158,7 @@ export default function QuestParser(context) {
 			quest.completion = u.textOf(completionHeading);
 		} else {
 			u.getFirstWithOwnText(headingsSize3, "Completion", fallbackCompletionHeading => {
-				quest.completion = u.collectTextUntilNextTag(fallbackCompletionHeading, "h2").trim();
+				quest.completion = u.normalize(u.collectTextUntilNextTag(fallbackCompletionHeading, "h2"));
 			});
 		}
 	}
@@ -221,7 +221,7 @@ export default function QuestParser(context) {
 	 */
 	function collectNonItemRewards(icontab, collector) {
 		for (let link of icontab.querySelectorAll("td > a")) {
-			collector.push(link.textContent.trim());
+			collector.push(u.normalize(link.textContent));
 		}
 	}
 	
@@ -272,7 +272,7 @@ export default function QuestParser(context) {
 							parseInt(repValue.replace(",", ""))));
 				} else {
 					// Non-reputation gain
-					quest.otherGains.push(div.textContent.trim());
+					quest.otherGains.push(u.normalize(div.textContent));
 				}
 			}
 		}

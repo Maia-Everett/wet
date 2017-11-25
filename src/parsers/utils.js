@@ -110,7 +110,7 @@ export default {
 			}
 		}
 
-		return result.trim();
+		return this.normalize(result);
 	},
 	
 	/**
@@ -299,5 +299,13 @@ export default {
 		}
 		
 		return null;
+	},
+
+	/**
+	 * @param {string} str
+	 * @return {string}
+	 */
+	normalize: function(str) {
+		return str.trim().replace(/[ ]{2,}/g, " ");
 	}
 };
