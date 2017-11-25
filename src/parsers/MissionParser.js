@@ -40,8 +40,8 @@ export default function MissionParser(context) {
 		parseDescription(mission, mainContainer);
 		parseEncounters(mission, mainContainer);
 		parseCost(mission, mainContainer);
-		/*
 		parseGains(mission, mainContainer);
+		/*
 		parseRewards(mission, mainContainer);
 		parseInfobox(mission, html);
 		*/
@@ -139,25 +139,33 @@ export default function MissionParser(context) {
 		});
 	}
 
-	/*
-	private void parseGains(final Mission mission, final Element mainContainer) {
-		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
-		final Optional<Element> gainsList = getFirstWithOwnText(headingsSize3, "Gains")
-				.flatMap(heading -> ParseUtils.findNextElementSibling(heading, el -> "ul".equals(el.tagName())));
+	/**
+	 * 
+	 * @param {Mission} mission 
+	 * @param {Element} mainContainer 
+	 */
+	function parseGains(mission, mainContainer) {
+		let headingsSize3 = mainContainer.querySelectorAll("h2.heading-size-3");
+		let gainsList;
 		
-		gainsList.ifPresent(ul -> {
-			for (final Element li : ul.getElementsByTag("li")) {
-				final String text = li.text();
-				final Optional<String> maybeXP = u.getRegexGroup(text, "([0-9,]*) experience", 1);
+		u.getFirstWithOwnText(headingsSize3, "Gains", heading => {
+			gainsList = u.findNextElementSibling(heading, el => u.tagName(el) === "ul");
+		});
+		
+		if (gainsList) {
+			for (let li of gainsList.getElementsByTagName("li")) {
+				let text = u.normalize(li.textContent);
+				let maybeXP = u.getRegexGroup(text, "([0-9,]*) experience", 1);
 				
-				if (maybeXP.isPresent()) {
-					mission.setFollowerXP(Integer.parseInt(maybeXP.get().replace(",", "")));
+				if (maybeXP) {
+					mission.followerXP = parseInt(maybeXP.replace(",", ""));
 					break;
 				}
 			}
-		});
+		}
 	}
 
+	/*
 	private void parseRewards(final Mission mission, final Element mainContainer) {
 		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
 		
