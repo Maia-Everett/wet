@@ -1,1 +1,104 @@
-<%- JSON.stringify(n, null, 4) %>
+{{Stub/NPC}}
+<% if (n.location) { -%>
+{{screenshot||<%- n.location %>}}
+<% } -%>
+{{Npcbox
+ | name = <%- n.name %>
+ | image = <%- n.name %>.jpg
+<% if (n.title) { -%>
+ | title = <%- n.title %>
+<% } -%>
+ | gender = <%- n.gender %>
+ | level = <%- n.levelLow %><% if (n.levelHigh) { %> - <%- n.levelHigh %><% } %>
+<% if (n.levelClassification) { -%>
+ | type = <%- n.levelClassification %>
+<% } -%>
+<% if (n.health) { -%>
+ | health = <%- n.healthStr %>
+<% } -%>
+<% if (n.mana) { -%>
+ | mana = <%- n.manaStr %>
+<% } -%>
+ | faction = <%- n.getFaction() %>
+ | aggro = {{Aggro|<%- n.allianceReaction %>|<%- n.hordeReaction %>}}
+ | race = <%- n.race %>
+ | creature = <%- n.creatureType %>
+<% if (n.repFaction) { -%>
+ | repfaction = <%- n.repFaction %>
+<% } -%>
+ | location = <% if (n.location) { %>[[<%- n.location %>]]<% } %>
+<% if (n.petFamily) { -%>
+ | pet = <%- n.petFamily %>
+<% } -%>
+<% if (n.hasMoney) { -%>
+ | money = {{Cost|<%- n.gold %>|<%- n.silver %>|<%- n.copper %>}}
+<% } -%>
+}}
+'''<%- n.name %>''' is a<% if (n.isRaceStartsWithVowel()) { %>n<% } %> [[<%- (n.race || "").toLowerCase() %>]] located in [[<%- n.location %>]].
+<% if (n.itemsSold.length) { -%>
+
+==Sells==
+<% if (n.isUseItembox()) { -%>
+{{Itembox
+<% n.itemsSold.forEach(function(item, index) { -%>
+|<%- item.name %>|c<%- (index + 1) %>={{Cost|<%- item.getGold() %>|<%- item.getSilver() %>|<%- item.getCopper() %>}}
+<% }) -%>
+}}
+<% } else { -%>
+{| class="darktable sortable zebra"
+! Item !! Cost
+<% n.itemsSold.forEach(function(item) { -%>
+|-
+| [[<%- item.name %>]] || {{Cost|<%- item.getGold() %>|<%- item.getSilver() %>|<%- item.getCopper() %>}}
+<% }) -%>
+|}
+<% } -%>
+<% } -%>
+<% if (n.quests.length) { -%>
+
+==Quests==
+<% n.quests.forEach(function(quest) { -%>
+* [[Quest:<%- quest.name %>]] <%
+	if (quest.starts) {
+		if (quest.finishes) {
+			%>{{queststartfinish}}<%
+		} else {
+			%>{{queststart}}<%
+		}
+	} else if (quest.finishes) {
+		%>{{questfinish}}<%
+	} %>
+<% }) -%>
+<% } -%>
+<% if (n.quotes.length) { -%>
+
+==Quotes==
+<% n.quotes.forEach(function(quote) { -%>
+* <%- quote %>
+<% }) -%>
+<% } -%>
+<% if (n.patchAdded) { -%>
+
+==Patch changes==
+* {{Patch <%- n.patchAdded %>|note=Added.}}
+<% } -%>
+
+==External links==
+{{subst:el}}
+{{Elinks-NPC|<%- n.id %>}}
+
+<% if (n.location) { -%>
+[[Category:<%- n.location %> NPCs]]
+<% } -%>
+<% if (n.isQuestGiver()) { -%>
+[[Category:Quest givers]]
+<% } -%>
+<% if (n.isQuestEnder()) { -%>
+[[Category:Quest enders]]
+<% } -%>
+<% if (n.itemsSold.length) { -%>
+[[Category:Vendors]]
+<% } -%>
+<% if (!n.location && !n.quests.length && !n.itemsSold.length) { -%>
+[[Category:World of Warcraft NPCs]]
+<% } -%>
