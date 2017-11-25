@@ -38,9 +38,7 @@ export default function NPCParser(context) {
 		parseLists(npc);
 		parseQuotes(npc, mainContainer);
 		parseHealth(npc);
-		/*
 		parseInfobox(npc);
-		*/
 
 		return npc;
 	}
@@ -267,59 +265,73 @@ export default function NPCParser(context) {
 			});
 		});
 	}
-
-	/*
-	private void parseInfobox(final NPC npc, final Document html) {
+	
+	/**
+	 * @param {NPC} npc
+	 */
+	function parseInfobox(npc) {
 		// Infobox section
-		final List<String> infoboxLines = ParseUtils.getInfoboxLines(html, false);
-		infoboxLines.forEach(System.out::println);
-		
 		// Pattern-match each infobox line
-		for (final String infoboxLine : infoboxLines) {
-			getRegexGroup(infoboxLine, "Level: (.+)", 1).ifPresent(levelStr -> {
-				final Pattern levelRegex = Pattern.compile("([^ ]+)(?: - ([0-9]+))?");
-				final Matcher matcher = levelRegex.matcher(levelStr);
+		for (let infoboxLine of u.getInfoboxLines(false)) {
+			u.getRegexGroup(infoboxLine, "Level: (.+)", 1, levelStr => {
+				let match = levelStr.match(/([^ ]+)(?: - ([0-9]+))?/);
 				
-				if (matcher.find()) {
-					npc.setLevelLow(matcher.group(1));
-					npc.setLevelHigh(matcher.group(2));
+				if (match) {
+					npc.levelLow = match[1];
+					npc.levelHigh = match[2];
 				}
 			});
 			
-			getRegexGroup(infoboxLine, "Classification: (.+)", 1).ifPresent(levelClassification -> {
-				npc.setLevelClassification(levelClassification);
+			u.getRegexGroup(infoboxLine, "Classification: (.+)", 1, levelClassification => {
+				npc.levelClassification = levelClassification;
 			});
 
-			getRegexGroup(infoboxLine, "React: (.+)", 1).ifPresent(reaction -> {
-				getRegexGroup(reaction, "<q([^>]*)>A", 1).ifPresent(colorId -> {
-					npc.setAllianceReaction(Reaction.getByColor(colorId));
+			u.getRegexGroup(infoboxLine, "React: (.+)", 1, reaction => {
+				u.getRegexGroup(reaction, "<q([^>]*)>A", 1, colorId => {
+					npc.allianceReaction = getReactionByColor(colorId);
 				});
 
-				getRegexGroup(reaction, "<q([^>]*)>H", 1).ifPresent(colorId -> {
-					npc.setHordeReaction(Reaction.getByColor(colorId));
+				u.getRegexGroup(reaction, "<q([^>]*)>H", 1, colorId => {
+					npc.hordeReaction = getReactionByColor(colorId);
 				});
 			});
 			
-			getRegexGroup(infoboxLine, "Faction: (.+)", 1).ifPresent(repFaction -> {
-				npc.setRepFaction(repFaction);
+			u.getRegexGroup(infoboxLine, "Faction: (.+)", 1, repFaction => {
+				npc.repFaction = repFaction;
 			});
 			
-			getRegexGroup(infoboxLine, "Tameable \\((.+)\\)", 1).ifPresent(petFamily -> {
-				npc.setPetFamily(petFamily);
+			u.getRegexGroup(infoboxLine, "Tameable \\((.+)\\)", 1, petFamily => {
+				npc.petFamily = petFamily;
 			});
 			
-			getRegexGroup(infoboxLine, "Worth: ([0-9]+)", 1).ifPresent(money -> {
-				npc.setMoney(Integer.parseInt(money));
+			u.getRegexGroup(infoboxLine, "Worth: ([0-9]+)", 1, money => {
+				npc.money = parseInt(money);
 			});
 			
-			getRegexGroup(infoboxLine, "Mana: ([0-9,]+)", 1).ifPresent(mana -> {
-				npc.setMana(Long.parseLong(mana.replace(",", "")));
+			u.getRegexGroup(infoboxLine, "Mana: ([0-9,]+)", 1, mana => {
+				npc.mana = parseInt(mana.replace(/,/g, ""));
 			});
 
-			getRegexGroup(infoboxLine, "Added in patch ([0-9]+.[0-9]+.[0-9]+)", 1).ifPresent(patch -> {
-				npc.setPatchAdded(Substitutions.getCanonicalPatchVersion(patch));
+			u.getRegexGroup(infoboxLine, "Added in patch ([0-9]+.[0-9]+.[0-9]+)", 1, patch => {
+				npc.patchAdded = substitutions.getCanonicalPatchVersion(patch);
 			});
 		}
 	}
-	*/
+
+	/**
+	 * 
+	 * @param {string} colorId 
+	 */
+	function getReactionByColor(colorId) {
+		switch (colorId) {
+			case "":
+				return "Neutral";
+			case "2":
+				return "Friendly";
+			case "10":
+				return "Hostile";
+			default:
+				throw new Error();
+			}
+	}
 }
