@@ -9,6 +9,7 @@ import GarrisonMission from "../model/mission/GarrisonMission";
 import NavalMission from "../model/mission/NavalMission";
 import ClassHallMission from "../model/mission/ClassHallMission";
 import MissionEnemy from "../model/mission/MissionEnemy";
+import ItemReward from "../model/core/ItemReward";
 
 // Magic numbers from breadcrumb bar
 const MISSION_SYSTEM_GARRISONS = 21;
@@ -41,8 +42,8 @@ export default function MissionParser(context) {
 		parseEncounters(mission, mainContainer);
 		parseCost(mission, mainContainer);
 		parseGains(mission, mainContainer);
-		/*
 		parseRewards(mission, mainContainer);
+		/*
 		parseInfobox(mission, html);
 		*/
 
@@ -164,54 +165,69 @@ export default function MissionParser(context) {
 			}
 		}
 	}
-
-	/*
-	private void parseRewards(final Mission mission, final Element mainContainer) {
-		final Elements headingsSize3 = mainContainer.select("h2.heading-size-3");
+	/**
+	 * 
+	 * @param {Mission} mission 
+	 * @param {Element} mainContainer 
+	 */
+	function parseRewards(mission, mainContainer) {
+		let headingsSize3 = mainContainer.querySelectorAll("h2.heading-size-3");
 		
-		getFirstWithOwnText(headingsSize3, "Rewards", rewardsHeading => {
+		u.getFirstWithOwnText(headingsSize3, "Rewards", rewardsHeading => {
 			// Look through everything between Rewards and the next header (or end of parent)
-			for (Element el = rewardsHeading.nextElementSibling();
-					el != null && !(el.tagName().equals("h3") && el.hasClass("heading-size-3"));
-					el = el.nextElementSibling()) {
-				if (el.tagName().equals("table") && el.hasClass("icontab")) {
+			for (let el = rewardsHeading.nextElementSibling;
+					el !== null && !(u.tagName(el) === "h3" && el.classList.contains("heading-size-3"));
+					el = el.nextElementSibling) {
+				if (u.tagName(el) === "table" && el.classList.contains("icontab")) {
 					parseItemRewards(mission, el);
-				} else if (el.tagName().equals("ul")) {
+				} else if (u.tagName(el) === "ul") {
 					// Non-item rewards
-					parseNonItemRewards(mission, el.getElementsByTag("li"));
+					parseNonItemRewards(mission, el.getElementsByTagName("li"));
 				}
 			}
 		});
 	}
 	
-	private void parseItemRewards(final Mission mission, final Element icontab) {
-		ParseUtils.collectItemRewards(icontab, (item, quantity) -> {
-			if (item.equals(mission.getResourceName())) {
-				mission.setBonusResources(quantity);
+	/**
+	 * 
+	 * @param {Mission} mission 
+	 * @param {Element} icontab 
+	 */
+	function parseItemRewards(mission, icontab) {
+		u.collectItemRewards(icontab, (item, quantity) => {
+			if (item === mission.getResourceName()) {
+				mission.bonusResources = quantity;
 			} else {
-				mission.getBonusItems().add(new ItemReward(item, quantity, mission.getBonusItems().size() + 1));
+				mission.bonusItems.push(new ItemReward(item, quantity, mission.bonusItems.length + 1));
 			}
 		});
 	}
 
-	private void parseNonItemRewards(final Mission mission, final Elements listItems) {
+	/**
+	 * 
+	 * @param {Mission} mission 
+	 * @param {Array.<Element>} listItems
+	 */
+	function parseNonItemRewards(mission, listItems) {
 		// This is a bit messy because Wowhead lumps all rewards together
-		for (final Element li : listItems) {
-			final String text = li.text();
-			final Optional<String> maybeXP = u.getRegexGroup(text, "([0-9,]*) experience", 1);
+		for (let li of listItems) {
+			let text = u.normalize(li.textContent);
+			let maybeXP = u.getRegexGroup(text, "([0-9,]*) experience", 1);
 			
-			if (maybeXP.isPresent()) {
-				mission.setBonusXP(Integer.parseInt(maybeXP.get().replace(",", "")));
+			if (maybeXP) {
+				mission.bonusXP = parseInt(maybeXP.replace(",", ""));
 				continue;
 			}
 			
-			final int money = ParseUtils.getMoney(li);
+			let money = u.getMoney(li);
 			
-			if (money != 0) {
-				mission.setBonusMoney(money);
+			if (money !== 0) {
+				mission.bonusMoney = money;
 			}
 		}
 	}
+
+	/*
 	private void parseInfobox(final Mission mission, final Document html) {
 		// Infobox section
 		final List<String> infoboxLines = ParseUtils.getInfoboxLines(html, true);
