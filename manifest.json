@@ -1,14 +1,14 @@
 {
 	"manifest_version": 2,
-	"name": "QuestFiller",
+	"name": "Wowpedia Editor's Toolkit",
 	"version": "2.0",
 
-	"description" : "This is not a description.",
+	"description" : "Converts Wowhead pages for quests, missions and NPCs into Wowpedia wiki markup.",
 
 	"icons" : {
-		"48" : "icons/questfiller-48.png",
-		"96" : "icons/questfiller-48.png",
-		"128" : "icons/questfiller-128.png"
+		"48" : "icons/icon-48.png",
+		"96" : "icons/icon-48.png",
+		"128" : "icons/icon-128.png"
 	},
 
 	"permissions" : [
@@ -26,10 +26,10 @@
 	"page_action": {
 		"browser_style": true,
 		"default_icon": {
-			"48" : "icons/questfiller-48.png",
-			"96" : "icons/questfiller-48.png",
-			"128" : "icons/questfiller-128.png"
+			"48" : "icons/icon-48.png",
+			"96" : "icons/icon-48.png",
+			"128" : "icons/icon-128.png"
 			},
-		"default_title": "QuestFiller: Parse current page"
+		"default_title": "Wowpedia Editor's Toolkit: Parse current page"
 	  }
 }
