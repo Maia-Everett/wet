@@ -36,9 +36,9 @@ export default function NPCParser(context) {
 		parseCreatureType(npc);
 		parseLocation(npc, mainContainer);
 		parseLists(npc);
-		/*
 		parseQuotes(npc, mainContainer);
 		parseHealth(npc);
+		/*
 		parseInfobox(npc);
 		*/
 
@@ -233,36 +233,42 @@ export default function NPCParser(context) {
 		}
 	}
 	
-	/*
-	private void parseQuotes(final NPC npc, final Element mainContainer) {
-		final Optional<Element> quotesDiv = mainContainer.select("a.disclosure-off")
-				.stream()
-				.filter(link -> link.text().contains("Quotes"))
-				.findFirst()
-				.map(Element::parent) // step from a to its parent h2
-				.flatMap(quotesEl -> ParseUtils.findNextElementSibling(quotesEl, el -> "div".equals(el.tagName())));
-		
-		quotesDiv.ifPresent(div -> {
-			npc.setQuotes(div.select("span.s2")
-					.stream()
-					.map(Element::text)
-					.map(quote -> quote.replaceAll("^.+ says: ", ""))
-					.collect(Collectors.toList()));
-		});
+	/**
+	 * @param {NPC} npc 
+	 * @param {Element} mainContainer
+	 */
+	function parseQuotes(npc, mainContainer) {
+		let quotesDiv = null;
+
+		for (let link of mainContainer.querySelectorAll("a.disclosure-off")) {
+			if (link.textContent.includes("Quotes")) {
+				let quotesEl = u.findNextElementSibling(link.parentElement, el => u.tagName(el) === "div");
+
+				if (quotesEl !== null) {
+					quotesDiv = quotesEl;
+					break;
+				}
+			}
+		}
+
+		if (quotesDiv !== null) {
+			npc.quotes = Array.from(quotesDiv.querySelectorAll("span.s2"))
+					.map(el => el.textContent.replace(/^.+ says: /g, ""));
+		};
 	}
 	
-	private void parseHealth(final NPC npc, final Document html) {
-		html.getElementsByTag("script")
-				.stream()
-				.map(Element::data)
-				.filter(data -> data.contains("Health: "))
-				.findFirst()
-				.flatMap(data -> getRegexGroup(data, "Health: ([0-9,]+)", 1))
-				.ifPresent(health -> {
-					npc.setHealth(Long.parseLong(health.replace(",", "")));
-				});
+	/**
+	 * @param {NPC} npc
+	 */
+	function parseHealth(npc) {
+		u.getElementContainingOwnText(document, "script", "Health: ", script => {
+			u.getRegexGroup(script.textContent, "Health: ([0-9,]+)", 1, health => {
+				npc.health = parseInt(health.replace(/,/g, ""));
+			});
+		});
 	}
 
+	/*
 	private void parseInfobox(final NPC npc, final Document html) {
 		// Infobox section
 		final List<String> infoboxLines = ParseUtils.getInfoboxLines(html, false);
