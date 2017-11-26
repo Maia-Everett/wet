@@ -7,6 +7,7 @@ import npcEJS from "../templates/npc.ejs";
 import NPC from "../model/npc/NPC";
 import NPCQuest from "../model/npc/NPCQuest";
 import SoldItem from "../model/npc/SoldItem";
+import Reaction from "../model/npc/Reaction";
 
 /**
  * @param {ParserContext} context 
@@ -291,11 +292,11 @@ export default function NPCParser(context) {
 
 			u.getRegexGroup(infoboxLine, "React: (.+)", 1, reaction => {
 				u.getRegexGroup(reaction, "<q([^>]*)>A", 1, colorId => {
-					npc.allianceReaction = getReactionByColor(colorId);
+					npc.allianceReaction = Reaction.getByColor(colorId);
 				});
 
 				u.getRegexGroup(reaction, "<q([^>]*)>H", 1, colorId => {
-					npc.hordeReaction = getReactionByColor(colorId);
+					npc.hordeReaction = Reaction.getByColor(colorId);
 				});
 			});
 			
@@ -321,20 +322,5 @@ export default function NPCParser(context) {
 		}
 	}
 
-	/**
-	 * 
-	 * @param {string} colorId 
-	 */
-	function getReactionByColor(colorId) {
-		switch (colorId) {
-			case "":
-				return "Neutral";
-			case "2":
-				return "Friendly";
-			case "10":
-				return "Hostile";
-			default:
-				throw new Error();
-			}
-	}
+	
 }

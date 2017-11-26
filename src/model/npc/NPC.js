@@ -1,3 +1,5 @@
+import Reaction from "./Reaction";
+
 const MAX_ITEMBOX_ITEMS = 30;
 
 /**
@@ -31,18 +33,18 @@ export default class NPC {
 	}
 	
 	getFaction() {
-		if (this.allianceReaction == null && this.hordeReaction == null) {
+		if (this.allianceReaction === undefined && this.hordeReaction === undefined) {
 			return null;
-		} else if (this.allianceReaction === "Friendly" && this.hordeReaction !== "Friendly") {
+		} else if (this.allianceReaction === Reaction.FRIENDLY && this.hordeReaction !== Reaction.FRIENDLY) {
 			return "Alliance";
-		} else if (this.allianceReaction !== "Friendly" && this.hordeReaction === "Friendly") {
+		} else if (this.allianceReaction !== Reaction.FRIENDLY && this.hordeReaction === Reaction.FRIENDLY) {
 			return "Horde";
-		} else if (this.allianceReaction === "Hostile" && this.hordeReaction === "Hostile") {
+		} else if (this.allianceReaction === Reaction.HOSTILE && this.hordeReaction === Reaction.HOSTILE) {
 			return "Combat";
-		} else if (this.allianceReaction === "Neutral" && this.hordeReaction === "Neutral") {
+		} else if (this.allianceReaction === Reaction.NEUTRAL && this.hordeReaction === Reaction.NEUTRAL) {
 			return "Combat";
 		} else {
-			return "Neutral";
+			return Reaction.NEUTRAL;
 		}
 	}
 	
