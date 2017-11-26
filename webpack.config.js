@@ -4,7 +4,7 @@ const config = {
     entry: "./main",
     
     output: {
-        path: __dirname + "/page",
+        path: __dirname + "/dist/page",
         filename: "page.js"
     },
 
