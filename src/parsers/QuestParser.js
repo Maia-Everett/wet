@@ -76,7 +76,7 @@ export default function QuestParser(context) {
 		// but rather progress or completion, like on the quest "Draenei Tail"
 		if (!(beforeObjectives instanceof Element && u.tagName(beforeObjectives) === "h2"
 				&& beforeObjectives.classList.contains("heading-size-3"))) {
-			quest.objectives = u.normalize(objectivesNode.data.trim);
+			quest.objectives = u.normalize(objectivesNode.data);
 		}
 		
 		// Objective completion stages
