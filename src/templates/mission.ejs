@@ -1,1 +1,98 @@
-<%- JSON.stringify(m, null, 4) %>
+{{<%- m.getInfoboxTemplate() %>
+ | id = <%- m.id %>
+ | name = <%- m.name %>
+ | location = <%- m.location %>
+<% if (m.faction) { -%>
+ | faction = <%- m.faction %>
+<% } -%>
+<% if (m.characterClass) { -%>
+ | class = <%- m.characterClass %>
+<% } -%>
+ | level = <%- m.level %>
+<% if (m.followerItemLevel) { -%>
+ | flevel = <%- m.followerItemLevel %>
+<% } -%>
+<% if (m.rare) { -%>
+ | rare = yes
+<% } -%>
+<% if (m.exhausting) { -%>
+ | exhausting = yes
+<% } -%>
+ | duration = <%- m.duration %>
+<% if (m.groupSize) { -%>
+ | groupsize = <%- m.groupSize %>
+<% } -%>
+ | type = <%- m.category %>
+ | enemies = <% m.enemies.forEach(function(enemy, index) { %><%- enemy.name %><% if (index < m.enemies.length - 1) { %><br /><% } }) %>
+<% if (m.cost) { -%>
+ | cost = <%- m.cost %>
+<% } -%>
+<% if (m.followerXP) { -%>
+ | experience = <%- m.getFollowerXPStr() %>
+<% } -%>
+<% if (m.money) { -%>
+ | bonusgold = {{cost|<%- m.getGold() %>|<%- m.getSilver() %>|<%- m.getCopper() %>}}
+<% } -%>
+<% if (m.bonusXP) { -%>
+ | bonusxp = <%- m.getBonusXPStr() %>
+<% } -%>
+<% if (m.bonusResources) { -%>
+ | bonusresources = <%- m.bonusResources %>
+<% } -%>
+<% if (m.bonusItems.length) { -%>
+ | bonusitem = <% m.bonusItems.forEach(function(item, index) { %><% if (item.quantity) { %><%- item.quantity %>x <% } %>[[<%- item.name %>]]<% if (index < m.bonusItems.length - 1) { %><br /><% } }) %>
+<% } -%>
+}}
+
+==Description==
+<% if (m.description) { -%>
+<%- m.description %>
+<% } else { -%>
+...
+<% } -%>
+
+==Counters==
+<% if (m.type) { -%>
+* Type: {{Garrison ability|<%- m.type %>}}
+<% } -%>
+<% m.enemies.forEach(function(enemy) { -%>
+* <%- enemy.name %>:<% enemy.counters.forEach(function(counter) { %> {{Garrison ability|<%- counter %>}}<% }) %>
+<% }) -%>
+<% if (m.followerXP) { -%>
+
+==Gains==
+* <%- m.getFollowerXPStr() %> follower XP
+<% } -%>
+
+<% if (m.hasRewards()) { -%>
+==Rewards==
+<% if (m.bonusItems.length) { -%>
+{{itembox|You will receive:
+<% m.bonusItems.forEach(function(item, index) { -%>
+<% if (item.quantity) { %>|q<%- (index + 1) %>=<%- item.quantity %><% } %>|<%- item.name %>
+<% }) -%>
+}}
+<% } -%>
+
+<% if (m.hasNonItemRewards()) { -%>
+You will <% if (m.bonusItems.length) { -%>also <% } -%>receive:
+<% if (m.bonusXP) { -%>
+* <%- m.getBonusXPStr() %> bonus follower XP
+<% } -%>
+<% if (m.money) { -%>
+* {{cost|<%- m.getGold() %>|<%- m.getSilver() %>|<%- m.getCopper() %>}}
+<% } -%>
+<% if (m.bonusResources) { -%>
+* [[<%- m.getResourceName() %>]] (<%- m.bonusResources %>)
+
+<% } -%>
+<% } -%>
+<% } -%>
+<% if (m.patchAdded) { -%>
+==Patch changes==
+* {{Patch <%- m.patchAdded %>|note=Added.}}
+
+<% } -%>
+==External links==
+{{subst:el}}
+{{Elinks-mission|<%- m.id %>}}

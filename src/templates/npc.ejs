@@ -30,8 +30,8 @@
 <% if (n.petFamily) { -%>
  | pet = <%- n.petFamily %>
 <% } -%>
-<% if (n.hasMoney) { -%>
- | money = {{Cost|<%- n.gold %>|<%- n.silver %>|<%- n.copper %>}}
+<% if (n.money) { -%>
+ | money = {{Cost|<%- n.getGold() %>|<%- n.getSilver() %>|<%- n.getCopper() %>}}
 <% } -%>
 }}
 '''<%- n.name %>''' is a<% if (n.isRaceStartsWithVowel()) { %>n<% } %> [[<%- (n.race || "").toLowerCase() %>]] located in [[<%- n.location %>]].

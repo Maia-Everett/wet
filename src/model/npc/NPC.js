@@ -47,11 +47,11 @@ export default class NPC {
 	}
 	
 	getHealthStr() {
-		return new Intl.NumberFormat("en-US").format(health);
+		return new Intl.NumberFormat("en-US").format(this.health);
 	}
 	
 	getManaStr() {
-		return mana == null ? null : new Intl.NumberFormat("en-US").format(mana);
+		return mana == null ? null : new Intl.NumberFormat("en-US").format(this.mana);
 	}
 
 	isUseItembox() {
