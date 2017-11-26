@@ -53,7 +53,7 @@ export default class NPC {
 	}
 	
 	getManaStr() {
-		return mana == null ? null : new Intl.NumberFormat("en-US").format(this.mana);
+		return this.mana == null ? null : new Intl.NumberFormat("en-US").format(this.mana);
 	}
 
 	isUseItembox() {

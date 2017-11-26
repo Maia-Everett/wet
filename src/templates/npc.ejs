@@ -14,10 +14,10 @@
  | type = <%- n.levelClassification %>
 <% } -%>
 <% if (n.health) { -%>
- | health = <%- n.healthStr %>
+ | health = <%- n.getHealthStr() %>
 <% } -%>
 <% if (n.mana) { -%>
- | mana = <%- n.manaStr %>
+ | mana = <%- n.getManaStr() %>
 <% } -%>
  | faction = <%- n.getFaction() %>
  | aggro = {{Aggro|<%- n.allianceReaction %>|<%- n.hordeReaction %>}}
