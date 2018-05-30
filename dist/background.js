@@ -9,7 +9,7 @@ function isSupported(url) {
 		return false;
 	}
 
-	let result = url.match(/https?:\/\/(?:www\.)?wowhead.com\/([a-z]+)=/);
+	let result = url.match(/https?:\/\/(?:.+\.)?wowhead.com\/([a-z]+)=/);
 	return result != null && PAGE_TYPES.has(result[1]);
 }
 
