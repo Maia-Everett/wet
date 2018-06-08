@@ -44,7 +44,7 @@ export default class NPC {
 		} else if (this.allianceReaction === Reaction.NEUTRAL && this.hordeReaction === Reaction.NEUTRAL) {
 			return "Combat";
 		} else {
-			return Reaction.NEUTRAL;
+			return "Neutral";
 		}
 	}
 	
