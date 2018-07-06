@@ -1,7 +1,12 @@
 {
-	"name": "questfiller",
+	"name": "wet",
 	"version": "2.0.0",
 	"devDependencies": {
-		"ejs-compiled-loader": "^1.1.0"
+		"ejs-compiled-loader": "^1.1.0",
+		"webpack": "^4.15.1",
+		"webpack-cli": "^3.0.8"
+	},
+	"scripts" : {
+		"start" : "webpack --watch"
 	}
 }

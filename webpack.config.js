@@ -1,4 +1,5 @@
 const config = {
+    mode: "production",
 	devtool: "source-map",
 	context: __dirname + "/src",
     entry: "./main",
