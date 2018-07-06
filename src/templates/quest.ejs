@@ -51,7 +51,7 @@
 <% if (q.experience) { -%>
  | experience = <%-q.getExperienceStr()%>
 <% } -%>
-<% if (q.hasNonMoneyRewards()) { -%>
+<% if (q.hasItemAbilityOrBuffRewards()) { -%>
  | rewards =
 <% q.choiceRewards.forEach(function(reward, index) { -%>
 <% if (index > 0) { -%>or <% } -%><% if (reward.quantity) { -%><%- reward.quantity %>x <% } -%>[[<%- reward.name %>]]<% if (index < q.choiceRewards.length - 1) { -%><br /><% } -%>
@@ -127,8 +127,20 @@ You will <% if (q.hasItemRewards()) { -%>also <% } -%>learn: [[<%-reward%>]]
 The following spell will be cast on you: [[<%-reward%>]]
 
 <% }) -%>
+<% if (q.hasGains()) { -%>
+You will <% if (q.hasChoiceAbilityOrBuffRewards()) { %>also <% } %>receive:
 <% if (q.money) { -%>
-You will <% if (q.hasChoiceAbilityOrBuffRewards()) { -%>also <% } -%>receive: {{cost|<%-q.getGold()%>|<%-q.getSilver()%>|<%-q.getCopper()%>}}
+* {{cost|<%-q.getGold()%>|<%-q.getSilver()%>|<%-q.getCopper()%>}}
+<% } -%>
+<% if (q.experience) { -%>
+* <%-q.getExperienceStr()%> [[XP]]
+<% } -%>
+<% q.reputationGains.forEach(function(gain) { -%>
+* <%-gain.getFullText()%>
+<% }) -%>
+<% q.otherGains.forEach(function(gain) { -%>
+* <%-gain%>
+<% }) -%>
 
 <% } -%>
 <% if (q.nonChoiceRewards.length) { -%>
@@ -139,7 +151,7 @@ You will <% if (q.hasChoiceAbilityOrBuffRewards()) { -%>also <% } -%>receive: {{
 }}
 
 <% } -%>
-<% } %>
+<% } -%>
 <% if (q.progress) { -%>
 ==Progress==
 <%-q.progress%>
@@ -149,19 +161,6 @@ You will <% if (q.hasChoiceAbilityOrBuffRewards()) { -%>also <% } -%>receive: {{
 ==Completion==
 <%-q.completion%>
 <% } -%>
-
-<% if (q.hasGains()) { -%>
-==Gains==
-<% if (q.experience) { -%>
-* <%-q.getExperienceStr()%> [[XP]]
-<% } -%>
-<% q.reputationGains.forEach(function(gain) { -%>
-* <%-gain.getFullText()%>
-<% }) -%>
-<% } -%>
-<% q.otherGains.forEach(function(gain) { -%>
-* <%-gain%>
-<% }) -%>
 
 ==Progression==
 ...

@@ -50,19 +50,19 @@ export default class Quest {
 		return this.choiceRewards.length > 0 || this.abilityRewards.length > 0 || this.buffRewards.length > 0;
 	}
 	
-	hasNonMoneyRewards() {
+	hasItemAbilityOrBuffRewards() {
 		return this.hasItemRewards() || this.abilityRewards.length > 0 || this.buffRewards.length > 0;
 	}
 	
+	hasGains() {
+		return !!this.money || !!this.experience || this.reputationGains.length > 0 || this.otherGains.length > 0;
+	}
+	
 	hasRewards() {
-		return !!this.money || this.hasNonMoneyRewards();
+		return this.hasItemAbilityOrBuffRewards() || this.hasGains();
 	}
 
 	getExperienceStr() {
 		return new Intl.NumberFormat("en-US").format(this.experience);
-	}
-	
-	hasGains() {
-		return !!this.experience || this.reputationGains.length > 0;
 	}
 }
