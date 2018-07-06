@@ -7,6 +7,7 @@
 		"webpack-cli": "^3.0.8"
 	},
 	"scripts" : {
-		"start" : "webpack --watch"
+		"start" : "webpack --watch",
+		"build" : "web-ext -s dist build --overwrite-dest"
 	}
 }
