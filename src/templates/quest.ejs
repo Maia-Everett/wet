@@ -173,3 +173,9 @@ You will <% if (q.hasChoiceAbilityOrBuffRewards()) { %>also <% } %>receive:
 ==External links==
 {{subst:el}}
 {{Elinks-quest|<%-q.id%>}}
+<% if (q.reputationGains.length) { -%>
+
+<% q.reputationGains.forEach(function(gain) { -%>
+[[Category:<%- gain.faction %> quests]]
+<% }) -%>
+<% } -%>
