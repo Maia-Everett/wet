@@ -15,6 +15,7 @@ let reputations = {
 	"Thunder Bluff": "Thunder Bluff (faction)",
 	"Undercity": "Undercity (faction)",
 	"Silvermoon": "Silvermoon (faction)",
+	"Zandalari Empire": "Zandalari Empire (faction)",
 };
 
 export default {
