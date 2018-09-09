@@ -1,4 +1,4 @@
-PACKAGE_VERSION = $(shell node -p "require('./package.json').version")
+PACKAGE_VERSION = $(shell node -p "require('./dist/manifest.json').version")
 
 all: build
 
