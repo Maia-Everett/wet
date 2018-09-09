@@ -38,7 +38,7 @@ export default {
 			return [];
 		}
 		
-		let infoboxMarkup = this.getRegexGroup(infoboxData, "[Mm]arkup\\.printHtml\\((['\"])(.*)\\1, 'infobox", 2)
+		let infoboxMarkup = this.getRegexGroup(infoboxData, "[Mm]arkup\\.printHtml\\((['\"])(.*)\\1, ['\"]infobox", 2)
 					.replace(/\\\//g, "/") // unescape forward slashes (the regex matches the string \/)
 					.replace(/\\x([0-9A-Z]{2})/g, escapeSeq => String.fromCharCode(parseInt(hex, 16)));
 					// Convert \xNN escape sequences to their corresponding characters
