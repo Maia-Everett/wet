@@ -24,7 +24,7 @@
  | race = <%- n.race %>
  | creature = <%- n.creatureType %>
 <% if (n.repFaction) { -%>
- | repfaction = <%- n.repFaction %>
+ | affiliation = <%- n.repFaction %>
 <% } -%>
  | location = <% if (n.location) { %>[[<%- n.location %>]]<% } %>
 <% if (n.petFamily) { -%>
@@ -100,5 +100,5 @@
 [[Category:Vendors]]
 <% } -%>
 <% if (!n.location && !n.quests.length && !n.itemsSold.length) { -%>
-[[Category:World of Warcraft NPCs]]
+[[Category:NPCs]]
 <% } -%>
