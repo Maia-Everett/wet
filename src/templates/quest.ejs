@@ -36,7 +36,7 @@
 <% } -%>
 <% if (q.finishEntity && q.startEntity !== q.finishEntity) { -%>
  | end = [[<%-q.finishEntity%>]]
-<% } else if (!q.finishEntity) { -%>
+<% } else if (!q.finishEntity && q.startEntity) { -%>
  | end = Automatic
 <% } -%>
 <% if (q.reputationGains.length) { -%>
