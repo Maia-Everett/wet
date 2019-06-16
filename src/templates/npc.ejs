@@ -39,7 +39,7 @@
 
 ==Sells==
 <% if (n.isUseItembox()) { -%>
-{{Itembox
+{{Itembox|
 <% n.itemsSold.forEach(function(item, index) { -%>
 |<%- item.name %>|c<%- (index + 1) %>={{Cost|<%- item.getGold() %>|<%- item.getSilver() %>|<%- item.getCopper() %>}}
 <% }) -%>
