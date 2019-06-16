@@ -70,6 +70,13 @@
 	} %>
 <% }) -%>
 <% } -%>
+<% if (n.objectiveOf.length) { -%>
+
+==Objective of==
+<% n.objectiveOf.forEach(function(quest) { -%>
+* [[<%- quest %>]]
+<% }) -%>
+<% } -%>
 <% if (n.quotes.length) { -%>
 
 ==Quotes==

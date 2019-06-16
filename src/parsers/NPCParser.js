@@ -78,6 +78,7 @@ export default function NPCParser(context) {
 			parseQuests(npc, script.textContent);
 			parseItems(npc, script.textContent);
 			parseSounds(npc, script.textContent);
+			parseObjectiveOf(npc, script.textContent);
 		});
 	}
 	
@@ -198,6 +199,34 @@ export default function NPCParser(context) {
 				u.getRegexGroup(s, "\"name\":\"([A-Za-z0-9_]+)(?:Attack|ATTACK)\"", 1, race => {
 					npc.race = normalizeRaceName(race);
 				});
+			}
+		});
+	}
+	
+	/**
+	 * @param {NPC} npc 
+	 * @param {string} script
+	 */
+	function parseObjectiveOf(npc, script) {
+		u.getRegexGroup(script, /new Listview\(\{template: 'quest', id: 'objective-of', (.*)\);/, 1, s => {
+			let objectiveOf = [];
+			let regex = /"name":"([^"]+)"/g;
+			let match;
+			
+			while ((match = regex.exec(s)) !== null) {
+				objectiveOf.push(match[1]);
+			}
+			
+			objectiveOf.sort();
+
+			// Remove duplicates
+			let seen = new Set();
+
+			for (let quest of objectiveOf) {
+				if (!seen.has(quest)) {
+					npc.objectiveOf.push(quest);
+					seen.add(quest);
+				}
 			}
 		});
 	}

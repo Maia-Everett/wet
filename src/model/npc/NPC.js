@@ -22,6 +22,7 @@ export default class NPC {
 		this.quests = [];
 		this.quotes = [];
 		this.itemsSold = [];
+		this.objectiveOf = [];
 	}
 	
 	isQuestGiver() {
