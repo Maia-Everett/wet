@@ -93,6 +93,13 @@ export default function QuestParser(context) {
 			for (let element of stagesTable.querySelectorAll("table.iconlist")) {
 				element.parentElement.removeChild(element);
 			}
+
+			let tds = stagesTable.getElementsByTagName("td");
+
+			if (!quest.objectives && tds.length > 0 && tds[0].getElementsByTagName("a").length === 0) {
+				// No objectives, but first element is not a link. Assume it's the objective.
+				quest.objectives = u.normalize(u.textOf(tds[0]));
+			}
 			
 			for (let stageLink of stagesTable.querySelectorAll("td a")) {
 				// Find the innermost td element enclosing the a, and add its whole text
