@@ -49,17 +49,16 @@
 	}) %>
 <% } -%>
 <% if (q.experience) { -%>
- | experience = <%-q.getExperienceStr()%>
+ | experience = <%- q.getExperienceStr() %>
 <% } -%>
 <% if (q.hasItemAbilityOrBuffRewards()) { -%>
- | rewards =
-<% q.choiceRewards.forEach(function(reward, index) { -%>
+ | rewards = <% q.choiceRewards.forEach(function(reward, index) { -%>
 <% if (index > 0) { -%>or <% } -%><% if (reward.quantity) { -%><%- reward.quantity %>x <% } -%>[[<%- reward.name %>]]<% if (index < q.choiceRewards.length - 1) { -%><br /><% } -%>
 <% }) -%>
 <% q.getAllNonChoiceRewards().forEach(function(reward, index, array) { -%>
 <% if (index === 0) { -%><% if (q.choiceRewards.length) { -%><br /><br /><% } } -%><% if (reward.quantity) { -%><%- reward.quantity %>x <% } -%>[[<%- reward.name %>]]<% if (index < array.length - 1) { -%><br /><% } -%>
-<% }) -%>
-<% } %>
+<% }) %>
+<% } -%>
 <% if (q.money) { -%>
  | money = {{cost|<%- q.getGold() %>|<%- q.getSilver() %>|<%- q.getCopper() %>}}
 <% } -%>
