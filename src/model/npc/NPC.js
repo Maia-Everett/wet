@@ -53,6 +53,10 @@ export default class NPC {
 		return new Intl.NumberFormat("en-US").format(this.health);
 	}
 	
+	getMythicHealthStr() {
+		return new Intl.NumberFormat("en-US").format(this.mythicHealth);
+	}
+	
 	getManaStr() {
 		return this.mana == null ? null : new Intl.NumberFormat("en-US").format(this.mana);
 	}

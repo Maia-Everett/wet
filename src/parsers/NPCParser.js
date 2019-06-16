@@ -304,6 +304,14 @@ export default function NPCParser(context) {
 				npc.health = parseInt(health.replace(/,/g, ""));
 			});
 		});
+
+		if (npc.health === undefined) {
+			u.getElementContainingOwnText(document, "script", "Health (Mythic): ", script => {
+				u.getRegexGroup(script.textContent, /Health \(Mythic\): ([0-9,]+)/, 1, health => {
+					npc.mythicHealth = parseInt(health.replace(/,/g, ""));
+				});
+			});
+		}
 	}
 	
 	/**
@@ -357,6 +365,4 @@ export default function NPCParser(context) {
 			});
 		}
 	}
-
-	
 }
