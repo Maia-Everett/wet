@@ -74,7 +74,7 @@
 
 ==Quotes==
 <% n.quotes.forEach(function(quote) { -%>
-* <%- quote %>
+* {{Text|<%- quote.type %>|<%- quote.text %>}}
 <% }) -%>
 <% } -%>
 <% if (n.patchAdded) { -%>

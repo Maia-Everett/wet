@@ -8,6 +8,7 @@ import NPC from "../model/npc/NPC";
 import NPCQuest from "../model/npc/NPCQuest";
 import SoldItem from "../model/npc/SoldItem";
 import Reaction from "../model/npc/Reaction";
+import NPCQuote from "../model/npc/NPCQuote";
 
 /**
  * @param {ParserContext} context 
@@ -254,8 +255,14 @@ export default function NPCParser(context) {
 		}
 
 		if (quotesDiv !== null) {
-			npc.quotes = Array.from(quotesDiv.querySelectorAll("span.s2"))
-					.map(el => el.textContent.replace(/^.+ says: /g, ""));
+			for (let el of quotesDiv.querySelectorAll("span")) {
+				let regex = /^.+ (say|yell)s: (.+)/g;
+				let matches;
+				
+				while ((matches = regex.exec(el.textContent)) !== null) {
+					npc.quotes.push(new NPCQuote(matches[2], matches[1]));
+				}
+			};
 		};
 	}
 	
