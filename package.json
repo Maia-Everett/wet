@@ -4,7 +4,8 @@
 	"devDependencies": {
 		"ejs-compiled-loader": "^1.1.0",
 		"webpack": "^4.15.1",
-		"webpack-cli": "^3.0.8"
+		"webpack-cli": "^3.0.8",
+		"web-ext": "^3.0.0"
 	},
 	"scripts": {
 		"start": "webpack --watch",

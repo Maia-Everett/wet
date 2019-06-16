@@ -8,7 +8,7 @@ build:
 	git archive -o web-ext-artifacts/wowpedia_editor_s_toolkit-$(PACKAGE_VERSION)-src.zip HEAD
 
 run:
-	web-ext run -s dist
+	npx web-ext run -s dist
 
 watch:
 	npm start
