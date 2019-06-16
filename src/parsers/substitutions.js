@@ -5,6 +5,7 @@ let patches = {
 };
 
 let reputations = {
+	"7th Legion": "7th Legion (faction)",
 	"Stormwind": "Stormwind (faction)",
 	"Ironforge": "Ironforge (faction)",
 	"Darnassus": "Darnassus (faction)",
