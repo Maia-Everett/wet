@@ -120,6 +120,10 @@ export default {
 	 */
 	collectTextUntilNextTag: function(header, nextTagName) {
 		let result = "";
+
+		if (header == null) {
+			return result;
+		}
 		
 		for (let node = header.nextSibling;
 				!(node instanceof Element && this.tagName(node) === nextTagName);

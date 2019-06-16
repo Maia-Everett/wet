@@ -64,6 +64,10 @@ export default function QuestParser(context) {
 	function parseObjectives(quest, mainContainer, questName) {
 		// Objectives section
 		let objectivesNode = questName.nextSibling;
+
+		if (objectivesNode == null) {
+			return;
+		}
 		
 		// Objectives text is the first non-empty text node immediately following the header
 		while (!(objectivesNode instanceof Text) || objectivesNode.data.trim().length === 0) {
@@ -135,6 +139,10 @@ export default function QuestParser(context) {
 	function parseQuestText(quest, mainContainer) {
 		// Description section
 		let headingsSize3 = mainContainer.querySelectorAll("h2.heading-size-3");
+
+		if (headingsSize3 == null) {
+			return;
+		}
 		
 		u.getFirstWithOwnText(headingsSize3, "Description", descriptionHeading => {
 			quest.description = u.normalize(u.collectTextUntilNextTag(descriptionHeading, "h2"));
