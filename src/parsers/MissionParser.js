@@ -8,14 +8,16 @@ import Mission from "../model/mission/Mission";
 import GarrisonMission from "../model/mission/GarrisonMission";
 import NavalMission from "../model/mission/NavalMission";
 import ClassHallMission from "../model/mission/ClassHallMission";
+import BFAMission from "../model/mission/BFAMission";
 import MissionEnemy from "../model/mission/MissionEnemy";
 import ItemReward from "../model/core/ItemReward";
 
 // Magic numbers from breadcrumb bar
-const MISSION_SYSTEM_GARRISONS = 21;
+// const MISSION_SYSTEM_GARRISONS = 21;
 const MISSION_SYSTEM_CLASS_HALLS = 30;
 const MISSION_UNIT_FOLLOWERS = 1;
 const MISSION_UNIT_SHIPS = 2;
+const MISSION_UNIT_BFA = 22;
 
 /**
  * @param {ParserContext} context 
@@ -60,6 +62,8 @@ export default function MissionParser(context) {
 			return new GarrisonMission();
 		case MISSION_UNIT_SHIPS:
 			return new NavalMission();
+		case MISSION_UNIT_BFA:
+			return new BFAMission();
 		default:
 			throw new Error();
 		}
@@ -260,7 +264,13 @@ export default function MissionParser(context) {
 			});
 
 			u.getRegexGroup(infoboxLine, "Category: (.+)", 1, category => {
-				mission.category = category;
+				if (category === "8.0 - Generic Missions") {
+					mission.category = "War Campaign Generic";
+				} else if (category.startsWith("8.0")) {
+					mission.category = category.replace ("8.0 - ", "War Campaign ");
+				} else {
+					mission.category = category;
+				}
 			});
 			
 			u.getRegexGroup(infoboxLine, "Class: ([0-9]+)", 1, classId => {
