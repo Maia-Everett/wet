@@ -1,6 +1,8 @@
 {
 	"name": "wet",
 	"version": "2.0.6",
+	"license": "GPL-3.0",
+	"repository": "https://github.com/Maia-Everett/wet.git",
 	"devDependencies": {
 		"ejs-compiled-loader": "^2.2.0",
 		"web-ext": "^3.0.0",
