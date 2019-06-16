@@ -21,8 +21,8 @@ class ParserContext {
 
 		this.missionMechanics = arrayToDict(localeData.fidropdowns.missionMechanics);
 		arrayToDict(localeData.fidropdowns.missionThreats, this.missionMechanics);
-		this.races = arrayToDict(localeData.fidropdowns.race);
-		this.classes = arrayToDict(localeData.fidropdowns.classs);
+		this.races = arrayToDict(localeData.mn_races);
+		this.classes = arrayToDict(localeData.mn_classes);
 		this.npcTypes = localeData.g_npc_types;
 
 		// This has to be hardcoded for now :(
@@ -64,7 +64,9 @@ export default {
 					questFillerTag: "questFillerTag",
 					g_npc_types: window.g_npc_types,
 					mn_quests: window.mn_quests,
-					fidropdowns: window.LANG.fidropdowns
+					fidropdowns: window.LANG.fidropdowns,
+					mn_races: window.mn_races,
+					mn_classes: window.mn_classes
 				}, "*");
 			`;
 			document.head.appendChild(script);
