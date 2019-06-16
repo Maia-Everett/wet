@@ -58,7 +58,7 @@
 
 ==Quests==
 <% n.quests.forEach(function(quest) { -%>
-* [[Quest:<%- quest.name %>]] <%
+* [[<%- quest.name %>]] <%
 	if (quest.starts) {
 		if (quest.finishes) {
 			%>{{queststartfinish}}<%

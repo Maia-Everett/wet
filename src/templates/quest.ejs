@@ -70,13 +70,13 @@
  | shareable = No
 <% } -%>
  | previous = <% q.previousQuests.forEach(function(quest, index) {
-	%>[[Quest:<%- quest %>]]<%
+	%>[[<%- quest %>]]<%
 		if (index < q.previousQuests.length - 1) {
 			%>, <%
 		}
 	}) %>
  | next = <% q.nextQuests.forEach(function(quest, index) {
-	%>[[Quest:<%- quest %>]]<%
+	%>[[<%- quest %>]]<%
 		if (index < q.nextQuests.length - 1) {
 			%>, <%
 		}
