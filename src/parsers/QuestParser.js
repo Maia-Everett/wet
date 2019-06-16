@@ -197,7 +197,7 @@ export default function QuestParser(context) {
 		for (let icontab of icontabs) {
 			let prevNode = icontab.previousSibling;
 			
-			if (icontab.id === "dynamic-rewards") {
+			if (icontab.id === "dynamic-rewards" || icontab.id === "choicerewards") {
 				collectItemRewards(icontab, quest.choiceRewards);
 			} else if (prevNode instanceof Text) {
 				let prevText = prevNode.textContent;
