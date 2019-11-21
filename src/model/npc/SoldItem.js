@@ -3,10 +3,12 @@ export default class SoldItem {
 	 * 
 	 * @param {string} name 
 	 * @param {number} price 
+	 * @param {number} quantity
 	 */
-	constructor(name, price) {
+	constructor(name, price, quantity) {
 		this.name = name;
 		this.price = price || 0;
+		this.quantity = quantity === -1 ? null : (quantity || null);
 	}
 
 	getGold() {

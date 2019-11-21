@@ -153,11 +153,11 @@ export default function NPCParser(context) {
 	function parseItems(npc, script) {
 		u.getRegexGroup(script, /new Listview\(\{template: 'item', id: 'sells', (.*)\);/, 1, s => {
 			let soldItems = [];
-			let regex = /"name":"[0-9]?([^"]+)".+?cost:\[([0-9]+)/g;
+			let regex = /"name":"[0-9]?([^"]+)".+?avail:([0-9-]+),cost:\[([0-9]+)/g;
 			let match;
 			
 			while ((match = regex.exec(s)) !== null) {
-				soldItems.push(new SoldItem(match[1], parseInt(match[2])));
+				soldItems.push(new SoldItem(match[1], parseInt(match[3], 10), parseInt(match[2], 10)));
 			}
 			
 			soldItems.sort((s1, s2) => s1.compareTo(s2));
