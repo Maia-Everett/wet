@@ -1,7 +1,7 @@
 function escapeRegExp(string) {
 	return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 }
-  
+
 export default {
 	/**
 	 * @return {Array.<number>}
@@ -12,14 +12,14 @@ export default {
 		for (let script of document.getElementsByTagName("script")) {
 			let text = script.textContent;
 
-			if (text.includes("PageTemplate.set({breadcrumb:")) {
+			if (text.includes(".set({breadcrumb:")) {
 				breadcrumbData = text;
 				break;
 			}
 		}
 		
 		// ugh, parsing JS with regexes
-		let regex = escapeRegExp("PageTemplate.set({breadcrumb: [") + "([0-9,-]+)" + escapeRegExp("]});");
+		let regex = escapeRegExp(".set({breadcrumb: [") + "([0-9, -]+)" + escapeRegExp("]});");
 		return this.getRegexGroup(breadcrumbData, regex, 1).split(",").map(id => parseInt(id, 10));
 	},
 	

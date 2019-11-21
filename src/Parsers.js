@@ -37,9 +37,8 @@ class Parsers {
 };
 
 export default {
-	create: function() {
-		return ParserContext.create().then(context => {
-			return new Parsers(context);
-		});
+	create: async function() {
+		const context = await ParserContext.create();
+		return new Parsers(context);
 	}
 }
