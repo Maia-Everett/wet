@@ -43,7 +43,7 @@
 <% if (n.isUseItembox()) { -%>
 {{Itembox|
 <% n.itemsSold.forEach(function(item, index) { -%>
-|<%- item.name %>|c<%- (index + 1) %>={{Cost|<%- item.getGold() %>|<%- item.getSilver() %>|<%- item.getCopper() %>}}
+|<%- item.name %>|c<%- (index + 1) %>={{Cost|<%- item.getGold() %>|<%- item.getSilver() %>|<%- item.getCopper() %>}}<% if (item.quantity) { %>|q<%- (index + 1) %>=<%- item.quantity %><% } %>
 <% }) -%>
 }}
 <% } else { -%>
