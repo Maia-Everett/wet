@@ -5,7 +5,7 @@
 	"repository": "https://github.com/Maia-Everett/wet.git",
 	"devDependencies": {
 		"ejs-compiled-loader": "^1.1.0",
-		"web-ext": "^3.0.0",
+		"web-ext": "^3.2.1",
 		"webpack": "^4.15.1",
 		"webpack-cli": "^3.0.8"
 	},
