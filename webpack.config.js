@@ -13,7 +13,7 @@ const config = {
         rules: [
             {
                 test: /\.ejs$/,
-                use: 'ejs-compiled-loader'
+                loader: 'compile-ejs-loader'
             }
         ]
     }

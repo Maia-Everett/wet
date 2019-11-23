@@ -4,7 +4,10 @@
 	"license": "GPL-3.0",
 	"repository": "https://github.com/Maia-Everett/wet.git",
 	"devDependencies": {
-		"ejs-compiled-loader": "^1.1.0",
+		"compile-ejs-loader": "0.0.2",
+		"ejs": "^2.7.4",
+		"html-minifier": "^4.0.0",
+		"uglify-js": "^3.6.9",
 		"web-ext": "^3.2.1",
 		"webpack": "^4.15.1",
 		"webpack-cli": "^3.0.8"
