@@ -19,13 +19,23 @@
 	font-family: monospace;
 }
 
-#questfiller-copy {
+#questfiller-copy, #questfiller-close {
 	height: 40px;
 	margin-top: 0;
 	text-shadow: none;
 }
 
-#questfiller-copy:focus {
+#questfiller-close {
+	background: white;
+	color: #444;
+}
+
+#questfiller-close:hover {
+	background: #f9f9f9;
+	color: black;
+}
+
+#questfiller-copy:focus, #questfiller-close:focus {
 	outline: 2px solid #333;
 	outline-offset: -4px;
 }

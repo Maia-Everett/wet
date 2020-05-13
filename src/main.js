@@ -12,13 +12,18 @@ document.body.appendChild(popup);
 popup.innerHTML = `
 	<textarea id="questfiller-content" spellcheck="false"></textarea>
 	<button id="questfiller-copy">Copy to clipboard and close</button>
+	<button id="questfiller-close">Close</button>
 `;
 
-var content = $("#questfiller-content");
+let content = $("#questfiller-content");
 
 $("#questfiller-copy").addEventListener("click", e => {
 	content.select();
 	document.execCommand("copy");
+	popup.parentElement.removeChild(popup);
+});
+
+$("#questfiller-close").addEventListener("click", e => {
 	popup.parentElement.removeChild(popup);
 });
 
