@@ -366,14 +366,13 @@ export default function QuestParser(context) {
 	 */
 	function parseSeries(quest, mainContainer) {
 		// Try to determine previous and next quests
-		let headingsSize3 = mainContainer.querySelectorAll("h2.heading-size-3");
-		/** @type {Element} */
-		let seriesTable = null;
+		let seriesHeader = $("#infobox-series");
 
-		u.getFirstWithOwnText(headingsSize3, "Series", seriesHeader => {
-			seriesTable = u.findNextElementSibling(seriesHeader,
-					el => u.tagName(el) === "table" && el.classList.contains("series"));
-		});
+		if (!seriesHeader) {
+			return;
+		}
+
+		let seriesTable = seriesHeader.parentElement.parentElement.querySelector("table.series");
 
 		if (!seriesTable) {
 			return;
