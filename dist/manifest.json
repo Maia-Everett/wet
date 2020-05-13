@@ -15,7 +15,8 @@
 	"permissions" : [
 		"tabs",
 		"activeTab",
-		"clipboardWrite"
+		"clipboardWrite",
+		"storage"
 	],
 
 	"background" : {

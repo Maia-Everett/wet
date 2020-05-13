@@ -39,3 +39,59 @@
 	outline: 2px solid #333;
 	outline-offset: -4px;
 }
+
+
+/** Dark theme */
+
+#questfiller-popup.questfiller-dark {
+	background: #333;
+	color: white;
+}
+
+#questfiller-popup.questfiller-dark #questfiller-content {
+	background: #555;
+	border: 1px solid black;
+	color: white;
+}
+
+#questfiller-popup.questfiller-dark #questfiller-copy {
+	background: white;
+	color: #444;
+}
+
+#questfiller-popup.questfiller-dark #questfiller-copy:hover {
+	background: #f9f9f9;
+	color: black;
+}
+
+#questfiller-popup.questfiller-dark #questfiller-close {
+	background: #555;
+	color: white;
+}
+
+#questfiller-popup.questfiller-dark #questfiller-close:hover {
+	background: #606060;
+	color: #f0f0f0;
+}
+
+#questfiller-popup.questfiller-dark #questfiller-close:focus {
+	outline: 2px solid #eee;
+	outline-offset: -4px;
+}
+
+#questfiller-dark-toggle {
+	float: right;
+	color: #555;
+}
+
+#questfiller-dark-toggle:hover {
+	color: black;
+}
+
+#questfiller-popup.questfiller-dark #questfiller-dark-toggle {
+	color: #ffd100;
+}
+
+#questfiller-popup.questfiller-dark #questfiller-dark-toggle:hover {
+	color: white;
+}
