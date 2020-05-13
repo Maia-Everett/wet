@@ -1,7 +1,4 @@
-<% if (n.isMob()) { %>{{Stub/Mob}}<% } else { %>{{Stub/NPC}}<% } %>
-<% if (n.location) { -%>
-{{screenshot||<%- n.location %>}}
-<% } -%>
+<% if (n.location) { -%>{{screenshot||<%- n.location %>}}<% } -%><% if (n.isMob()) { %>{{Stub/Mob}}<% } else { %>{{Stub/NPC}}<% } %>
 {{Npcbox
  | name = <%- n.name %>
  | image = <%- n.name %>.jpg
