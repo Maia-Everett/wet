@@ -269,8 +269,8 @@ export default function QuestParser(context) {
 			
 			if (divs[0].textContent.includes("experience")) {
 				firstNonXPDiv = 1;
-				let xpValue = u.getRegexGroup(divs[0].textContent, "([0-9,]*) experience", 1);
-				quest.experience = parseInt(xpValue.replace(",", ""));
+				let xpValue = u.getRegexGroup(divs[0].textContent, "([0-9, ]*) experience", 1);
+				quest.experience = parseInt(xpValue.replace(/[ ,]/g, ""));
 			} else {
 				firstNonXPDiv = 0;
 			}
