@@ -7,6 +7,7 @@ $$("#questfiller-popup").forEach(element => element.parentElement.removeChild(el
 // Create popup
 let popup = document.createElement("div");
 popup.setAttribute("id", "questfiller-popup");
+popup.setAttribute("display", "none"); // starts hidden to avoid flicker
 document.body.appendChild(popup);
 
 popup.innerHTML = `
@@ -46,6 +47,7 @@ function setTheme() {
 chrome.storage.sync.get(["isDark"], result => {
 	isDark = result.isDark || false;
 	setTheme();
+	popup.removeAttribute("display"); // show
 });
 
 darkThemeToggle.addEventListener("click", () => {
