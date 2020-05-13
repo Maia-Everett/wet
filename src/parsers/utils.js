@@ -198,8 +198,8 @@ export default {
 		// Item names are contained in the actual icontab, as are placeholders for the icon and quantity
 		for (let iconPlaceholder of icontab.querySelectorAll("th[id]")) {
 			let iconId = iconPlaceholder.id;
-			// the next element is a td with the link to the actual item
-			let itemName = iconPlaceholder.nextElementSibling.getElementsByTagName("a")[0].textContent;
+			// the next element is a td with the name of the actual item (and possibly a link)
+			let itemName = this.textOf(iconPlaceholder.nextElementSibling.getElementsByTagName("span")[0]);
 			itemNamesByIconId.set(iconId, itemName);
 		}
 		
