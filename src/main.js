@@ -44,16 +44,21 @@ function setTheme() {
 	}
 }
 
-chrome.storage.sync.get(["isDark"], result => {
-	isDark = result.isDark || false;
+if ("storage" in chrome) {
+	chrome.storage.sync.get(["isDark"], result => {
+		isDark = result.isDark || false;
+		setTheme();
+		popup.removeAttribute("display"); // show
+	});
+} else {
 	setTheme();
 	popup.removeAttribute("display"); // show
-});
+}
 
 darkThemeToggle.addEventListener("click", () => {
 	isDark = !isDark;
-	chrome.storage.sync.set({ "isDark": isDark });
 	setTheme();
+	chrome.storage.sync.set({ "isDark": isDark });
 });
 
 // End dark theme support
