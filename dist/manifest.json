@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "Wowpedia Editor's Toolkit",
 	"short_name" : "wet",
-	"version": "2.0.8",
+	"version": "2.0.9",
 
 	"description" : "Converts Wowhead pages for quests, missions and NPCs into Wowpedia wiki markup.",
 
@@ -33,5 +33,11 @@
 			"128" : "icons/icon-128.png"
 			},
 		"default_title": "Wowpedia Editor's Toolkit: Parse current page"
-	  }
+	},
+
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "{22caf078-bc44-41ae-9f12-2c4e08a074ac}"
+		}
+	}
 }
