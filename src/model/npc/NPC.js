@@ -30,7 +30,7 @@ export default class NPC {
 	}
 	
 	isQuestEnder() {
-		return anyMatch(this.quests, q => q.finishes);
+		return anyMatch(this.quests, q => q.finishes && !q.starts);
 	}
 	
 	getFaction() {
