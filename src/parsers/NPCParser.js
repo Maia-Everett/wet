@@ -347,6 +347,7 @@ export default function NPCParser(context) {
 			
 			u.getRegexGroup(infoboxLine, "Faction: (.+)", 1, repFaction => {
 				npc.repFaction = repFaction;
+				npc.repFactionCanonicalName = substitutions.getCanonicalReputationFaction(repFaction);
 			});
 			
 			u.getRegexGroup(infoboxLine, "Tameable \\((.+)\\)", 1, petFamily => {

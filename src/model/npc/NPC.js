@@ -52,6 +52,17 @@ export default class NPC {
 			return "Neutral";
 		}
 	}
+
+	/**
+	 * @return {string}
+	 */
+	getRepFactionLink() {
+		if (this.repFactionCanonicalName == null) {
+			return "[[" + this.repFaction + "]]";
+		} else {
+			return "[[" + this.repFactionCanonicalName + "|" + this.repFaction + "]]";
+		}
+	}
 	
 	getHealthStr() {
 		return new Intl.NumberFormat("en-US").format(this.health);
