@@ -32,6 +32,10 @@ export default class NPC {
 	isQuestEnder() {
 		return anyMatch(this.quests, q => q.finishes && !q.starts);
 	}
+
+	isMob() {
+		return this.allianceReaction === Reaction.HOSTILE && this.hordeReaction === Reaction.HOSTILE;
+	}
 	
 	getFaction() {
 		if (this.allianceReaction === undefined && this.hordeReaction === undefined) {
