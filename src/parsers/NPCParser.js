@@ -239,7 +239,8 @@ export default function NPCParser(context) {
 		let transformed = raceName
 				.replace(/Player/g, "")
 				.replace(/^MON_/, "")
-				.replace(/^VO_[0-9]*/, "");
+				.replace(/^VO_[0-9]*/, "")
+				.replace(/_[Vv][0-9]+_/, "_");
 		
 		if (transformed.length === 0) {
 			return "";
