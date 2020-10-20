@@ -1,6 +1,6 @@
 {
 	"name": "wet",
-	"version": "2.0.9",
+	"version": "2.0.10",
 	"license": "GPL-3.0",
 	"repository": "https://github.com/Maia-Everett/wet.git",
 	"devDependencies": {
@@ -13,7 +13,7 @@
 		"webpack-cli": "^3.3.11"
 	},
 	"scripts": {
-		"start": "webpack --watch",
+		"start": "webpack --mode development --watch",
 		"build": "web-ext -s dist build --overwrite-dest"
 	}
 }
