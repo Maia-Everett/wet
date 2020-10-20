@@ -19,8 +19,18 @@ class ParserContext {
 			}
 		});
 
-		this.missionMechanics = arrayToDict(localeData.fidropdowns.missionMechanics);
-		arrayToDict(localeData.fidropdowns.missionThreats, this.missionMechanics);
+		this.missionMechanics = {
+			"1": "Wild Aggression",
+			"2": "Massive Strike",
+			"3": "Group Damage",
+			"4": "Magic Debuff",
+			"6": "Danger Zones",
+			"7": "Minion Swarms",
+			"8": "Powerful Spell",
+			"9": "Deadly Minions",
+			"10": "Timed Battle",
+		};
+
 		this.races = arrayToDict(localeData.mn_races);
 		this.classes = arrayToDict(localeData.mn_classes);
 		this.npcTypes = localeData.g_npc_types;
@@ -64,7 +74,6 @@ export default {
 					questFillerTag: "questFillerTag",
 					g_npc_types: window.g_npc_types,
 					mn_quests: window.mn_quests,
-					fidropdowns: window.LANG.fidropdowns,
 					mn_races: window.mn_races,
 					mn_classes: window.mn_classes
 				}, "*");
