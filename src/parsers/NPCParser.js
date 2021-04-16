@@ -176,7 +176,7 @@ export default function NPCParser(context) {
 					"\"name\":\"([A-Za-z0-9_]+)"
 					+ "(Male|Female|_MALE|_FEMALE)"
 					+ "[A-Za-z0-9_]*"
-					+ "(?:Attack|ATTACK)\"");
+					+ "(?:Attack|ATTACK)");
 			
 			let match = s.match(raceGenderPattern);
 
@@ -196,7 +196,7 @@ export default function NPCParser(context) {
 				}
 			} else {
 				// Try to determine just race
-				u.getRegexGroup(s, "\"name\":\"([A-Za-z0-9_]+)(?:Attack|ATTACK)\"", 1, race => {
+				u.getRegexGroup(s, "\"name\":\"([A-Za-z0-9_]+)(?:Attack|ATTACK)", 1, race => {
 					npc.race = normalizeRaceName(race);
 				});
 			}
