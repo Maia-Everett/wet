@@ -10,11 +10,6 @@
 <% if (n.levelClassification) { -%>
  | type = <%- n.levelClassification %>
 <% } -%>
-<% if (n.health) { -%>
- | health = <%- n.getHealthStr() %>
-<% } else if (n.mythicHealth) { -%>
- | health = {{Health|lfr=Scales|10-25=Scales|10-25h=Scales|20=<%- n.getMythicHealthStr() %>}}
-<% } -%>
 <% if (n.mana) { -%>
  | mana = <%- n.getManaStr() %>
 <% } -%>
