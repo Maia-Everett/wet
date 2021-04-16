@@ -17,6 +17,7 @@ let reputations = {
 	"Undercity": "Undercity (faction)",
 	"Silvermoon": "Silvermoon (faction)",
 	"Zandalari Empire": "Zandalari Empire (faction)",
+	"Bilgewater Cartel": "Bilgewater Cartel (faction)",
 };
 
 export default {
