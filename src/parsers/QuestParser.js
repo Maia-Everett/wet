@@ -84,13 +84,13 @@ export default function QuestParser(context) {
 		}
 		
 		// Objective completion stages
-		let iconlists = mainContainer.querySelectorAll("table.iconlist");
+		let iconlists = mainContainer.querySelectorAll("table.icon-list");
 		
 		if (iconlists.length > 0) {
 			let stagesTable = iconlists[0];
 
 			// Remove any subtables
-			for (let element of stagesTable.querySelectorAll("table.iconlist")) {
+			for (let element of stagesTable.querySelectorAll("table.icon-list")) {
 				element.parentElement.removeChild(element);
 			}
 
@@ -128,7 +128,7 @@ export default function QuestParser(context) {
 			let before = maybeProvided.previousSibling;
 			
 			if (before instanceof Text && before.textContent.includes("Provided")) {
-				for (let element of maybeProvided.querySelectorAll("table.iconlist")) {
+				for (let element of maybeProvided.querySelectorAll("table.icon-list")) {
 					element.parentElement.removeChild(element);
 				}
 				
