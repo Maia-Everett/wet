@@ -7,11 +7,11 @@
 <% } -%>
  | gender = <%- n.gender %>
  | level = <%- n.location %>
+<% if (n.mana) { -%>
+ | resource = Mana
+<% } -%>
 <% if (n.levelClassification) { -%>
  | type = <%- n.levelClassification %>
-<% } -%>
-<% if (n.mana) { -%>
- | mana = <%- n.getManaStr() %>
 <% } -%>
  | faction = <%- n.getFaction() %>
  | aggro = {{Aggro|<%- n.allianceReaction %>|<%- n.hordeReaction %>}}
