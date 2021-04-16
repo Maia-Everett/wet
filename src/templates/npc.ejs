@@ -86,7 +86,11 @@
 {{Elinks-NPC|<%- n.id %>}}
 
 <% if (n.location) { -%>
+<%   if (n.allianceReaction === -1 && n.hordeReaction === -1) { -%>
+[[Category:<%- n.location %> mobs]]
+<%   } else { -%>
 [[Category:<%- n.location %> NPCs]]
+<%   } -%>
 <% } -%>
 <% if (n.isQuestGiver()) { -%>
 [[Category:Quest givers]]
@@ -98,5 +102,9 @@
 [[Category:Vendors]]
 <% } -%>
 <% if (!n.location && !n.quests.length && !n.itemsSold.length) { -%>
+<%   if (n.allianceReaction === -1 && n.hordeReaction === -1) { -%>
+[[Category:Mobs]]
+<%   } else { -%>
 [[Category:NPCs]]
+<%   } -%>
 <% } -%>
