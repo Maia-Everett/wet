@@ -322,7 +322,7 @@ export default function QuestParser(context) {
 			});
 			
 			u.getRegexGroup(infoboxLine, "Side: (.+)", 1, side => {
-				if (side === "Both") {
+				if (side === "Both" || side === "None") {
 					quest.faction = "Neutral";
 				} else {
 					quest.faction = side;
