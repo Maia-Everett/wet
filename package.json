@@ -14,6 +14,6 @@
 	},
 	"scripts": {
 		"start": "webpack --mode development --watch",
-		"build": "web-ext -s dist build --overwrite-dest"
+		"build": "webpack && web-ext -s dist build --overwrite-dest"
 	}
 }
