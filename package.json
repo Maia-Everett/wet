@@ -1,6 +1,6 @@
 {
 	"name": "wet",
-	"version": "2.0.11",
+	"version": "2.0.12",
 	"license": "GPL-3.0",
 	"repository": "https://github.com/Maia-Everett/wet.git",
 	"devDependencies": {
