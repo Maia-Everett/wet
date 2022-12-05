@@ -38,7 +38,6 @@ export default function NPCParser(context) {
 			npc.title = title;
 		});
 		
-		parseCreatureType(npc);
 		parseLocation(npc, mainContainer);
 		parseLists(npc);
 		parseQuotes(npc, mainContainer);
@@ -46,16 +45,6 @@ export default function NPCParser(context) {
 		parseInfobox(npc);
 
 		return npc;
-	}
-
-	/**
-	 * @param {NPC} npc 
-	 */
-	function parseCreatureType(npc) {
-		let categoryIds = u.getCategoryIds();
-		// third number in list is the creature type id
-		let creatureTypeId = categoryIds[2];
-		npc.creatureType = context.npcTypes[creatureTypeId.toString()];
 	}
 	
 	/**
@@ -352,6 +341,10 @@ export default function NPCParser(context) {
 				if (npc.repFactionCanonicalName === npc.repFaction) {
 					npc.repFactionCanonicalName = null;
 				}
+			});
+			
+			u.getRegexGroup(infoboxLine, "Type: (.+)", 1, type => {
+				npc.creatureType = type;
 			});
 			
 			u.getRegexGroup(infoboxLine, "Tameable \\((.+)\\)", 1, petFamily => {

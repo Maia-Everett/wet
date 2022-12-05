@@ -33,7 +33,6 @@ class ParserContext {
 
 		this.races = arrayToDict(localeData.mn_races);
 		this.classes = arrayToDict(localeData.mn_classes);
-		this.npcTypes = localeData.g_npc_types;
 
 		// This has to be hardcoded for now :(
 		this.legionMissionMechanics = {
@@ -72,7 +71,6 @@ export default {
 			script.text = `
 				window.postMessage({
 					questFillerTag: "questFillerTag",
-					g_npc_types: window.g_npc_types,
 					mn_quests: window.mn_quests,
 					mn_races: window.mn_races,
 					mn_classes: window.mn_classes
