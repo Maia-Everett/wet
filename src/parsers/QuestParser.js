@@ -314,7 +314,7 @@ export default function QuestParser(context) {
 			
 			u.getRegexGroup(infoboxLine, "Type: (.+)", 1, type => {
 				if (type === "Artifact") {
-					// This is what wowpedia uses
+					// This is what Warcraft Wiki uses
 					quest.type = "Legendary";
 				} else {
 					quest.type = type;

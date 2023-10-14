@@ -1,8 +1,8 @@
-# Wowpedia Editor's Toolkit
+# Warcraft Wiki Editor's Toolkit
 
-This browser extension converts Wowhead quest, mission, and NPC pages into Wowpedia wiki markup.
+This browser extension converts Wowhead quest, mission, and NPC pages into Warcraft Wiki markup.
 
-[https://wow.gamepedia.com/Wowpedia:Wowpedia_Editor%27s_Toolkit]
+[https://wow.gamepedia.com/Warcraft_Wiki:Warcraft_Wiki_Editor%27s_Toolkit]
 
 ## Building
 
