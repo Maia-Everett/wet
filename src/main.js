@@ -46,7 +46,7 @@ function setTheme() {
 
 if ("storage" in chrome) {
 	chrome.storage.sync.get(["isDark"], result => {
-		isDark = result.isDark || true;
+		isDark = result.isDark !== false; // true if not set
 		setTheme();
 		popup.removeAttribute("display"); // show
 	});
