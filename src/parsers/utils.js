@@ -112,6 +112,33 @@ export default {
 
 		return this.normalize(result);
 	},
+
+	/**
+	 * @param {Element} header
+	 * @param {string[]} allowedTags
+	 * @return {string}
+	 */
+	collectTextAndElements: function(header, ...allowedTags) {
+		let result = "";
+
+		if (header == null) {
+			return result;
+		}
+		
+		for (let node = header.nextSibling;
+				!(node instanceof Element) || allowedTags.includes(this.tagName(node));
+				node = node.nextSibling) {
+			if (node instanceof Text) {
+				result += node.textContent;
+			} else if (node instanceof Element && this.tagName(node) === "br") {
+				result += "\n";
+			} else if (node instanceof Element) {
+				result += node.textContent;
+			}
+		}
+		
+		return result;
+	},
 	
 	/**
 	 * @param {Element} header
@@ -128,7 +155,7 @@ export default {
 		for (let node = header.nextSibling;
 				!(node instanceof Element && this.tagName(node) === nextTagName);
 				node = node.nextSibling) {
-			if (node instanceof Text) {
+			if ((node instanceof Text) || (node instanceof Element && this.tagName(node) === "a")) {
 				result += node.textContent;
 			} else if (node instanceof Element && this.tagName(node) === "br") {
 				result += "\n";

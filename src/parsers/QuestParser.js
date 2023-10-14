@@ -69,7 +69,7 @@ export default function QuestParser(context) {
 			return;
 		}
 		
-		// Objectives text is the first non-empty text node immediately following the header
+		// Objectives text is the first non-empty node immediately following the header
 		while (!(objectivesNode instanceof Text) || objectivesNode.data.trim().length === 0) {
 			objectivesNode = objectivesNode.nextSibling;
 		}
@@ -80,7 +80,7 @@ export default function QuestParser(context) {
 		// but rather progress or completion, like on the quest "Draenei Tail"
 		if (!(beforeObjectives instanceof Element && u.tagName(beforeObjectives) === "h2"
 				&& beforeObjectives.classList.contains("heading-size-3"))) {
-			quest.objectives = u.normalize(objectivesNode.data);
+			quest.objectives = u.normalize(u.collectTextAndElements(questName, "a"));
 		}
 		
 		// Objective completion stages
