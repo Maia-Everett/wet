@@ -2,7 +2,7 @@
 
 This browser extension converts Wowhead quest, mission, and NPC pages into Warcraft Wiki markup.
 
-[https://wow.gamepedia.com/Warcraft_Wiki:Warcraft_Wiki_Editor%27s_Toolkit]
+[https://warcraft.wiki.gg/Warcraft_Wiki:Warcraft_Wiki_Editor%27s_Toolkit]
 
 ## Building
 
